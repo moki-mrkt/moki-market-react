@@ -1,0 +1,152 @@
+.feedbacks-section {
+    margin-bottom: 53px;
+}
+
+.feedbacks-grid {
+    margin-top: 17px;
+
+    display: flex;
+    gap: 20px;
+    justify-content: space-between;
+    margin-bottom: 30px; /* Отступ до кнопки "Усі відгуки" */
+}
+
+.feedback-card {
+    /* Рамка и фон */
+    border: 1px solid #1032A3; /* Синяя рамка */
+    border-radius: 20px;       /* Скругление углов */
+    background-color: white;
+
+    /* Размеры */
+    flex: 1;             /* Все карточки одинаковой ширины */
+    padding: 20px;       /* Внутренний отступ */
+
+    /* Содержимое */
+    display: flex;
+    flex-direction: column;
+    gap: 8px;            /* Расстояние между строками внутри */
+}
+
+.feedback-header {
+    display: flex;
+    align-items: center;
+    gap: 15px; /* Расстояние от имени до звезд */
+}
+
+.feedback-name {
+    font-size: 20px;
+    font-weight: 600;
+    color: #1032A3; /* Синий цвет имени */
+}
+
+.feedback-stars {
+    display: flex;
+    gap: 2px;
+
+    height: 15px;
+    width: 15px;
+    color: #F0D051; /* Желтый цвет звезд */
+    letter-spacing: 2px;
+}
+
+.feedback-date {
+    font-size: 14px;
+    color: #BDBDBD; /* Серый цвет */
+    margin-bottom: 5px;
+}
+
+.feedback-text {
+    font-size: 16px;
+    color: #1032A3;
+    line-height: 1.4;
+    margin: 0;
+}
+
+.feedbacks-actions {
+    display: flex;
+    justify-content: center;
+}
+
+.btn-all-feedbacks {
+
+    justify-content: center;
+    display: flex;
+    align-items: center;
+
+    width: 146px;
+    height: 40px;
+
+    background: transparent;
+    border: 2px solid #EBC64D;
+    border-radius: 12px;
+
+
+    font-size: 18px;
+    font-weight: 500;
+    color: #1032A3;
+    cursor: pointer;
+    transition: background 0.3s;
+}
+
+.btn-all-feedbacks:hover {
+    background-color: #FFF8E1;
+}
+
+@media (max-width: 768px) {
+    .feedbacks-section {
+        margin-bottom: 30px;
+    }
+
+    .feedbacks-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr; /* Два рівні стовпчики */
+        gap: 10px;
+        flex-wrap: wrap; /* На випадок конфліктів */
+    }
+
+    .feedback-card {
+        padding: 15px;
+        border-radius: 15px;
+
+        gap: 0;
+
+        max-width: 180px;
+    }
+
+    .feedback-header {
+        display: flex;
+
+    }
+
+    .feedback-name {
+        font-size: 16px;
+        margin-right: 10px;
+    }
+
+    .feedback-stars {
+
+        display: flex;
+        align-items: center;
+        gap: 0;
+        margin: 0;
+    }
+
+    .feedback-stars img {
+        height: 10px;
+        width: 10px;
+    }
+
+    .feedback-date {
+        font-size: 10px;
+    }
+
+    .feedback-text {
+        font-size: 12px;
+    }
+
+    .btn-all-feedbacks {
+        font-size: 16px;
+        width: 150px;
+
+    }
+}

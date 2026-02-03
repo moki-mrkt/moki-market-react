@@ -1,0 +1,52 @@
+.sidebar-menu {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+}
+
+.sidebar-menu a {
+    display: flex;
+    align-items: center;
+    gap: 23px;
+}
+
+.sidebar {
+    height: 374px;
+    width: 346px;
+    overflow-y: auto;
+
+}
+
+.sidebar::-webkit-scrollbar {
+    width: 4px;
+
+}
+
+.sidebar::-webkit-scrollbar-track {
+    background-color: #A49F9F;
+}
+
+.sidebar::-webkit-scrollbar-thumb {
+    background-color: #0D2996;
+    border-radius: 10px;
+    width: 3px;
+}
+
+
+.sidebar ul {
+    margin-top: 0;
+}
+
+.sidebar li {
+    text-decoration: none;
+}
+
+
+@media (max-width: 768px) {
+    .sidebar {
+        display: none;
+    }
+}
