@@ -2,13 +2,13 @@ import React from 'react';
 import { Outlet, Link } from 'react-router-dom';
 import {
     Box, Drawer, List, ListItem, ListItemButton, ListItemIcon,
-    ListItemText, CssBaseline, ThemeProvider, createTheme, Typography, AppBar, Toolbar
+    ListItemText, CssBaseline, ThemeProvider, createTheme, Typography, AppBar, Toolbar, Button
 } from '@mui/material';
 import PeopleIcon from '@mui/icons-material/People';
 import DashboardIcon from '@mui/icons-material/Dashboard';
 import InventoryIcon from '@mui/icons-material/Inventory';
+import {authService} from "../services/authService.js";
 
-// Темна тема, як на скріншоті
 const lightTheme = createTheme({
     palette: {
         mode: 'light',
@@ -86,6 +86,11 @@ const linkStyle = {
 };
 
 const AdminLayout = () => {
+
+    const handleLogout = () => {
+        authService.logout(); // Цей метод очистить токени і перекине на /login
+    };
+
     return (
         <ThemeProvider theme={lightTheme}>
             <Box sx={{ display: 'flex' }}>
@@ -110,11 +115,26 @@ const AdminLayout = () => {
                     variant="permanent"
                     anchor="left"
                 >
-                    <Toolbar>
-                        <Typography variant="h6" >
-                            <img src="/icon.svg" alt="logo" style={{height: 50, width: 50}}/>
-                            <span style={{marginLeft: 20}}>Адмін панель </span>
+                    <Toolbar sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: 0 }}>
+
+                        {/* ЛІВА ЧАСТИНА: Лого + Текст (групуємо їх разом) */}
+                        <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
+                            <img src="/icon.svg" alt="logo" style={{ height: 40, width: 40 }} />
+                        </Box>
+                        <Typography variant="h6" sx={{ fontSize: '16px', fontWeight: 'bold' }}>
+                            Адмін панель
                         </Typography>
+
+                        {/* ПРАВА ЧАСТИНА: Кнопка виходу */}
+                        <Button
+                            onClick={handleLogout}
+                            sx={{
+                                minWidth: 'auto',
+                            }}
+                        >
+                            <img src="/img/logout.svg" alt="logout" style={{ height: 20, width: 20 }} />
+                        </Button>
+
                     </Toolbar>
                     <List>
                         <ListItem disablePadding>

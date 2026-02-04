@@ -1,24 +1,47 @@
-import React from 'react';
-import { Link } from 'react-router-dom';
+import React, {useEffect, useState} from 'react';
+import {Link, useNavigate} from 'react-router-dom';
 import { DataGrid } from '@mui/x-data-grid';
 import { Box, Typography, Button, IconButton, Paper, TextField, InputAdornment, useTheme, useMediaQuery } from '@mui/material';
 import EditIcon from '@mui/icons-material/EditOutlined';
 import DeleteIcon from '@mui/icons-material/DeleteOutlined';
 import AddIcon from '@mui/icons-material/Add';
 import SearchIcon from '@mui/icons-material/Search';
-
-// Тестові дані
-const rows = [
-    { id: 1, name: 'Сухофрукти мікс', price: 120, category: 'Сухофрукти', discount: 50, status: 'Active' },
-    { id: 2, name: 'Кеш’ю смажений', price: 450, category: 'Горіхи', discount: 12, status: 'Active' },
-    { id: 3, name: 'Манго сушене', price: 300, category: 'Сухофрукти', discount: 0, status: 'Out of stock' },
-    { id: 4, name: 'Фісташкова паста', price: 200, category: 'Пасти', discount: 5, status: 'Active' },
-    { id: 5, name: 'Фініки королівські', price: 250, category: 'Сухофрукти', discount: 20, status: 'Active' },
-];
+import {productService} from "../../../services/productService.js";
 
 const AdminProducts = () => {
+    const navigate = useNavigate();
     const theme = useTheme();
     const isMobile = useMediaQuery(theme.breakpoints.down('md'));
+
+    const [rows, setRows] = useState([]); // Дані таблиці
+    const [loading, setLoading] = useState(false); // Спінер завантаження
+    const [rowCount, setRowCount] = useState(0);
+
+    const [paginationModel, setPaginationModel] = useState({
+        page: 0,
+        pageSize: 10,
+    });
+
+    const loadProducts = async () => {
+        setLoading(true);
+        try {
+            // Передаємо page і size. Spring Pageable починає сторінки з 0, DataGrid теж.
+            const response = await productService.getAllProducts(paginationModel.page, paginationModel.pageSize);
+
+            // Spring повертає об'єкт Page: { content: [], totalElements: 123, ... }
+            setRows(response.content || []);
+            setRowCount(response.totalElements || 0);
+
+        } catch (error) {
+            console.error("Помилка при завантаженні товарів:", error);
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    useEffect(() => {
+        loadProducts();
+    }, [paginationModel]);
 
     const columns = [
         {
@@ -38,7 +61,7 @@ const AdminProducts = () => {
             headerAlign: 'center'
         },
         {
-            field: 'category',
+            field: 'productCategory',
             headerName: 'Категорія',
             flex: 1,
             minWidth: 120,
@@ -70,7 +93,7 @@ const AdminProducts = () => {
             headerAlign: 'center'
         },
         {
-            field: 'status',
+            field: 'availability',
             headerName: 'Статус',
             flex: 1,
             minWidth: 110,
@@ -78,14 +101,17 @@ const AdminProducts = () => {
             headerAlign: 'center',
             renderCell: (params) => (
                 <span style={{
-                    color: params.value === 'Active' ? '#059669' : '#DC2626',
-                    background: params.value === 'Active' ? '#D1FAE5' : '#FEE2E2',
-                    padding: '6px 8px',
-                    borderRadius: '6px',
+                    color: params.value === 'IN_STOCK' ? '#059669' : '#DC2626',
+                    background: params.value === 'IN_STOCK' ? '#D1FAE5' : '#FEE2E2',
+                    height: '80%',
+                    padding: '1px 4px',
+                    borderRadius: '10px',
                     fontSize: '12px',
                     fontWeight: 600,
+                    display: 'flex',
+                    alignItems: 'center'
                 }}>
-                {params.value}
+                {params.value === 'IN_STOCK' ? 'В наявності' : 'Немає'}
             </span>
             )
         },
@@ -99,10 +125,10 @@ const AdminProducts = () => {
             headerAlign: 'center',
             renderCell: (params) => (
                 <Box sx={{ display: 'flex', gap: 1, justifyContent: 'center', alignItems: 'center', width: '100%', height: '100%' }}>
-                    <IconButton size="small" sx={{ border: '1px solid #E5E7EB', borderRadius: 1 }}>
+                    <IconButton size="small" onClick={() => handleEdit(params.row.id)} sx={{ border: '1px solid #E5E7EB', borderRadius: 1 }}>
                         <EditIcon fontSize="small" />
                     </IconButton>
-                    <IconButton size="small" sx={{ border: '1px solid #E5E7EB', borderRadius: 1 }}>
+                    <IconButton size="small" onClick={() => handleDelete(params.row.id)} sx={{ border: '1px solid #E5E7EB', borderRadius: 1 }}>
                         <DeleteIcon fontSize="small" />
                     </IconButton>
                 </Box>
@@ -110,19 +136,19 @@ const AdminProducts = () => {
         },
     ];
 
-    const linkStyle = {
-        color: 'text.primary',
-        textDecoration: 'none',
-        '&:visited': {
-            color: 'text.primary', // Запобігає фіолетовому кольору відвіданих посилань
-        },
-        '&:active': {
-            color: 'text.primary',
-        },
-        '&:hover': {
-            color: 'text.primary',
-            // При наведенні ListItemButton сам додасть легкий сірий фон,
-            // але текст залишимо чорним
+    const handleEdit = (id) => {
+        navigate(`/admin/products/edit/${id}`);
+    };
+
+    const handleDelete = async (id) => {
+        if (window.confirm('Ви впевнені, що хочете видалити цей товар?')) {
+            try {
+                await productService.deleteProduct(id);
+                await loadProducts(); // Перезавантажуємо таблицю після видалення
+            } catch (error) {
+                console.error("Не вдалося видалити:", error);
+                alert("Помилка видалення");
+            }
         }
     };
 
@@ -192,10 +218,15 @@ const AdminProducts = () => {
                     <DataGrid
                         rows={rows}
                         columns={columns}
-                        initialState={{
-                            pagination: { paginationModel: { pageSize: 10 } },
-                        }}
+
+                        // === ВАЖЛИВІ НАЛАШТУВАННЯ ДЛЯ БЕКЕНДУ ===
+                        loading={loading}
+                        rowCount={rowCount} // Повідомляємо таблиці, скільки всього записів у БД
+                        paginationMode="server" // Вмикаємо серверну пагінацію
+                        paginationModel={paginationModel}
+                        onPaginationModelChange={setPaginationModel}
                         pageSizeOptions={[5, 10, 25]}
+
                         disableRowSelectionOnClick
                         sx={{
                             border: 'none',
@@ -204,10 +235,9 @@ const AdminProducts = () => {
                             },
                             '& .MuiDataGrid-cell': {
                                 borderBottom: '1px solid #F3F4F6',
+                                display: 'flex',
+                                alignItems: 'center'
                             },
-                            '& .MuiDataGrid-virtualScroller': {
-                                overflowX: 'auto',
-                            }
                         }}
                     />
                 </Box>

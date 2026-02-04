@@ -22,6 +22,8 @@ import TermsTab from './components/InfoPage/tabs/TermsTab';
 
 import AdminProducts from './components/admin/Admin/AdminProducts';
 import AdminProductCreate from './components/admin/Admin/AdminProductCreate';
+import LoginPage from './components/admin/Admin/LoginPage';
+import PrivateRoute from './components/admin/Admin/PrivateRoute';
 
 import PublicLayout from './layouts/PublicLayout.jsx';
 import AdminLayout from './layouts/AdminLayout.jsx';
@@ -31,6 +33,9 @@ function App() {
 
     return (
         <Routes>
+
+            <Route path="/login" element={<LoginPage />} />
+
             {/* --- ГІЛКА МАГАЗИНУ (PUBLIC) --- */}
             <Route path="/" element={<PublicLayout />}>
                 <Route index element={<Home />} />
@@ -53,11 +58,18 @@ function App() {
             </Route>
 
             {/* --- ГІЛКА АДМІНКИ (ADMIN) --- */}
-            <Route path="/admin/*" element={<AdminLayout />}>
+            <Route
+                path="/admin/*"
+                element={
+                    <PrivateRoute>
+                        <AdminLayout />
+                    </PrivateRoute>
+                }
+            >
                 <Route index element={<Navigate to="products" replace />} />
                 <Route path="products" element={<AdminProducts />} />
                 <Route path="products/create" element={<AdminProductCreate />} />
-                {/* Тут можна додати інші сторінки: orders, users і т.д. */}
+                <Route path="products/edit/:id" element={<AdminProductCreate />} />
             </Route>
 
 

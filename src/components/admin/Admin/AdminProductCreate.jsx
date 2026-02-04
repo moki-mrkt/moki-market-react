@@ -1,27 +1,32 @@
-import React, { useState } from 'react';
-import { Box, Paper, TextField, Button, Typography,
+import React, { useState, useEffect } from 'react';
+import { useParams, useNavigate } from 'react-router-dom';
+import {
+    Box, Paper, TextField, Button, Typography,
     Grid, MenuItem, Select, FormControl, InputLabel,
     IconButton, Checkbox, FormControlLabel,
     Divider,
-    FormHelperText
+    FormHelperText, CircularProgress
 } from '@mui/material';
 import DeleteIcon from '@mui/icons-material/Delete';
 import AddIcon from '@mui/icons-material/Add';
 import SaveIcon from '@mui/icons-material/Save';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
-import { useNavigate } from 'react-router-dom';
 
 import ImageUploader from './ImageUploader';
 
-
 import { productService } from '../../../services/productService';
-import { imageService } from '../../../services/imageService';
 
 import { CATEGORY_CONFIG } from '../../../constants/categories';
 
 const AdminProductCreate = () => {
+
+    const { id } = useParams();
+    const isEditMode = !!id;
+
     const navigate = useNavigate();
+
     const [loading, setLoading] = useState(false);
+    const [fetching, setFetching] = useState(false);
 
     const [selectedImages, setSelectedImages] = useState([]);
 
@@ -38,6 +43,74 @@ const AdminProductCreate = () => {
         initOfMeasure: 'шт',
         valueOfInitOfMeasure: '',
     });
+
+    useEffect(() => {
+        if (isEditMode) {
+            loadProductData();
+        }
+    }, [id]);
+
+    const loadProductData = async () => {
+        setFetching(true);
+        try {
+            const product = await productService.getById(id);
+
+            console.log(product)
+            // 1. Заповнюємо прості поля
+            setFormData({
+                name: product.name,
+                productCategory: product.productCategory,
+                price: product.price,
+                purchasePrice: product.purchasePrice || '',
+                discount: product.discount,
+                description: product.description || '',
+                availability: product.availability,
+                subcategory: product.subcategory,
+                manufacturerOfTheProduct: product.manufacturerOfTheProduct,
+                initOfMeasure: product.initOfMeasure,
+                valueOfInitOfMeasure: product.valueOfInitOfMeasure
+            });
+
+            if (product.characteristics) {
+                const charsArray = Object.entries(product.characteristics).map(([key, val]) => ({
+                    key: key,
+                    value: val
+                }));
+                setCharacteristics(charsArray.length > 0 ? charsArray : [{ name: '', value: '' }]);
+            }
+
+            // 3. Перетворюємо картинки у формат ImageUploader
+            // Бекенд повертає: [{ imageUrl: '...', isMain: true }]
+            // Uploader очікує: [{ preview: '...', uploadedUrl: '...', loading: false }]
+            if (product.images) {
+                const formattedImages = product.images.map(img => ({
+                    file: null,
+                    imageId: img.imageId, // Файлу немає, бо це вже на сервері
+                    preview: img.imageUrl, // Використовуємо URL як прев'ю
+                    uploadedUrl: img.imageUrl, // URL вже є
+                    loading: false,
+                    error: false
+                }));
+                // Сортуємо так, щоб головна (isMain) була першою, якщо треба
+                setSelectedImages(formattedImages);
+            }
+
+        } catch (error) {
+            console.error("Failed to load product", error);
+            alert("Не вдалося завантажити товар");
+            navigate('/admin/products');
+        } finally {
+            setFetching(false);
+        }
+    };
+
+    // const addChar = () => setCharacteristics([...characteristics, { name: '', value: '' }]);
+    //
+    // const removeChar = (index) => {
+    //     const newChars = [...characteristics];
+    //     newChars.splice(index, 1);
+    //     setCharacteristics(newChars);
+    // };
 
     // --- Стан для динамічних полів ---
     // Характеристики (масив пар ключ-значення, який потім перетворимо в об'єкт)
@@ -76,30 +149,6 @@ const AdminProductCreate = () => {
         setCharacteristics(newChars);
     };
 
-    // Обробка зображень
-    const handleImageChange = (index, field, value) => {
-        const newImages = [...images];
-        newImages[index][field] = value;
-
-        // Якщо це поле isMain і воно true, скидаємо isMain у інших
-        if (field === 'isMain' && value === true) {
-            newImages.forEach((img, i) => {
-                if (i !== index) img.isMain = false;
-            });
-        }
-
-        setImages(newImages);
-    };
-
-    const addImage = () => {
-        setImages([...images, { imageId: '', isMain: false, sortOrder: images.length, altText: '' }]);
-    };
-
-    const removeImage = (index) => {
-        const newImages = images.filter((_, i) => i !== index);
-        setImages(newImages);
-    };
-
     // --- SUBMIT ---
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -114,23 +163,47 @@ const AdminProductCreate = () => {
         setLoading(true);
 
         try {
+            console.log(selectedImages)
             // 1. Беремо тільки ті фото, які успішно завантажились (мають uploadedUrl)
             const validImages = selectedImages
                 .filter(img => img.uploadedUrl && !img.error)
                 .map((img, index) => ({
-                    imageUrl: img.uploadedUrl,
-                    isMain: index === 0 // Перше фото в списку робимо головним
+                    imageId: img.imageId,
+                    isMain: index === 0,
+                    sortOrder: 0,
+                    altText: 'photo'
                 }));
+
+            console.log(validImages)
+
+            console.log(characteristics)
+            const charMap = {};
+            characteristics.forEach(c => {
+                const k = c.key?.trim();
+                const v = c.value?.trim();
+                if(k && v) charMap[k] = v;
+            });
 
             // 2. Формуємо об'єкт
             const productPayload = {
                 ...formData,
                 price: parseFloat(formData.price),
-                images: validImages
+                purchasePrice: parseFloat(formData.purchasePrice) || 0,
+                discount: parseFloat(formData.discount) || 0,
+                images: validImages,
+                characteristics: charMap
             };
 
-            // 3. Відправляємо
-            await productService.createProduct(productPayload);
+            console.log(productPayload)
+
+            if (isEditMode) {
+                // ОНОВЛЕННЯ
+                await productService.updateProduct(id, productPayload);
+            } else {
+                // СТВОРЕННЯ
+                await productService.createProduct(productPayload);
+            }
+
             navigate('/admin/products');
 
         } catch (error) {
@@ -140,6 +213,10 @@ const AdminProductCreate = () => {
         }
     };
 
+    if (fetching) {
+        return <Box display="flex" justifyContent="center" mt={10}><CircularProgress /></Box>;
+    }
+
     return (
         <Box component="form" onSubmit={handleSubmit} sx={{ pb: 5, gap: 2 }}>
 
@@ -147,7 +224,9 @@ const AdminProductCreate = () => {
                 <IconButton onClick={() => navigate('/admin/products')}>
                     <ArrowBackIcon />
                 </IconButton>
-                <Typography variant="h5" sx={{ fontWeight: 700 }}>Створити новий товар</Typography>
+                <Typography variant="h5" sx={{ fontWeight: 700 }}>
+                    {isEditMode ? 'Редагування товару' : 'Новий товар'}
+                </Typography>
             </Box>
 
             <Grid container spacing={2}>
@@ -165,7 +244,7 @@ const AdminProductCreate = () => {
                             />
                         </Grid>
 
-                        <Grid container sx={{ mb: 3 }} spacing={2}>
+                        <Grid container  sx={{ mb: 3 }}  spacing={2}>
                             <Grid item xs={12} sm={6}>
                                 <FormControl fullWidth>
                                     <InputLabel>Категорія</InputLabel>

@@ -32,8 +32,16 @@ const ImageUploader = ({ selectedImages, setSelectedImages }) => {
             loading: true,
             error: false,
             key: null,
-            uploadedUrl: null
+            uploadedUrl: null,
+            imageId: null
         }));
+
+        // file: null,
+        //     imageId: img.imageId, // Файлу немає, бо це вже на сервері
+        //     preview: img.imageUrl, // Використовуємо URL як прев'ю
+        //     uploadedUrl: img.imageUrl, // URL вже є
+        //     loading: false,
+        //     error: false
 
         setSelectedImages(prev => [...prev, ...newPlaceholders]);
 
@@ -51,7 +59,8 @@ const ImageUploader = ({ selectedImages, setSelectedImages }) => {
                             ...item,
                             loading: false,
                             key: response.key,
-                            uploadedUrl: response.url
+                            uploadedUrl: response.url,
+                            imageId: response.key
                         };
                     }
                     return item;

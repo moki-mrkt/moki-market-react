@@ -1,15 +1,35 @@
-// src/services/goodsService.js
+import api from './api';
 const API_URL = 'http://localhost:8080/v1/api';
 
-const request = async (endpoint) => {
+// const request = async (endpoint) => {
+//     try {
+//         console.log(`${API_URL}${endpoint}`);
+//         const response = await fetch(`${API_URL}${endpoint}`);
+//         if (!response.ok) throw new Error(`HTTP error! Status: ${response.status}`);
+//         return await response.json();
+//     } catch (error) {
+//         console.error('Fetch error:', error);
+//         return [];
+//     }
+// };
+
+const request = async (endpoint, method = 'GET', body = null) => {
     try {
-        console.log(`${API_URL}${endpoint}`);
-        const response = await fetch(`${API_URL}${endpoint}`);
-        if (!response.ok) throw new Error(`HTTP error! Status: ${response.status}`);
-        return await response.json();
+
+        const response = await api({
+            url: endpoint,
+            method: method,
+            data: body
+        });
+
+        return response.data;
+
     } catch (error) {
-        console.error('Fetch error:', error);
-        return [];
+        console.error("API Request Error:", error);
+        if (error.response) {
+            throw error.response.data;
+        }
+        throw error;
     }
 };
 
@@ -29,9 +49,16 @@ export const productService = {
 
     getByCategory: (category, page = 0, size = 3) => request(`/products/category/${category}?page=${page}&size=${size}`),
 
+    getAllProducts: (page = 0, size = 10) => request(`/products?page=${page}&size=${size}`),
+
     getById: (id) => request(`/products/${id}`),
 
     createProduct: (productData) => {
         return request('/products', 'POST', productData);
-    }
+    },
+
+    updateProduct: (id, productData) => {
+        return request(`/products/${id}`, 'PUT', productData);
+    },
+    deleteProduct: (id) => request(`/products/${id}`, 'DELETE')
 };
