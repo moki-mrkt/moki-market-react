@@ -398,7 +398,7 @@ const PageGoods = ({ initialFilters = {} }) => {
                         ) : products.length > 0 ? (
                             <div className="goods-list">
                                 {products.map((product) => (
-                                    <ProductCard key={product.id} {...product} />
+                                    <ProductCard key={product.id} product={product} />
                                 ))}
                             </div>
                         ) : (

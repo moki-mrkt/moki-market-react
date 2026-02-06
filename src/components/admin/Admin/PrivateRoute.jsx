@@ -10,7 +10,7 @@ const PrivateRoute = ({ children }) => {
         // Якщо немає токена, перекидаємо на /login
         // state={{ from: location }} зберігає сторінку, з якої нас викинуло,
         // щоб повернутися туди після логіну
-        return <Navigate to="/login" state={{ from: location }} replace />;
+        return <Navigate to="/admin-ui/login" state={{ from: location }} replace />;
     }
 
     return children;

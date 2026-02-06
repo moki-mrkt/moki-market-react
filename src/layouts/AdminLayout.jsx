@@ -1,40 +1,49 @@
 import React from 'react';
-import { Outlet, Link } from 'react-router-dom';
+import {Link, Outlet} from 'react-router-dom';
 import {
-    Box, Drawer, List, ListItem, ListItemButton, ListItemIcon,
-    ListItemText, CssBaseline, ThemeProvider, createTheme, Typography, AppBar, Toolbar, Button
+    Box, Button, createTheme,
+    CssBaseline,
+    Drawer,
+    List,
+    ListItem,
+    ListItemButton,
+    ListItemIcon,
+    ListItemText,
+    ThemeProvider,
+    Toolbar,
+    Typography
 } from '@mui/material';
 import PeopleIcon from '@mui/icons-material/People';
-import DashboardIcon from '@mui/icons-material/Dashboard';
 import InventoryIcon from '@mui/icons-material/Inventory';
 import {authService} from "../services/authService.js";
+import {CalendarIcon} from "@mui/x-date-pickers";
+import InsertCommentTwoToneIcon from '@mui/icons-material/InsertCommentTwoTone';
 
 const lightTheme = createTheme({
     palette: {
         mode: 'light',
         primary: {
-            main: '#111827', // Чорний/Темно-сірий колір для основних кнопок (Create)
+            main: '#111827',
         },
         background: {
-            default: '#F9FAFB', // Дуже світло-сірий фон для основної області
-            paper: '#FFFFFF',   // Білий фон для карток і сайдбару
+            default: '#F9FAFB',
+            paper: '#FFFFFF',
         },
         text: {
-            primary: '#111827', // Темний текст
-            secondary: '#6B7280', // Сірий текст для підписів
+            primary: '#111827',
+            secondary: '#6B7280',
         },
     },
     typography: {
 
         fontFamily: 'Nunito, sans-serif',
         allVariants: {
-            fontWeight: 600, // 600 - напівжирний, 700 - жирний. Змініть на 600, якщо 700 забагато.
+            fontWeight: 600,
         },
         h5: { fontWeight: 700 },
         h6: { fontWeight: 600, fontSize: '18px' },
     },
     components: {
-        // Кастомізація кнопок (щоб були більш округлі)
         MuiButton: {
             styleOverrides: {
                 root: {
@@ -44,14 +53,14 @@ const lightTheme = createTheme({
                 },
             },
         },
-        // Кастомізація таблиці (DataGrid)
+
         MuiDataGrid: {
             styleOverrides: {
                 root: {
-                    border: 'none', // Прибираємо зовнішню рамку самого грід
+                    border: 'none',
                 },
                 columnHeaders: {
-                    backgroundColor: '#F9FAFB', // Світлий фон заголовків колонок
+                    backgroundColor: '#F9FAFB',
                     color: '#6B7280',
                     fontWeight: 700,
                     textTransform: 'uppercase',
@@ -59,7 +68,7 @@ const lightTheme = createTheme({
                 },
                 row: {
                     '&:hover': {
-                        backgroundColor: '#F3F4F6', // Колір при наведенні
+                        backgroundColor: '#F3F4F6',
                     }
                 }
             }
@@ -67,28 +76,26 @@ const lightTheme = createTheme({
     },
 });
 
-const drawerWidth = 260;
+const drawerWidth = 280;
 
 const linkStyle = {
     color: 'text.primary',
     textDecoration: 'none',
     '&:visited': {
-        color: 'text.primary', // Запобігає фіолетовому кольору відвіданих посилань
+        color: 'text.primary',
     },
     '&:active': {
         color: 'text.primary',
     },
     '&:hover': {
         color: 'text.primary',
-        // При наведенні ListItemButton сам додасть легкий сірий фон,
-        // але текст залишимо чорним
     }
 };
 
 const AdminLayout = () => {
 
     const handleLogout = () => {
-        authService.logout(); // Цей метод очистить токени і перекине на /login
+        authService.logoutAdmin();
     };
 
     return (
@@ -96,7 +103,6 @@ const AdminLayout = () => {
             <Box sx={{ display: 'flex' }}>
                 <CssBaseline />
 
-                {/* Sidebar */}
                 <Drawer
                     sx={{
                         width: drawerWidth,
@@ -115,9 +121,8 @@ const AdminLayout = () => {
                     variant="permanent"
                     anchor="left"
                 >
-                    <Toolbar sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: 0 }}>
+                    <Toolbar disableGutters sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '0 10px' }}>
 
-                        {/* ЛІВА ЧАСТИНА: Лого + Текст (групуємо їх разом) */}
                         <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
                             <img src="/icon.svg" alt="logo" style={{ height: 40, width: 40 }} />
                         </Box>
@@ -125,7 +130,6 @@ const AdminLayout = () => {
                             Адмін панель
                         </Typography>
 
-                        {/* ПРАВА ЧАСТИНА: Кнопка виходу */}
                         <Button
                             onClick={handleLogout}
                             sx={{
@@ -138,15 +142,27 @@ const AdminLayout = () => {
                     </Toolbar>
                     <List>
                         <ListItem disablePadding>
-                            <ListItemButton component={Link} to="/admin/products" sx={linkStyle}>
+                            <ListItemButton component={Link} to="/admin-ui/products" sx={linkStyle}>
                                 <ListItemIcon><InventoryIcon /></ListItemIcon>
                                 <ListItemText primary="Товари" />
                             </ListItemButton>
                         </ListItem>
                         <ListItem disablePadding>
-                            <ListItemButton component={Link} to="/admin/users" sx={linkStyle}>
+                            <ListItemButton component={Link} to="/admin-ui/users" sx={linkStyle}>
                                 <ListItemIcon><PeopleIcon /></ListItemIcon>
                                 <ListItemText primary="Користувачі" />
+                            </ListItemButton>
+                        </ListItem>
+                        <ListItem disablePadding>
+                            <ListItemButton component={Link} to="/admin-ui/orders" sx={linkStyle}>
+                                <ListItemIcon><CalendarIcon /></ListItemIcon>
+                                <ListItemText primary="Замовлення" />
+                            </ListItemButton>
+                        </ListItem>
+                        <ListItem disablePadding>
+                            <ListItemButton component={Link} to="/admin-ui/feedbacks" sx={linkStyle}>
+                                <ListItemIcon><InsertCommentTwoToneIcon /></ListItemIcon>
+                                <ListItemText primary="Відгуки" />
                             </ListItemButton>
                         </ListItem>
                     </List>

@@ -1,280 +1,411 @@
-import React, { useState, useEffect } from 'react';
-import Header from '../Header/Header';
-import Footer from '../Footer/Footer';
+import React, { useState, useEffect, useMemo } from 'react';
+import { useNavigate, Link } from 'react-router-dom';
 import Breadcrumbs from '../Breadcrumbs/Breadcrumbs';
+import { useCart } from '../CartContext/CartContext';
+import { orderService } from '../../services/orderService';
 
-// Якщо ви переносите стилі в папку компонента:
 import './Checkout.css';
-// Або використовуйте глобальний файл, якщо він підключений в index.js/App.jsx
+import SuccessOrderModal from "../Modals/SuccessOrderModal/SuccessOrderModal.jsx";
 
 const Checkout = () => {
-    // --- СТАН ДАНИХ ФОРМИ ---
+    const navigate = useNavigate();
+
+    const {
+        cartItems,
+        updateQuantity,
+        removeFromCart,
+        clearCart
+    } = useCart();
+
+    const [isSuccessModalOpen, setIsSuccessModalOpen] = useState(false);
+    const [orderNumber, setOrderNumber] = useState(null);
+
     const [formData, setFormData] = useState({
         email: '',
-        phone: '',
+        phoneNumber: '+380',
         firstName: '',
         lastName: '',
-        deliveryMethod: 'nova_poshta', // 'nova_poshta' | 'ukr_poshta'
+        deliveryType: 'nova_poshta',
+        paymentType: 'card',
         city: '',
+        region: '',
         department: '',
-        paymentMethod: 'card' // 'card' | 'cod' (cash on delivery)
     });
 
-    // --- СТАН КОШИКА (Заглушка, тут має бути запит до cartService) ---
-    const [cartItems, setCartItems] = useState([
-        {
-            id: 1,
-            name: 'Дубайський шоколад Coral 100г',
-            price: 120,
-            quantity: 1,
-            image: '/img/categories/coffee.png'
-        },
-        {
-            id: 2,
-            name: 'Фісташкова паста 200г',
-            price: 120,
-            quantity: 1,
-            image: '/icon.png'
+    // 3. Розрахунок цін (використовуємо useMemo для оптимізації)
+    const { originalTotal, discountAmount, finalTotal } = useMemo(() => {
+        let original = 0;
+        let final = 0;
+
+        cartItems.forEach(item => {
+            const price = Number(item.price) || 0;
+            const qty = item.quantity || 1;
+            const discountPercent = Number(item.discount) || 0;
+
+            original += price * qty;
+
+            const discountedPrice = price - (price * (discountPercent / 100));
+            final += discountedPrice * qty;
+        });
+
+        return {
+            originalTotal: original,
+            discountAmount: original - final,
+            finalTotal: final
+        };
+    }, [cartItems]);
+
+    useEffect(() => {
+        if (cartItems.length === 0) {
         }
-    ]);
+    }, [cartItems, navigate]);
 
-    // --- ОБЧИСЛЕННЯ СУМ ---
-    const totalAmount = cartItems.reduce((sum, item) => sum + item.price * item.quantity, 0);
-    const discount = 10; // Статична знижка або логіка розрахунку
-    const totalPay = totalAmount - discount;
-
-    // --- ОБРОБНИКИ ПОДІЙ ---
     const handleInputChange = (e) => {
         const { id, value } = e.target;
         setFormData(prev => ({ ...prev, [id]: value }));
     };
 
+    const handlePhoneChange = (e) => {
+        const value = e.target.value;
+
+        if (!value.startsWith('+380')) {
+            setFormData(prev => ({ ...prev, phoneNumber: '+380' }));
+            return;
+        }
+
+        if (!/^\d*$/.test(value.slice(1))) {
+            return; // Якщо ввели букву, ігноруємо
+        }
+
+        if (value.length > 13) {
+            return;
+        }
+
+        setFormData(prev => ({ ...prev, phoneNumber: value }));
+    };
+
     const handleRadioChange = (e) => {
         const { name, value } = e.target;
-        // name = 'delivery' або 'payment'
-        // value ми задаємо вручну в інпутах нижче (наприклад, value="nova_poshta")
-        const fieldName = name === 'delivery' ? 'deliveryMethod' : 'paymentMethod';
+        const fieldName = name === 'delivery' ? 'deliveryType' : 'paymentType';
         setFormData(prev => ({ ...prev, [fieldName]: value }));
     };
 
-    const handleQuantityChange = (id, delta) => {
-        setCartItems(prevItems => prevItems.map(item => {
-            if (item.id === id) {
-                const newQty = item.quantity + delta;
-                return { ...item, quantity: newQty > 0 ? newQty : 1 };
-            }
-            return item;
-        }));
+    const handleQuantityChange = (id, currentQty, delta) => {
+        const newQty = currentQty + delta;
+        updateQuantity(id, newQty);
     };
 
-    const handleRemoveItem = (id) => {
-        setCartItems(prevItems => prevItems.filter(item => item.id !== id));
+    const handleSelectChange = (e) => {
+        const { name, value } = e.target;
+        setFormData(prev => ({ ...prev, [name]: value }));
     };
 
-    const handleSubmit = (e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault();
-        console.log("Відправка замовлення:", { ...formData, items: cartItems, totalPay });
-        alert("Замовлення оформлено! (див. консоль)");
-        // Тут виклик orderService.createOrder(...)
+
+        if (formData.phone.length !== 13) {
+            alert("Будь ласка, введіть повний номер телефону (+380...)");
+            return;
+        }
+
+        const deliveryTypeMap = {
+            'nova_poshta': 'NOVA_POSHTA',
+            'ukr_poshta': 'UKR_POSHTA'
+        };
+
+        const paymentTypeMap = {
+            'cod': 'CASH',
+            'card': 'CARD'
+        };
+
+        const orderPayload = {
+            email: formData.email,
+            phoneNumber: formData.phone,
+            firstName: formData.firstName,
+            secondName: formData.lastName,
+
+            deliveryType: deliveryTypeMap[formData.deliveryType] || 'NOVA_POSHTA',
+            paymentType: paymentTypeMap[formData.paymentType] || 'CASH',
+
+            cartItems: cartItems.map(item => ({
+                productId: item.id,
+                quantity: item.quantity
+            })),
+
+            addressDTO: {
+                city: formData.city || "Не вказано",
+                region: "",
+                department: formData.department || "Не вказано",
+                street: "",
+                houseNumber: "",
+                apartment: ""
+            }
+        };
+
+        console.log("Відправка JSON:", JSON.stringify(orderPayload, null, 2));
+
+        try {
+            const response = await orderService.createOrder(orderPayload);
+            setOrderNumber(response.orderNumber)
+            setIsSuccessModalOpen(true);
+        } catch (error) {
+            console.error("Помилка замовлення:", error);
+            alert("Сталася помилка при оформленні. Перевірте дані.");
+        }
     };
 
-    // Хлібні крихти
+    const handleCloseModal = () => {
+        clearCart();
+        setIsSuccessModalOpen(false);
+        navigate('/');
+    };
+
+    const getImageUrl = (item) => {
+        if (item.image) return item.image;
+        if (item.images && item.images.length > 0) return item.images[0].imageUrl;
+        return '/placeholder.png';
+    };
+
     const breadcrumbs = [
         { path: '/', breadcrumb: 'Головна' },
-        { path: '/cart', breadcrumb: 'Кошик' }, // Опціонально
         { path: null, breadcrumb: 'Оформлення замовлення' }
     ];
 
-    return (
-
+    if (cartItems.length === 0) {
+        return (
             <section className="hero-section">
-                <div className="container hero__grid">
+                <div className="container" style={{ textAlign: 'center', padding: '100px 0' }}>
+                    <h2>Ваш кошик порожній</h2>
+                    <p style={{ margin: '20px 0', color: '#6B7280' }}>Додайте товари, щоб оформити замовлення.</p>
+                    <Link to="/" className="checkout-button" style={{ display: 'inline-block', maxWidth: '350px', textDecoration: 'none', color: "white", paddingTop: "10px" }}>
+                        Перейти до покупок
+                    </Link>
+                </div>
+            </section>
+        );
+    }
 
-                    <Breadcrumbs customCrumbs={breadcrumbs} />
+    return (
+        <section className="hero-section">
+            <div className="container hero__grid">
 
-                    <div className="checkout-grid">
+                <SuccessOrderModal
+                    isOpen={isSuccessModalOpen}
+                    onClose={handleCloseModal}
+                    orderNumber={orderNumber}
+                />
 
-                        {/* ЛІВА ЧАСТИНА - ФОРМА */}
-                        <div className="checkout-form">
-                            <form onSubmit={handleSubmit}>
+                <Breadcrumbs customCrumbs={breadcrumbs} />
 
-                                {/* ДАНІ КЛІЄНТА */}
-                                <section className="form-section">
-                                    <h2 className="section-title">Дані клієнта</h2>
+                <div className="checkout-grid">
 
-                                    <div className="input-group user-info-input">
-                                        <input
-                                            type="email"
-                                            id="email"
-                                            className="checkout-input"
-                                            placeholder=" "
-                                            value={formData.email}
-                                            onChange={handleInputChange}
-                                            required
-                                        />
-                                        <label htmlFor="email" className="floating-label">E-mail</label>
-                                        <span className="helper-text">Це поле обов'язкове</span>
-                                    </div>
+                    <div className="checkout-form">
+                        <form onSubmit={handleSubmit}>
 
-                                    <div className="input-group user-info-input">
-                                        <input
-                                            type="tel"
-                                            id="phone"
-                                            className="checkout-input"
-                                            placeholder=" "
-                                            value={formData.phone}
-                                            onChange={handleInputChange}
-                                            required
-                                        />
-                                        <label htmlFor="phone" className="floating-label">Телефон</label>
-                                        <span className="helper-text">Це поле обов'язкове</span>
-                                    </div>
+                            <section className="form-section">
+                                <h2 className="section-title">Дані клієнта</h2>
 
-                                    <div className="row-inputs user-info-input">
-                                        <div className="input-group">
-                                            <input
-                                                type="text"
-                                                id="firstName"
-                                                className="checkout-input"
-                                                placeholder=" "
-                                                value={formData.firstName}
-                                                onChange={handleInputChange}
-                                                required
-                                            />
-                                            <label htmlFor="firstName" className="floating-label">Ім'я</label>
-                                            <span className="helper-text">Це поле обов'язкове</span>
-                                        </div>
-                                        <div className="input-group">
-                                            <input
-                                                type="text"
-                                                id="lastName"
-                                                className="checkout-input"
-                                                placeholder=" "
-                                                value={formData.lastName}
-                                                onChange={handleInputChange}
-                                                required
-                                            />
-                                            <label htmlFor="lastName" className="floating-label">Прізвище</label>
-                                            <span className="helper-text">Це поле обов'язкове</span>
-                                        </div>
-                                    </div>
-
-                                    <div className="info-message">
-                                        <img src="/img/info-icon.svg" alt="info" className="info-icon" />
-                                        <p>Вкажи своє справжнє прізвище та ім'я, інакше ми не зможемо доставити Твою посилку.</p>
-                                    </div>
-                                </section>
-
-                                {/* СПОСІБ ДОСТАВКИ */}
-                                <section className="form-section">
-                                    <h2 className="section-title">Спосіб доставки</h2>
-
-                                    <div className="radio-group user-info-input">
-                                        <label className="radio-card">
-                                            <input
-                                                type="radio"
-                                                name="delivery"
-                                                value="nova_poshta"
-                                                checked={formData.deliveryMethod === 'nova_poshta'}
-                                                onChange={handleRadioChange}
-                                            />
-                                            <span className="radio-custom"></span>
-                                            <span className="radio-label">Нова Пошта - Відділення</span>
-                                        </label>
-                                        <hr />
-                                        <label className="radio-card">
-                                            <input
-                                                type="radio"
-                                                name="delivery"
-                                                value="ukr_poshta"
-                                                checked={formData.deliveryMethod === 'ukr_poshta'}
-                                                onChange={handleRadioChange}
-                                            />
-                                            <span className="radio-custom"></span>
-                                            <span className="radio-label">Укр Пошта - Відділення</span>
-                                        </label>
-                                    </div>
-
-                                    <div className="row-inputs delivery-selects">
-                                        <div className="select-wrapper">
-                                            <label>
-                                                <select className="checkout-select" defaultValue="">
-                                                    <option disabled value="">Вибрати місто</option>
-                                                    <option>Київ</option>
-                                                    <option>Харків</option>
-                                                </select>
-                                            </label>
-                                        </div>
-                                        <div className="select-wrapper">
-                                            <label>
-                                                <select className="checkout-select" defaultValue="">
-                                                    <option disabled value="">Вибрати відділення</option>
-                                                    <option>Відділення №1</option>
-                                                    <option>Відділення №2</option>
-                                                </select>
-                                            </label>
-                                        </div>
-                                    </div>
-                                </section>
-
-                                {/* СПОСІБ ОПЛАТИ */}
-                                <section className="form-section">
-                                    <h2 className="section-title">Спосіб оплати</h2>
-
-                                    <div className="radio-group user-info-input">
-                                        <label className="radio-card payment-card">
-                                            <div className="radio-left">
-                                                <input
-                                                    type="radio"
-                                                    name="payment"
-                                                    value="card"
-                                                    checked={formData.paymentMethod === 'card'}
-                                                    onChange={handleRadioChange}
-                                                />
-                                                <span className="radio-custom"></span>
-                                                <div className="payment-icons-group">
-                                                    <img src="/img/visa.png" alt="Visa" />
-                                                </div>
-                                                <span className="radio-label">Оплата картою</span>
-                                            </div>
-                                        </label>
-                                        <hr />
-                                        <label className="radio-card payment-card">
-                                            <div className="radio-left">
-                                                <input
-                                                    type="radio"
-                                                    name="payment"
-                                                    value="cod"
-                                                    checked={formData.paymentMethod === 'cod'}
-                                                    onChange={handleRadioChange}
-                                                />
-                                                <span className="radio-custom"></span>
-                                                <div className="payment-icons-group">
-                                                    <img src="/img/wallet.svg" alt="Wallet" />
-                                                </div>
-                                                <span className="radio-label">Оплата при отриманні</span>
-                                            </div>
-                                        </label>
-                                    </div>
-                                </section>
-
-                                <div className="checkout-button-wrapper">
-                                    <button type="submit" className="checkout-button">
-                                        Оформити замовлення
-                                    </button>
+                                <div className="input-group user-info-input">
+                                    <input
+                                        type="email"
+                                        id="email"
+                                        className="checkout-input"
+                                        placeholder=" "
+                                        value={formData.email}
+                                        onChange={handleInputChange}
+                                        required
+                                    />
+                                    <label htmlFor="email" className="floating-label">E-mail</label>
                                 </div>
-                            </form>
-                        </div>
 
-                        {/* ПРАВА ЧАСТИНА - САЙДБАР КОШИКА */}
-                        <aside className="order-summary">
-                            <h2 className="summary-title">Ваше замовлення</h2>
+                                <div className="input-group user-info-input">
+                                    <input
+                                        type="tel"
+                                        id="phone"
+                                        className="checkout-input"
+                                        placeholder=" "
+                                        value={formData.phoneNumber}
+                                        onChange={handlePhoneChange}
+                                        required
+                                        maxLength={13}
+                                    />
+                                    <label htmlFor="phone" className="floating-label">Телефон</label>
+                                </div>
 
-                            <div className="cart-items">
-                                {cartItems.map(item => (
+                                <div className="row-inputs user-info-input">
+                                    <div className="input-group">
+                                        <input
+                                            type="text"
+                                            id="firstName"
+                                            className="checkout-input"
+                                            placeholder=" "
+                                            value={formData.firstName}
+                                            onChange={handleInputChange}
+                                            required
+                                        />
+                                        <label htmlFor="firstName" className="floating-label">Ім'я</label>
+                                    </div>
+                                    <div className="input-group">
+                                        <input
+                                            type="text"
+                                            id="lastName"
+                                            className="checkout-input"
+                                            placeholder=" "
+                                            value={formData.lastName}
+                                            onChange={handleInputChange}
+                                            required
+                                        />
+                                        <label htmlFor="lastName" className="floating-label">Прізвище</label>
+                                    </div>
+                                </div>
+
+                                <div className="info-message">
+                                    <img src="/img/info-icon.svg" alt="info" className="info-icon" />
+                                    <p>Вкажи своє справжнє прізвище та ім'я, інакше ми не зможемо доставити Твою посилку.</p>
+                                </div>
+                            </section>
+
+                            {/* СПОСІБ ДОСТАВКИ */}
+                            <section className="form-section">
+                                <h2 className="section-title">Спосіб доставки</h2>
+
+                                <div className="radio-group user-info-input">
+                                    <label className="radio-card">
+                                        <input
+                                            type="radio"
+                                            name="delivery"
+                                            value="nova_poshta"
+                                            checked={formData.deliveryType === 'nova_poshta'}
+                                            onChange={handleRadioChange}
+                                        />
+                                        <span className="radio-custom"></span>
+                                        <span className="radio-label">Нова Пошта - відділення</span>
+                                    </label>
+                                    <hr />
+
+                                    {/*<label className="radio-card">*/}
+                                    {/*    <input*/}
+                                    {/*        type="radio"*/}
+                                    {/*        name="delivery"*/}
+                                    {/*        value="nova_poshta"*/}
+                                    {/*        checked={formData.deliveryType === 'nova_poshta'}*/}
+                                    {/*        onChange={handleRadioChange}*/}
+                                    {/*    />*/}
+                                    {/*    <span className="radio-custom"></span>*/}
+                                    {/*    <span className="radio-label">Нова Пошта - поштомат</span>*/}
+                                    {/*</label>*/}
+                                    {/*<hr />*/}
+                                    <label className="radio-card">
+                                        <input
+                                            type="radio"
+                                            name="delivery"
+                                            value="ukr_poshta"
+                                            checked={formData.deliveryType === 'ukr_poshta'}
+                                            onChange={handleRadioChange}
+                                        />
+                                        <span className="radio-custom"></span>
+                                        <span className="radio-label">Укр Пошта - відділення</span>
+                                    </label>
+                                </div>
+
+                                {/* Тут можна додати селекти міст/відділень */}
+                                <div className="row-inputs delivery-selects">
+                                    <div className="select-wrapper">
+                                        <label>
+                                            <select
+                                                className="checkout-select"
+                                                name="city"
+                                                value={formData.city}
+                                                onChange={handleSelectChange}
+                                                required
+                                            >
+                                                <option value="" disabled>Вибрати місто</option>
+                                                <option value="Київ">Київ</option>
+                                                <option value="Харків">Харків</option>
+                                                <option value="Полтава">Полтава</option>
+                                                <option value="Дніпро">Дніпро</option>
+                                            </select>
+                                        </label>
+                                    </div>
+                                    <div className="input-group">
+                                        <input
+                                            type="text"
+                                            id="department" // Важливо: id має співпаати з полем в formData
+                                            className="checkout-select"
+                                            placeholder="Номер відделення"
+                                            value={formData.department}
+                                            onChange={handleInputChange} // Використовуємо обробник для текстових полів
+                                            required
+                                        />
+                                        <label htmlFor="department" className="floating-label"></label>
+                                    </div>
+                                </div>
+                            </section>
+
+                            {/* СПОСІБ ОПЛАТИ */}
+                            <section className="form-section">
+                                <h2 className="section-title">Спосіб оплати</h2>
+
+                                <div className="radio-group user-info-input">
+                                    <label className="radio-card payment-card">
+                                        <div className="radio-left">
+                                            <input
+                                                type="radio"
+                                                name="payment"
+                                                value="card"
+                                                checked={formData.paymentType === 'card'}
+                                                onChange={handleRadioChange}
+                                            />
+                                            <span className="radio-custom"></span>
+                                            <div className="payment-icons-group">
+                                                <img src="/img/visa.png" alt="Visa" />
+                                            </div>
+                                            <span className="radio-label">Оплата картою</span>
+                                        </div>
+                                    </label>
+                                    <hr />
+                                    <label className="radio-card payment-card">
+                                        <div className="radio-left">
+                                            <input
+                                                type="radio"
+                                                name="payment"
+                                                value="cod"
+                                                checked={formData.paymentType === 'cod'}
+                                                onChange={handleRadioChange}
+                                            />
+                                            <span className="radio-custom"></span>
+                                            <div className="payment-icons-group">
+                                                <img src="/img/wallet.svg" alt="Wallet" />
+                                            </div>
+                                            <span className="radio-label">Оплата при отриманні</span>
+                                        </div>
+                                    </label>
+                                </div>
+                            </section>
+
+                            <div className="checkout-button-wrapper">
+                                <button type="submit" className="checkout-button">
+                                    Оформити замовлення
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+
+                    {/* ПРАВА ЧАСТИНА - САЙДБАР КОШИКА */}
+                    <aside className="order-summary">
+                        <h2 className="summary-title">Ваше замовлення</h2>
+
+                        <div className="cart-items">
+                            {cartItems.map(item => {
+                                const itemPrice = Number(item.price);
+                                const itemQty = item.quantity;
+                                const itemDiscount = Number(item.discount) || 0;
+                                const priceWithDiscount = itemPrice - (itemPrice * (itemDiscount / 100));
+
+                                return (
                                     <div className="cart-item" key={item.id}>
                                         <div className="cart-img">
-                                            <img src={item.image} alt={item.name} />
+                                            <img src={getImageUrl(item)} alt={item.name} />
                                         </div>
 
                                         <div className="cart-info">
@@ -287,60 +418,81 @@ const Checkout = () => {
                                                     <div className="qty-counter">
                                                         <button
                                                             className="btn-minus"
-                                                            onClick={() => handleQuantityChange(item.id, -1)}
+                                                            type="button"
+                                                            onClick={() => handleQuantityChange(item.id, item.quantity, -1)}
+                                                            disabled={item.quantity <= 1}
                                                         >-</button>
                                                         <input type="text" value={item.quantity} readOnly />
                                                         <button
                                                             className="btn-plus"
-                                                            onClick={() => handleQuantityChange(item.id, 1)}
+                                                            type="button"
+                                                            onClick={() => handleQuantityChange(item.id, item.quantity, 1)}
                                                         >+</button>
                                                     </div>
                                                     <button
+                                                        type="button"
                                                         className="remove-btn action-mobile"
-                                                        onClick={() => handleRemoveItem(item.id)}
+                                                        onClick={() => removeFromCart(item.id)}
                                                     >
                                                         <img src="/img/trash.svg" alt="delete" />
                                                     </button>
                                                 </div>
-                                                <div className="item-price action-mobile">{item.price} грн</div>
+                                                <div className="item-price action-mobile">
+                                                    {priceWithDiscount.toFixed(0)} грн
+                                                </div>
                                             </div>
                                         </div>
 
                                         <div className="cart-price-action-desktop">
-                                            <span className="item-price">{item.price * item.quantity} грн</span>
+                                            <div style={{textAlign: 'right'}}>
+                                                {itemDiscount > 0 && (
+                                                    <span className="old-price" style={{ textDecoration: 'line-through', color: '#999', fontSize: '12px', display: 'block' }}>
+                                                        {(itemPrice * itemQty).toFixed(0)} грн
+                                                    </span>
+                                                )}
+                                                <span className="item-price">
+                                                    {(priceWithDiscount * itemQty).toFixed(0)} грн
+                                                </span>
+                                            </div>
                                             <button
+                                                type="button"
                                                 className="remove-btn"
-                                                onClick={() => handleRemoveItem(item.id)}
+                                                onClick={() => removeFromCart(item.id)}
                                             >
                                                 <img src="/img/trash.svg" alt="delete" />
                                             </button>
                                         </div>
                                     </div>
-                                ))}
+                                );
+                            })}
+                        </div>
+
+                        <div className="order-totals">
+                            <div className="total-row final-total together">
+                                <span>Разом</span>
+                            </div>
+                            <div className="total-row small-row">
+                                <span>{cartItems.length} товари на суму:</span>
+                                <span className="total-amount">{originalTotal.toFixed(0)} грн</span>
                             </div>
 
-                            <div className="order-totals">
-                                <div className="total-row final-total together">
-                                    <span>Разом</span>
-                                </div>
-                                <div className="total-row small-row">
-                                    <span>{cartItems.length} товари на суму:</span>
-                                    <span className="total-amount">{totalAmount} грн</span>
-                                </div>
+                            {discountAmount > 0 && (
                                 <div className="total-row discount small-row">
                                     <span>У тому числі знижка:</span>
-                                    <span className="total-discount">-{discount} грн</span>
+                                    <span className="total-discount">-{discountAmount.toFixed(0)} грн</span>
                                 </div>
-                                <div className="total-row final-total">
-                                    <span>До сплати:</span>
-                                    <span className="total-pay">{totalPay} грн</span>
-                                </div>
-                            </div>
-                        </aside>
+                            )}
 
-                    </div>
+                            <div className="total-row final-total">
+                                <span>До сплати:</span>
+                                <span className="total-pay">{finalTotal.toFixed(0)} грн</span>
+                            </div>
+                        </div>
+                    </aside>
+
                 </div>
-            </section>
+            </div>
+        </section>
     );
 };
 

@@ -49,7 +49,18 @@ export const productService = {
 
     getByCategory: (category, page = 0, size = 3) => request(`/products/category/${category}?page=${page}&size=${size}`),
 
-    getAllProducts: (page = 0, size = 10) => request(`/products?page=${page}&size=${size}`),
+    getAllProducts: (page = 0, size = 10, query = '', sort = null) => {
+        const params = new URLSearchParams();
+
+        params.append('page', page);
+        params.append('size', size);
+
+        if (query) params.append('query', query);
+
+        if (sort) params.append('sort', sort);
+
+        return request(`/products?${params.toString()}`);
+    },
 
     getById: (id) => request(`/products/${id}`),
 

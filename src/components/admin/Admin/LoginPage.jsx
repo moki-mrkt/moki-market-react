@@ -10,7 +10,7 @@ const LoginPage = () => {
     const location = useLocation();
 
     // Щоб повернути юзера туди, куди він хотів зайти
-    const from = location.state?.from?.pathname || '/admin/products';
+    const from = location.state?.from?.pathname || '/admin-ui/products';
 
      console.log(from);
 

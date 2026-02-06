@@ -1,8 +1,10 @@
 import React, {useEffect, useState} from 'react';
 import {Link, useNavigate} from 'react-router-dom';
 import { DataGrid } from '@mui/x-data-grid';
+import ClearIcon from '@mui/icons-material/Clear';
 import { Box, Typography, Button, IconButton, Paper, TextField, InputAdornment, useTheme, useMediaQuery } from '@mui/material';
 import EditIcon from '@mui/icons-material/EditOutlined';
+import VisibilityIcon from '@mui/icons-material/Visibility';
 import DeleteIcon from '@mui/icons-material/DeleteOutlined';
 import AddIcon from '@mui/icons-material/Add';
 import SearchIcon from '@mui/icons-material/Search';
@@ -13,24 +15,23 @@ const AdminProducts = () => {
     const theme = useTheme();
     const isMobile = useMediaQuery(theme.breakpoints.down('md'));
 
-    const [rows, setRows] = useState([]); // Дані таблиці
-    const [loading, setLoading] = useState(false); // Спінер завантаження
+    const [rows, setRows] = useState([]);
+    const [loading, setLoading] = useState(false);
     const [rowCount, setRowCount] = useState(0);
+    const [searchTerm, setSearchTerm] = useState('');
 
     const [paginationModel, setPaginationModel] = useState({
-        page: 0,
-        pageSize: 10,
+        page: 0, pageSize: 10,
     });
 
-    const loadProducts = async () => {
+    const loadProducts = async (query = searchTerm) => {
         setLoading(true);
         try {
-            // Передаємо page і size. Spring Pageable починає сторінки з 0, DataGrid теж.
-            const response = await productService.getAllProducts(paginationModel.page, paginationModel.pageSize);
+            const response = await productService.getAllProducts(paginationModel.page, paginationModel.pageSize, query, null);
 
-            // Spring повертає об'єкт Page: { content: [], totalElements: 123, ... }
+            console.log(response)
             setRows(response.content || []);
-            setRowCount(response.totalElements || 0);
+            setRowCount(response.page.totalElements || 0);
 
         } catch (error) {
             console.error("Помилка при завантаженні товарів:", error);
@@ -43,19 +44,53 @@ const AdminProducts = () => {
         loadProducts();
     }, [paginationModel]);
 
+
+    const handleSearchSubmit = () => {
+        setPaginationModel(prev => ({ ...prev, page: 0 })); // Скидаємо на 1-шу сторінку
+        loadProducts(searchTerm); // Викликаємо завантаження з поточним текстом
+    };
+
+    const handleKeyDown = (e) => {
+        if (e.key === 'Enter') {
+            handleSearchSubmit();
+        }
+    };
+
+    const handleClearSearch = () => {
+        setSearchTerm(''); // Очищаємо поле візуально
+        setPaginationModel(prev => ({ ...prev, page: 0 })); // Скидаємо на 1-шу сторінку
+        loadProducts(''); // Явно викликаємо завантаження з пустим запитом
+    };
+
+    const handleEdit = (id) => {
+        navigate(`/admin-ui/products/edit/${id}`);
+    };
+
+    const handleDelete = async (id) => {
+        if (window.confirm('Ви впевнені, що хочете видалити цей товар?')) {
+            try {
+                await productService.deleteProduct(id);
+                await loadProducts();
+            } catch (error) {
+                console.error("Не вдалося видалити:", error);
+                alert("Помилка видалення");
+            }
+        }
+    };
+
     const columns = [
         {
             field: 'id',
             headerName: 'ID',
-            width: 70, // ID залишаємо вузьким
+            width: 70,
             minWidth: 50,
-            align: 'center',      // Центрування тексту
-            headerAlign: 'center' // Центрування заголовка
+            align: 'center',
+            headerAlign: 'center'
         },
         {
             field: 'name',
             headerName: 'Назва товару',
-            flex: 1.5, // flex: 1.5 означає, що ця колонка займе в 1.5 рази більше місця, ніж інші з flex: 1
+            flex: 1.5,
             minWidth: 200,
             align: 'center',
             headerAlign: 'center'
@@ -125,6 +160,13 @@ const AdminProducts = () => {
             headerAlign: 'center',
             renderCell: (params) => (
                 <Box sx={{ display: 'flex', gap: 1, justifyContent: 'center', alignItems: 'center', width: '100%', height: '100%' }}>
+                    <IconButton
+                        size="small"
+                        onClick={() => navigate(`/admin-ui/products/view/${params.row.id}`)}
+                        sx={{ border: '1px solid #E5E7EB', borderRadius: 1, color: '#4B5563' }}
+                    >
+                        <VisibilityIcon fontSize="small" />
+                    </IconButton>
                     <IconButton size="small" onClick={() => handleEdit(params.row.id)} sx={{ border: '1px solid #E5E7EB', borderRadius: 1 }}>
                         <EditIcon fontSize="small" />
                     </IconButton>
@@ -135,22 +177,6 @@ const AdminProducts = () => {
             ),
         },
     ];
-
-    const handleEdit = (id) => {
-        navigate(`/admin/products/edit/${id}`);
-    };
-
-    const handleDelete = async (id) => {
-        if (window.confirm('Ви впевнені, що хочете видалити цей товар?')) {
-            try {
-                await productService.deleteProduct(id);
-                await loadProducts(); // Перезавантажуємо таблицю після видалення
-            } catch (error) {
-                console.error("Не вдалося видалити:", error);
-                alert("Помилка видалення");
-            }
-        }
-    };
 
     return (
         <Box>
@@ -171,7 +197,7 @@ const AdminProducts = () => {
                     variant="contained"
                     startIcon={<AddIcon />}
                     component={Link}
-                    to="/admin/products/create"
+                    to="/admin-ui/products/create"
                     sx={{
                         bgcolor: '#111827',
                         color: 'white',
@@ -203,10 +229,32 @@ const AdminProducts = () => {
                     <TextField
                         size="small"
                         placeholder="Пошук..."
+                        value={searchTerm}
+                        onChange={(e) => setSearchTerm(e.target.value)}
+                        onKeyDown={handleKeyDown}
                         InputProps={{
                             startAdornment: (
                                 <InputAdornment position="start">
-                                    <SearchIcon sx={{ color: '#9CA3AF' }} />
+                                    {/* 2. Робимо іконку клікабельною */}
+                                    <IconButton
+                                        onClick={handleSearchSubmit}
+                                        edge="start"
+                                        size="small"
+                                    >
+                                        <SearchIcon sx={{ color: '#9CA3AF' }} />
+                                    </IconButton>
+                                </InputAdornment>
+                            ),
+                            endAdornment: searchTerm && (
+                                <InputAdornment position="end">
+                                    <IconButton
+                                        onClick={handleClearSearch}
+                                        edge="end"
+                                        size="small"
+                                        sx={{ color: '#9CA3AF' }}
+                                    >
+                                        <ClearIcon fontSize="small" />
+                                    </IconButton>
                                 </InputAdornment>
                             ),
                         }}
@@ -219,10 +267,9 @@ const AdminProducts = () => {
                         rows={rows}
                         columns={columns}
 
-                        // === ВАЖЛИВІ НАЛАШТУВАННЯ ДЛЯ БЕКЕНДУ ===
                         loading={loading}
-                        rowCount={rowCount} // Повідомляємо таблиці, скільки всього записів у БД
-                        paginationMode="server" // Вмикаємо серверну пагінацію
+                        rowCount={rowCount}
+                        paginationMode="server"
                         paginationModel={paginationModel}
                         onPaginationModelChange={setPaginationModel}
                         pageSizeOptions={[5, 10, 25]}

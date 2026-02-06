@@ -1,22 +1,29 @@
-import React, { useState, useEffect } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
+import React, {useEffect, useState} from 'react';
+import {useNavigate, useParams} from 'react-router-dom';
 import {
-    Box, Paper, TextField, Button, Typography,
-    Grid, MenuItem, Select, FormControl, InputLabel,
-    IconButton, Checkbox, FormControlLabel,
-    Divider,
-    FormHelperText, CircularProgress
+    Box,
+    Button,
+    CircularProgress,
+    FormControl,
+    Grid,
+    IconButton,
+    InputLabel,
+    MenuItem,
+    Paper,
+    Select,
+    TextField,
+    Typography
 } from '@mui/material';
 import DeleteIcon from '@mui/icons-material/Delete';
 import AddIcon from '@mui/icons-material/Add';
 import SaveIcon from '@mui/icons-material/Save';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 
-import ImageUploader from './ImageUploader';
+import ImageUploader from './ImageUploader.jsx';
 
-import { productService } from '../../../services/productService';
+import {productService} from '../../../services/productService.js';
 
-import { CATEGORY_CONFIG } from '../../../constants/categories';
+import {CATEGORY_CONFIG} from '../../../constants/categories.js';
 
 const AdminProductCreate = () => {
 
@@ -98,7 +105,7 @@ const AdminProductCreate = () => {
         } catch (error) {
             console.error("Failed to load product", error);
             alert("Не вдалося завантажити товар");
-            navigate('/admin/products');
+            navigate('/admin-ui/products');
         } finally {
             setFetching(false);
         }
@@ -204,7 +211,7 @@ const AdminProductCreate = () => {
                 await productService.createProduct(productPayload);
             }
 
-            navigate('/admin/products');
+            navigate('/admin-ui/products');
 
         } catch (error) {
             console.error("Помилка створення:", error);
@@ -221,7 +228,7 @@ const AdminProductCreate = () => {
         <Box component="form" onSubmit={handleSubmit} sx={{ pb: 5, gap: 2 }}>
 
             <Box sx={{ display: 'flex', alignItems: 'center', mb: 3, gap: 2 }}>
-                <IconButton onClick={() => navigate('/admin/products')}>
+                <IconButton onClick={() => navigate('/admin-ui/products')}>
                     <ArrowBackIcon />
                 </IconButton>
                 <Typography variant="h5" sx={{ fontWeight: 700 }}>
@@ -232,7 +239,7 @@ const AdminProductCreate = () => {
             <Grid container spacing={2}>
 
                 {/* ЛІВА КОЛОНКА - Основна інформація */}
-                <Grid item xs={12} md={8}>
+                <Grid size={{ xs: 12, md: 7 }}>
                     <Paper sx={{ p: 3, mb: 3, borderRadius: 3, boxShadow: 'none', border: '1px solid #E5E7EB', gap: '10px'}}>
 
                         <Typography variant="h6" sx={{ mb: 2 }}>Загальна інформація</Typography>
@@ -336,7 +343,7 @@ const AdminProductCreate = () => {
                 </Grid>
 
 
-                <Grid item xs={12} md={4}>
+                <Grid size={{ xs: 12, md: 4 }}>
 
                     <Paper sx={{ p: 3, mb: 3 }}>
                         <Typography variant="h6" gutterBottom>Ціна та статус</Typography>

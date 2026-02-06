@@ -34,18 +34,18 @@ const Footer = () => {
                         <ul className="footer-menu">
                             <li><Link to="/" onClick={scrollToTop}>Головна</Link></li>
                             <li><Link to="/catalog" onClick={scrollToTop}>Каталог</Link></li>
-                            <li><Link to="/info/about">Про нас</Link></li>
-                            <li><Link to="/info/reviews">Відгуки</Link></li>
+                            <li><Link to="/info/about" onClick={scrollToTop}>Про нас</Link></li>
+                            <li><Link to="/info/reviews" onClick={scrollToTop}>Відгуки</Link></li>
                             <li><Link to="/promotions" onClick={scrollToTop}>Акції</Link></li>
                         </ul>
                     </div>
 
                     <div className="footer__col footer__about_us">
                         <ul className="footer-menu">
-                            <li><Link to="/info/payment">Оплата та доставка</Link></li>
-                            <li><Link to="/info/return">Обмін та повернення</Link></li>
-                            <li><Link to="/info/contacts">Контактна інформація</Link></li>
-                            <li><Link to="/info/terms">Користувацька угода</Link></li>
+                            <li><Link to="/info/payment" onClick={scrollToTop}>Оплата та доставка</Link></li>
+                            <li><Link to="/info/return" onClick={scrollToTop}>Обмін та повернення</Link></li>
+                            <li><Link to="/info/contacts" onClick={scrollToTop}>Контактна інформація</Link></li>
+                            <li><Link to="/info/terms" onClick={scrollToTop}>Користувацька угода</Link></li>
                         </ul>
                     </div>
 

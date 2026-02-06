@@ -1,0 +1,225 @@
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.5); /* Напівпрозорий чорний фон */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000; /* Щоб було поверх всього */
+    animation: fadeIn 0.3s ease;
+}
+
+.modal-content {
+    background: white;
+    padding: 40px;
+    border-radius: 16px;
+    width: 90%;
+    max-width: 1125px;
+    max-height: 850px;
+    text-align: center;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+    animation: slideUp 0.3s ease;
+}
+
+.modal-content h2 {
+    font-size: 42px;
+    font-weight: 700;
+    color: #061F7C;
+    margin-bottom: 12px;
+}
+
+.modal-content p {
+    color: #7B8CC6;
+    font-size: 20px;
+    line-height: 1.5;
+    margin-bottom: 20px;
+}
+
+.order-number-title {
+    color: #7B8CC6;
+    font-size: 20px;
+    font-weight: 500;
+    margin-bottom: 0;
+}
+
+.order-number-info {
+    color: #0E2CA4;
+    margin-top: 0;
+    font-size: 24px;
+}
+
+.modal-info {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 350px;
+    width: 100%;
+    position: relative;
+}
+
+
+.monkey-img {
+    z-index: 1;
+    position: absolute;
+    top: 30px;
+}
+
+
+.order-number-wrapper {
+    position: relative;
+    z-index: 10;
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    margin-bottom: 20px;
+}
+
+.arm-monkey-img {
+    position: absolute;
+    z-index: 20;
+    right: 530px;
+    top: 290px;
+}
+
+.order-number {
+    background: rgba(255, 255, 255, 1); /* Напівпрозорий фон */
+
+    box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+    text-align: center;
+
+    width: 350px;
+    height: 90px;
+    border-radius: 16px;
+    border: 2px solid #0E2CA4;
+}
+
+
+.modal-btn {
+    background-color: #0E2CA4;
+    color: white;
+    border: none;
+    padding: 0;
+    border-radius: 20px;
+    font-size: 32px;
+    font-weight: 400;
+    cursor: pointer;
+    width: 350px;
+    height: 70px;
+    transition: background-color 0.2s;
+}
+
+.modal-btn:hover {
+    background-color: #061F7C;
+}
+
+/* Анімації */
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+@keyframes slideUp {
+    from { transform: translateY(20px); opacity: 0; }
+    to { transform: translateY(0); opacity: 1; }
+}
+
+@media (max-width: 768px) {
+    .modal-content {
+        padding: 20px;
+        border-radius: 16px;
+        width: 90%;
+        max-width: 335px;
+        max-height: 307px;
+    }
+
+    .modal-content h2 {
+        font-size: 18px;
+        font-weight: 700;
+        color: #061F7C;
+        margin-top: 0;
+        margin-bottom: 12px;
+    }
+
+    .modal-content p {
+        color: #7B8CC6;
+        font-size: 12px;
+        line-height: 1.5;
+        margin-bottom: 0;
+    }
+
+    .modal-info {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100px;
+        width: 100%;
+        position: relative;
+    }
+
+
+    .monkey-img {
+        z-index: 1;
+        position: absolute;
+        top: 12px;
+
+        height: 100%;
+    }
+
+
+    .order-number-wrapper {
+        margin-bottom: 15px;
+    }
+
+    .arm-monkey-img {
+        right: 150px;
+        top: 87px;
+
+        height: 20px;
+    }
+
+    .order-number {
+        width: 160px;
+        height: 45px;
+    }
+
+    .order-number-title {
+        font-size: 10px;
+        margin-top: 5px;
+    }
+
+    .order-number-info {
+        margin-top: 0;
+        font-size: 14px;
+    }
+
+    .modal-btn {
+
+        font-size: 16px;
+        width: 160px;
+        height: 40px;
+    }
+
+}
+
+@media (max-width: 370px) {
+
+    .arm-monkey-img {
+        right: 146px;
+        top: 87px;
+
+        height: 20px;
+    }
+}
+
+@media (max-width: 350px) {
+
+    .arm-monkey-img {
+        right: 138px;
+        top: 87px;
+
+        height: 20px;
+    }
+}

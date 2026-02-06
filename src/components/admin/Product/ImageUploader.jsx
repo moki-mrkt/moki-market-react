@@ -6,7 +6,7 @@ import DeleteIcon from '@mui/icons-material/Delete';
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import ErrorIcon from '@mui/icons-material/Error';
 
-import { imageService } from '../../../services/imageService';
+import { imageService } from '../../../services/imageService.js';
 
 const ImageUploader = ({ selectedImages, setSelectedImages }) => {
     const fileInputRef = useRef(null);

@@ -2,55 +2,67 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import './ProductCard.css';
 
+import { useCart } from '../CartContext/CartContext.jsx'; // <--- Імпорт хука
+
 const image_api = 'http://localhost:9000/moki-images/';
 
-const ProductCard = ({
-                         id,
-                         name,
-                         initOfMeasure,
-                         valueOfInitOfMeasure,
-                         price,
-                         images,
-                         discount,
-                         rating = 0
+const ProductCard = ({product
+                         // id,
+                         // name,
+                         // initOfMeasure,
+                         // valueOfInitOfMeasure,
+                         // price,
+                         // images,
+                         // discount,
+                         // rating = 0
                      }) => {
 
-    const mainImage = images && images.length > 0
-        ? images.find(img => img.isMain) || images[0]
+    const { addToCart } = useCart(); // <--- Дістаємо функцію
+
+    const handleBuyClick = (e) => {
+        e.preventDefault(); // Щоб не переходило на сторінку товару при кліку на кнопку
+        addToCart(product);
+    };
+
+
+    const mainImage = product.images && product.images.length > 0
+        ? product.images.find(img => img.isMain) || product.images[0]
         : null;
 
     const imageUrl = mainImage
         ? `${image_api}${mainImage.imageId}`
         : '/img/placeholder.png';
 
-    const hasDiscount = discount > 0;
+    const hasDiscount = product.discount > 0;
     const currentPrice = hasDiscount
-        ? (price - (price * discount / 100)).toFixed(2)
-        : price;
+        ? (product.price - (product.price * product.discount / 100)).toFixed(2)
+        : product.price;
+
+    if (!product) return null;
 
     return (
         <div className="goods">
             <div className="goods-header">
 
-                {discount > 0 && <span className="discount-badge">-{discount}%</span>}
+                {product.discount > 0 && <span className="discount-badge">-{product.discount}%</span>}
 
                 <button className="wishlist-btn" aria-label="Додати в обране">
                     <img src="/img/fav_heart.svg" alt="fav" />
                 </button>
             </div>
 
-            <Link to={`/product/${id}`} className="goods-image">
-                <img src={imageUrl} alt={name} />
+            <Link to={`/product/${product.id}`} className="goods-image">
+                <img src={imageUrl} alt={product.name} />
             </Link>
 
             <div className="goods-info">
                 <div className="goods-title-weight">
-                    <Link to={`/product/${id}`} className="goods-title">
-                        {name}
+                    <Link to={`/product/${product.id}`} className="goods-title">
+                        {product.name}
                     </Link>
 
                     <div className="goods-weight">
-                        {valueOfInitOfMeasure} {initOfMeasure}
+                        {product.valueOfInitOfMeasure} {product.initOfMeasure}
                     </div>
                 </div>
 
@@ -58,16 +70,16 @@ const ProductCard = ({
                     <div className="goods-rating">
 
 
-                        {rating > 0 ? (<div className="goods-stars">
+                        {product.rating > 0 ? (<div className="goods-stars">
                             {[...Array(5)].map((_, index) => (
                                 <img
                                     key={index}
-                                    src={index < rating ? "/img/star.svg" : "/img/star-outline.svg"}
+                                    src={index < product.rating ? "/img/star.svg" : "/img/star-outline.svg"}
                                     alt="star"
                                 />
 
                             ))}
-                            <span className="card-rating-value"> {rating}</span>
+                            <span className="card-rating-value"> {product.rating}</span>
                         </div>)
                             :
                             <div className="goods-stars">
@@ -92,13 +104,13 @@ const ProductCard = ({
 
                         {hasDiscount && (
                             <span className="card-old-price-value">
-                                 {price} грн
+                                 {product.price} грн
                              </span>
                         )}
 
                     </div>
 
-                    <button className="buy-button">Купити</button>
+                    <button className="buy-button" onClick={handleBuyClick}>Купити</button>
                 </div>
             </div>
         </div>

@@ -1,0 +1,176 @@
+.not-found-modal-content {
+    background: white;
+    padding: 40px;
+    border-radius: 16px;
+    width: 90%;
+    margin: 40px auto;
+
+    max-width: 1125px;
+    max-height: 850px;
+    text-align: center;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+    animation: slideUp 0.3s ease;
+}
+
+.not-found-modal-content h2 {
+    font-size: 42px;
+    font-weight: 700;
+    color: #061F7C;
+    margin-bottom: 12px;
+}
+
+.not-found-modal-content p {
+    color: #7B8CC6;
+    font-size: 20px;
+    line-height: 1.5;
+    margin-bottom: 20px;
+}
+
+.not-found-modal-info {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 350px;
+    width: 100%;
+    position: relative;
+
+    margin-bottom: 20px;
+}
+
+
+.not-found-monkey-img {
+    z-index: 1;
+    position: absolute;
+    top: -10px;
+}
+
+.not-found-arm-monkey-img {
+    position: absolute;
+    z-index: 20;
+    right: 515px;
+    top: 255px;
+}
+
+.not-found-modal-btn {
+
+    position: absolute;
+    z-index: 10;
+    top: 320px;
+
+    background-color: #0E2CA4;
+    color: white;
+    border: none;
+    padding: 0;
+    border-radius: 20px;
+    font-size: 32px;
+    font-weight: 400;
+    cursor: pointer;
+    width: 340px;
+    height: 70px;
+    transition: background-color 0.2s;
+}
+
+.not-found-modal-btn:hover {
+    background-color: #061F7C;
+}
+
+/* Анімації */
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+@keyframes slideUp {
+    from { transform: translateY(20px); opacity: 0; }
+    to { transform: translateY(0); opacity: 1; }
+}
+
+@media (max-width: 768px) {
+
+    .not-found-modal-content {
+        padding: 20px;
+        border-radius: 16px;
+        width: 90%;
+        max-width: 335px;
+        max-height: 307px;
+        margin-top: 80px;
+    }
+
+    .not-found-modal-content h2 {
+        font-size: 18px;
+        font-weight: 700;
+        color: #061F7C;
+        margin-top: 0;
+        margin-bottom: 12px;
+    }
+
+    .not-found-modal-content p {
+        color: #7B8CC6;
+        font-size: 12px;
+        line-height: 1.5;
+        margin-bottom: 0;
+    }
+
+    .not-found-modal-info {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100px;
+        width: 100%;
+        position: relative;
+        margin-bottom: 30px;
+    }
+
+
+    .not-found-monkey-img {
+        z-index: 1;
+        position: absolute;
+        top: 5px;
+
+        height: 100%;
+    }
+
+    .not-found-arm-monkey-img {
+        right: 150px;
+        top: 82px;
+
+        height: 20px;
+    }
+
+    .not-found-modal-btn {
+
+        font-size: 16px;
+        width: 160px;
+        height: 40px;
+
+        top: 95px;
+
+    }
+
+}
+
+@media (max-width: 370px) {
+
+    .not-found-arm-monkey-img {
+        right: 144px;
+        top: 82px;
+
+        height: 20px;
+    }
+
+    .not-found-modal-btn {
+
+        top: 93px;
+
+    }
+}
+
+@media (max-width: 350px) {
+
+    .not-found-arm-monkey-img {
+        right: 138px;
+        top: 82px;
+
+        height: 20px;
+    }
+}

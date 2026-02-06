@@ -1,0 +1,162 @@
+.auth-modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.5);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+    animation: fadeIn 0.3s ease;
+}
+
+.auth-modal-content {
+    display: flex;
+    flex-direction: column;
+    background: white;
+    padding: 40px;
+    border-radius: 16px;
+    width: 100%;
+    max-width: 850px;
+    max-height: 740px;
+    text-align: center;
+
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+    animation: slideUp 0.3s ease;
+}
+
+
+.auth-close-bnt {
+    display: flex;
+    justify-content: end;
+}
+
+.auth-modal-title {
+    font-size: 48px;
+    color: #061F7C;
+    margin-top: 17px;
+    margin-bottom: 30px;
+}
+
+.auth-checkout-input {
+    width: 675px;
+    height: 88px;
+    background: #FCF9EC;
+    border: 1px solid #061F7C;
+    border-radius: 20px;
+    color: #0E2CA4;
+
+    font-size: 32px;
+    font-weight: 400;
+    padding-left: 20px;
+
+    box-sizing: border-box;
+}
+
+.auth-checkout-input::placeholder {
+    color: #7B8CC6;
+    font-size: 32px;
+    font-weight: 400;
+}
+
+.password-wrapper {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    margin-bottom: 50px;
+}
+
+
+.password-toggle-btn {
+    position: absolute;
+    right: 60px;
+    background: none;
+    border: none;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    padding: 0;
+    opacity: 0.6;
+    transition: opacity 0.2s;
+}
+
+.password-toggle-btn:hover {
+    opacity: 1;
+}
+
+.password-toggle-btn img {
+    width: 35px;
+    height: 25px;
+}
+
+.auth-form-section {
+    margin-bottom: 30px;
+}
+
+.auth-btn {
+    background-color: #0E2CA4;
+    color: white;
+    border: none;
+    padding: 0;
+    border-radius: 20px;
+    font-size: 32px;
+    font-weight: 500;
+    cursor: pointer;
+    width: 510px;
+    height: 70px;
+    transition: background-color 0.2s;
+}
+
+.auth-btn:hover {
+    background-color: #061F7C;
+}
+
+
+.registration-btn {
+    background: white;
+
+    color: #061F7C;
+    border: 2px solid #061F7C;
+
+    margin-bottom: 20px;
+    padding: 0;
+    border-radius: 20px;
+    font-size: 32px;
+    font-weight: 500;
+    cursor: pointer;
+    width: 510px;
+    height: 70px;
+    transition: background-color 0.2s;
+}
+
+.registration-btn:hover {
+    background-color: #FCF9EC;
+}
+
+.forgot-password {
+    font-size: 28px;
+}
+
+.forgot-password:hover {
+    text-decoration: underline;
+}
+
+
+
+.auth-checkout-input:-webkit-autofill,
+.auth-checkout-input:-webkit-autofill:hover,
+.auth-checkout-input:-webkit-autofill:focus,
+.auth-checkout-input:-webkit-autofill:active {
+    /* Робимо внутрішню тінь кольором вашого фону (#FCF9EC) */
+    -webkit-box-shadow: 0 0 0 100px #FCF9EC inset !important;
+
+    /* Встановлюємо колір тексту (#0E2CA4) */
+    -webkit-text-fill-color: #0E2CA4 !important;
+
+    /* Затримка зміни фону, щоб браузер не встиг перефарбувати */
+    transition: background-color 5000s ease-in-out 0s;
+}

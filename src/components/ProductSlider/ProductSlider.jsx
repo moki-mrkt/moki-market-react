@@ -5,7 +5,8 @@ import ProductCard from '../ProductCard/ProductCard';
 
 import 'swiper/css';
 import 'swiper/css/navigation';
-import './ProductSlider.css'; // Стилі для заголовків і слайдера
+import './ProductSlider.css';
+import {data} from "react-router-dom"; // Стилі для заголовків і слайдера
 
 const ProductSlider = ({ title, products }) => {
 
@@ -56,8 +57,7 @@ const ProductSlider = ({ title, products }) => {
             >
                 {products.map((product) => (
                     <SwiperSlide key={product.id}>
-                        {/* Це автоматично передасть id, name, price, images і т.д. як пропси */}
-                        <ProductCard {...product} />
+                        <ProductCard product={product} />
                     </SwiperSlide>
                 ))}
             </Swiper>

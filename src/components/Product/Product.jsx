@@ -10,7 +10,8 @@ import 'swiper/css/free-mode';
 
 import Breadcrumbs from '../Breadcrumbs/Breadcrumbs';
 import ProductSlider from '../ProductSlider/ProductSlider';
-import ProductCard from '../ProductCard/ProductCard';
+
+import { useCart } from '../CartContext/CartContext.jsx';
 
 import { getLabelFromSlug } from '../../constants/categories';
 
@@ -23,16 +24,17 @@ import './Product.css';
 
 const PageProduct = () => {
 
+    const { addToCart } = useCart();
+    const [qty, setQty] = useState(1);
+
     const { productId } = useParams();
     const [product, setProduct] = useState(null);
     const [loading, setLoading] = useState(true);
     const [similarProducts, setSimilarProducts] = useState([]);
 
     const categorySlug = product?.productCategory?.toLowerCase();
-    console.log(categorySlug);
     const categoryName = categorySlug ? getLabelFromSlug(categorySlug) : 'Каталог';
 
-    console.log(categoryName)
     const productBreadcrumbs = [
         { path: '/', breadcrumb: 'Головна' },
         { path: '/catalog', breadcrumb: 'Каталог' },
@@ -56,14 +58,12 @@ const PageProduct = () => {
                 if (data) {
                     setProduct(data);
 
-                    // Завантажуємо схожі товари з тієї ж категорії
-                    // Використовуємо productCategory з DTO
                     if (data.productCategory) {
                         const similar = await productService.search({
                             category: data.productCategory,
                             size: 6
                         });
-                        // Фільтруємо, щоб не показувати поточний товар у слайдері схожих
+
                         const content = similar.products.content || [];
                         console.log(content);
                         setSimilarProducts(content.filter(p => p.id !== data.id));
@@ -82,8 +82,6 @@ const PageProduct = () => {
         }
     }, [productId]);
 
-    console.log(product);
-
     if (loading) return <div className="loader">Завантаження...</div>;
     if (!product) return <div className="not-found">Товар не знайдено</div>;
 
@@ -92,13 +90,7 @@ const PageProduct = () => {
 
     const oldPrice = hasDiscount ? product.price : null;
 
-    // Перевірка наявності через ENUM
     const isAvailable = product.availability === 'IN_STOCK';
-
-    console.log(product);
-    console.log(similarProducts);
-
-    product.rating = 4;
 
     return (
         <>
@@ -194,7 +186,7 @@ const PageProduct = () => {
                                     </div>
 
                                     <div className="product-buttons-row">
-                                        <button className="btn-cart-primary">
+                                        <button className="btn-cart-primary" onClick={() => addToCart(product, qty)}>
                                             <img src="../../img/white_cart.png" alt="cart" />
                                             До кошика
                                         </button>

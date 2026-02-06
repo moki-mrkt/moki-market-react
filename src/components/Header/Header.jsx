@@ -1,12 +1,35 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
+
+import {useCart} from "../CartContext/CartContext.jsx";
+
+import { authService } from '../../services/authService';
+
 import './Header.css';
 
-const Header = ({ onCartClick }) => {
+import AuthenticationModal from "../Modals/AuthenticationModal/AuthenticationModal";
+
+const Header = () => {
+
+    const [isAuthOpen, setIsAuthOpen] = useState(false);
+
+    const navigate = useNavigate();
+
+    const { cartCount, setIsCartOpen } = useCart();
+
     const [isMenuOpen, setIsMenuOpen] = useState(false);
 
     const [searchTerm, setSearchTerm] = useState('');
-    const navigate = useNavigate();
+
+    const handleCabinetClick = () => {
+        // 4. Логіка перевірки
+        if (authService.isAuthenticated()) {
+            // Якщо токен є — йдемо в кабінет (наприклад, '/admin' або '/profile')
+            navigate('/profile');
+        } else {
+            setIsAuthOpen(true)
+        }
+    };
 
     const handleSearch = () => {
         if (searchTerm.trim()) {
@@ -30,9 +53,12 @@ const Header = ({ onCartClick }) => {
         document.querySelector('.search-input').focus();
     };
 
+    const handleCloseAuthModal = () => {
+        setIsAuthOpen(false);
+    };
+
     const closeMenu = () => {
         setIsMenuOpen(false);
-        document.body.style.overflow = '';
     };
 
     return (
@@ -58,6 +84,12 @@ const Header = ({ onCartClick }) => {
                     </div>
                 </div>
             </div>
+
+            <AuthenticationModal
+                isOpen={isAuthOpen}  // Передаємо isOpen замість open
+                onClose={handleCloseAuthModal}
+                onSuccess={() => navigate('/profile')} // Передаємо як анонімну функцію
+            />
 
             <header className="header">
                 <div className="container">
@@ -105,18 +137,31 @@ const Header = ({ onCartClick }) => {
                         </div>
 
                         <div className="user-actions">
-                            <Link to="/profile" className="icon-user user-actions-icon">
-                                <img src="/img/user.svg" alt="user" />
-                            </Link>
-                            <Link to="/profile#wishlist" className="icon-heart user-actions-icon">
+                            {/*<Link to="/profile" className="icon-user user-actions-icon">*/}
+                            {/*    <img src="/img/user.svg" alt="user" />*/}
+                            {/*</Link>*/}
+
+                            <div className="user-actions-icon">
+                                <button onClick={handleCabinetClick} className="icon-cart-btn">
+                                    <img src="/img/user.svg" alt="User room" />
+                                </button>
+                            </div>
+
+                            <Link to="/profile/wishlist" className="icon-heart user-actions-icon">
                                 <img src="/img/fav.svg" alt="fav" />
                             </Link>
+
                             <div className="user-actions-icon">
                                 <button
                                     className="icon-cart-btn"
-                                    onClick={onCartClick}
+                                    onClick={() => setIsCartOpen(true)}
                                 >
                                     <img src="/img/cart.svg" alt="Cart" />
+                                    {cartCount > 0 && (
+                                        <span className="cart-badge">
+                                            {cartCount > 99 ? '99+' : cartCount}
+                                        </span>
+                                    )}
                                 </button>
                             </div>
                         </div>

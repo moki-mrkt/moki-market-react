@@ -183,6 +183,10 @@ input:-webkit-autofill:active {
     flex-grow: 1;
 }
 
+#department::placeholder {
+    color: #7B8CC6;
+}
+
 .checkout-select {
     width: 100%;
     height: 36px;
