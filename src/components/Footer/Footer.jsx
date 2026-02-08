@@ -24,7 +24,7 @@ const Footer = () => {
                             <a href="https://www.instagram.com/moki_ua_" target="_blank" rel="noreferrer" aria-label="Instagram">
                                 <img src="/img/instagram_logo.svg" alt="instagram" />
                             </a>
-                            <a href="#" aria-label="Telegram">
+                            <a href="https://t.me/moki_market" aria-label="Telegram">
                                 <img src="/img/telegram_logo.svg" alt="telegram" />
                             </a>
                         </div>

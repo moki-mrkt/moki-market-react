@@ -42,13 +42,13 @@
   height: 90px;
   display: flex;
   align-items: center;
+  font-weight: 600;
 }
 
 .burger-menu-btn {
   display: none;
 }
 
-/* Ховаємо висувне меню та його фон */
 .mobile-menu-drawer,
 .mobile-menu-overlay {
   display: none;

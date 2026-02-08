@@ -1,0 +1,233 @@
+
+.reg-modal-content {
+    display: flex;
+    flex-direction: column;
+    background: white;
+
+    padding: 20px 40px 40px 40px;
+    border-radius: 16px;
+    width: 100%;
+    max-width: 800px;
+    max-height: 800px;
+    text-align: center;
+
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+    animation: slideUp 0.3s ease;
+}
+
+.reg-form-section {
+
+    display: flex;
+    flex-direction: column;
+    gap: 30px;
+
+    width: 100%;
+
+    margin-bottom: 15px;
+
+}
+
+.reg-modal-title {
+    font-size: 32px;
+    color: #061F7C;
+    margin-top: 17px;
+    margin-bottom: 30px;
+    font-weight: 600;
+}
+
+.reg-row-inputs {
+    display: flex;
+    gap: 20px;
+}
+
+.reg-checkout-input {
+    width: 100%;
+}
+
+.reg-checkout-input {
+    height: 60px;
+    background: #FCF9EC;
+    border: 1px solid #061F7C;
+    border-radius: 20px;
+    color: #0E2CA4;
+
+    font-size: 24px;
+    font-weight: 400;
+    padding-left: 20px;
+
+    box-sizing: border-box;
+}
+
+.reg-password-wrapper {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.password-toggle-btn {
+    position: absolute;
+    right: 30px;
+    background: none;
+    border: none;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    padding: 0;
+    opacity: 0.6;
+    transition: opacity 0.2s;
+}
+
+.reg-checkout-input::placeholder {
+    color: #7B8CC6;
+    font-size: 24px;
+    font-weight: 400;
+}
+
+.reg-btn-wrapper {
+    display: flex;
+    justify-content: center;
+    width: 100%;
+}
+
+.reg-btn {
+    background-color: #0E2CA4;
+    color: white;
+    border: none;
+    padding: 0;
+    border-radius: 20px;
+    font-size: 24px;
+    font-weight: 500;
+    cursor: pointer;
+    width: 370px;
+    height: 60px;
+    transition: background-color 0.2s;
+}
+
+.reg-btn:hover {
+    background-color: #061F7C;
+}
+
+.reg-modal-info-block {
+    width: 100%;
+    padding-left: 10px;
+}
+.reg-modal-info {
+    text-align: start;
+    margin-top: 0;
+
+    color: #061F7C;
+    margin-bottom: 5px;
+}
+
+.reg-modal-text {
+    text-align: start;
+    margin: 0;
+    color: #7B8CC6;
+}
+
+.reg-modal-terms {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.agreement-wrapper {
+    display: flex;
+    justify-content: flex-start;
+    padding-left: 10px;
+    font-weight: 600;
+}
+
+/* Стилізація лейбла */
+.custom-checkbox-label {
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+    font-size: 18px;
+    color: #7B8CC6;
+    user-select: none;
+    text-align: left;
+    line-height: 1.2;
+}
+
+.checkmark {
+    height: 24px;
+    width: 24px;
+    background-color: transparent; /* Колір фону як у інпутів */
+    border: 1px solid #061F7C;
+    border-radius: 6px;
+    margin-right: 15px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    transition: all 0.2s;
+}
+
+.checkmark:after {
+    content: "";
+    display: none;
+    width: 75%;
+    height: 75%;
+    background-color: #0E2CA4;
+    border: solid #061F7C;
+    transform: rotate(180deg);
+    border-width: 0 2px 2px 0;
+}
+
+.custom-checkbox-label input:checked ~ .checkmark:after {
+    display: block;
+}
+
+.agreement-text a {
+    margin-left: 5px;
+    color: #F0D051;
+}
+
+.agreement-text a:hover {
+   text-decoration: underline;
+}
+
+.custom-checkbox-label input {
+    position: absolute;
+    opacity: 0;
+    cursor: pointer;
+    height: 0;
+    width: 0;
+}
+
+.reg-btn.disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    background-color: #7B8CC6;
+}
+
+.reg-btn.disabled:hover {
+    background-color: #7B8CC6;
+}
+
+.return-to-auth {
+    background-color: transparent;
+    border: none;
+
+    font-size: 20px;
+    color: #0E2CA4;
+    padding: 0;
+}
+
+.return-to-auth:hover {
+    border-bottom: 1px solid #0E2CA4;
+}
+
+.reg-checkout-input:-webkit-autofill,
+.reg-checkout-input:-webkit-autofill:hover,
+.reg-checkout-input:-webkit-autofill:focus,
+.auth-creg-checkout-inputheckout-input:-webkit-autofill:active {
+
+    -webkit-box-shadow: 0 0 0 100px #FCF9EC inset !important;
+
+    -webkit-text-fill-color: #0E2CA4 !important;
+
+    transition: background-color 5000s ease-in-out 0s;
+}

@@ -218,10 +218,10 @@
     font-weight: 600;
 }
 
-.input-group {
-    margin-bottom: 20px;
-    max-width: 400px;
-}
+/*.input-group {*/
+/*    margin-bottom: 20px;*/
+/*    max-width: 400px;*/
+/*}*/
 
 .account-input {
     width: 100%;
@@ -666,12 +666,12 @@
         margin-bottom: 15px;
     }
 
-    .input-group,
-    .input-group.full-width {
-        max-width: 100%;
-        margin-bottom: 15px;
+    /*.input-group,*/
+    /*.input-group.full-width {*/
+    /*    max-width: 100%;*/
+    /*    margin-bottom: 15px;*/
 
-    }
+    /*}*/
 
     .account-input {
         font-size: 16px;

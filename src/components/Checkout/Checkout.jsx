@@ -32,7 +32,6 @@ const Checkout = () => {
         department: '',
     });
 
-    // 3. Розрахунок цін (використовуємо useMemo для оптимізації)
     const { originalTotal, discountAmount, finalTotal } = useMemo(() => {
         let original = 0;
         let final = 0;
@@ -103,7 +102,7 @@ const Checkout = () => {
     const handleSubmit = async (e) => {
         e.preventDefault();
 
-        if (formData.phone.length !== 13) {
+        if (formData.phoneNumber.length !== 13) {
             alert("Будь ласка, введіть повний номер телефону (+380...)");
             return;
         }
@@ -120,7 +119,7 @@ const Checkout = () => {
 
         const orderPayload = {
             email: formData.email,
-            phoneNumber: formData.phone,
+            phoneNumber: formData.phoneNumber,
             firstName: formData.firstName,
             secondName: formData.lastName,
 
@@ -221,7 +220,7 @@ const Checkout = () => {
                                 <div className="input-group user-info-input">
                                     <input
                                         type="tel"
-                                        id="phone"
+                                        id="phoneNumber"
                                         className="checkout-input"
                                         placeholder=" "
                                         value={formData.phoneNumber}
@@ -229,7 +228,7 @@ const Checkout = () => {
                                         required
                                         maxLength={13}
                                     />
-                                    <label htmlFor="phone" className="floating-label">Телефон</label>
+                                    <label htmlFor="phoneNumber" className="floating-label">Телефон</label>
                                 </div>
 
                                 <div className="row-inputs user-info-input">
@@ -308,7 +307,6 @@ const Checkout = () => {
                                     </label>
                                 </div>
 
-                                {/* Тут можна додати селекти міст/відділень */}
                                 <div className="row-inputs delivery-selects">
                                     <div className="select-wrapper">
                                         <label>
@@ -360,7 +358,7 @@ const Checkout = () => {
                                             <div className="payment-icons-group">
                                                 <img src="/img/visa.png" alt="Visa" />
                                             </div>
-                                            <span className="radio-label">Оплата картою</span>
+                                            <span className="radio-label">Оплата на рахунок</span>
                                         </div>
                                     </label>
                                     <hr />
@@ -395,7 +393,7 @@ const Checkout = () => {
                     <aside className="order-summary">
                         <h2 className="summary-title">Ваше замовлення</h2>
 
-                        <div className="cart-items">
+                        <div className="checkout-items">
                             {cartItems.map(item => {
                                 const itemPrice = Number(item.price);
                                 const itemQty = item.quantity;
@@ -403,60 +401,60 @@ const Checkout = () => {
                                 const priceWithDiscount = itemPrice - (itemPrice * (itemDiscount / 100));
 
                                 return (
-                                    <div className="cart-item" key={item.id}>
-                                        <div className="cart-img">
+                                    <div className="checkout-item" key={item.id}>
+                                        <div className="checkout-img">
                                             <img src={getImageUrl(item)} alt={item.name} />
                                         </div>
 
-                                        <div className="cart-info">
+                                        <div className="checkout-info">
                                             <div>
-                                                <h4 className="cart-name">{item.name}</h4>
+                                                <h4 className="checkout-name">{item.name}</h4>
                                             </div>
 
-                                            <div className="cart-controls">
-                                                <div className="qty-and-trash">
-                                                    <div className="qty-counter">
+                                            <div className="checkout-controls">
+                                                <div className="checkout-qty-and-trash">
+                                                    <div className="checkout-qty-counter">
                                                         <button
-                                                            className="btn-minus"
+                                                            className="checkout-btn-minus"
                                                             type="button"
                                                             onClick={() => handleQuantityChange(item.id, item.quantity, -1)}
                                                             disabled={item.quantity <= 1}
                                                         >-</button>
                                                         <input type="text" value={item.quantity} readOnly />
                                                         <button
-                                                            className="btn-plus"
+                                                            className="checkout-btn-plus"
                                                             type="button"
                                                             onClick={() => handleQuantityChange(item.id, item.quantity, 1)}
                                                         >+</button>
                                                     </div>
                                                     <button
                                                         type="button"
-                                                        className="remove-btn action-mobile"
+                                                        className="checkout-remove-btn checkout-action-mobile"
                                                         onClick={() => removeFromCart(item.id)}
                                                     >
                                                         <img src="/img/trash.svg" alt="delete" />
                                                     </button>
                                                 </div>
-                                                <div className="item-price action-mobile">
+                                                <div className="checkout-item-price checkout-action-mobile">
                                                     {priceWithDiscount.toFixed(0)} грн
                                                 </div>
                                             </div>
                                         </div>
 
-                                        <div className="cart-price-action-desktop">
+                                        <div className="checkout-price-action-desktop">
                                             <div style={{textAlign: 'right'}}>
                                                 {itemDiscount > 0 && (
-                                                    <span className="old-price" style={{ textDecoration: 'line-through', color: '#999', fontSize: '12px', display: 'block' }}>
+                                                    <span className="checkout-old-price" style={{ textDecoration: 'line-through', color: '#999', fontSize: '12px', display: 'block' }}>
                                                         {(itemPrice * itemQty).toFixed(0)} грн
                                                     </span>
                                                 )}
-                                                <span className="item-price">
+                                                <span className="checkout-item-price">
                                                     {(priceWithDiscount * itemQty).toFixed(0)} грн
                                                 </span>
                                             </div>
                                             <button
                                                 type="button"
-                                                className="remove-btn"
+                                                className="checkout-remove-btn"
                                                 onClick={() => removeFromCart(item.id)}
                                             >
                                                 <img src="/img/trash.svg" alt="delete" />
@@ -467,25 +465,25 @@ const Checkout = () => {
                             })}
                         </div>
 
-                        <div className="order-totals">
-                            <div className="total-row final-total together">
+                        <div className="checkout-order-totals">
+                            <div className="checkout-total-row checkout-final-total checkout-together">
                                 <span>Разом</span>
                             </div>
-                            <div className="total-row small-row">
+                            <div className="checkout-total-row checkout-small-row">
                                 <span>{cartItems.length} товари на суму:</span>
-                                <span className="total-amount">{originalTotal.toFixed(0)} грн</span>
+                                <span className="checkout-total-amount">{originalTotal.toFixed(0)} грн</span>
                             </div>
 
                             {discountAmount > 0 && (
-                                <div className="total-row discount small-row">
+                                <div className="checkout-total-row checkout-discount checkout-small-row">
                                     <span>У тому числі знижка:</span>
-                                    <span className="total-discount">-{discountAmount.toFixed(0)} грн</span>
+                                    <span className="checkout-total-discount">-{discountAmount.toFixed(0)} грн</span>
                                 </div>
                             )}
 
-                            <div className="total-row final-total">
+                            <div className="checkout-total-row checkout-final-total">
                                 <span>До сплати:</span>
-                                <span className="total-pay">{finalTotal.toFixed(0)} грн</span>
+                                <span className="checkout-total-pay">{finalTotal.toFixed(0)} грн</span>
                             </div>
                         </div>
                     </aside>

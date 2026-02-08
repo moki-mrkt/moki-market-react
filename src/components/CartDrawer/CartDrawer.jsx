@@ -111,7 +111,7 @@ const CartDrawer = ({ isOpen, onClose }) => {
                                                 <img src="/img/trash.svg" alt="delete" />
                                             </button>
                                         </div>
-                                        <div className="item-price action-mobile">{item.priceWithDiscount} ₴</div>
+                                        <div className="item-price action-mobile">{(item.priceWithDiscount * item.quantity).toFixed(2)} ₴</div>
                                     </div>
                                 </div>
 

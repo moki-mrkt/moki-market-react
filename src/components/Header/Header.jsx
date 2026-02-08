@@ -8,10 +8,12 @@ import { authService } from '../../services/authService';
 import './Header.css';
 
 import AuthenticationModal from "../Modals/AuthenticationModal/AuthenticationModal";
+import RegistrationModal from "../Modals/RegistrationModal/RegistrationModal"; // Імпортуємо нову модалку
 
 const Header = () => {
 
     const [isAuthOpen, setIsAuthOpen] = useState(false);
+    const [isRegisterOpen, setIsRegisterOpen] = useState(false);
 
     const navigate = useNavigate();
 
@@ -21,14 +23,32 @@ const Header = () => {
 
     const [searchTerm, setSearchTerm] = useState('');
 
+    const openLogin = () => {
+        setIsRegisterOpen(false);
+        setIsAuthOpen(true);
+    };
+
+    const openRegister = () => {
+        setIsAuthOpen(false);
+        setIsRegisterOpen(true);
+    };
+
+    const closeAllModals = () => {
+        setIsAuthOpen(false);
+        setIsRegisterOpen(false);
+    };
+
     const handleCabinetClick = () => {
-        // 4. Логіка перевірки
         if (authService.isAuthenticated()) {
-            // Якщо токен є — йдемо в кабінет (наприклад, '/admin' або '/profile')
             navigate('/profile');
         } else {
-            setIsAuthOpen(true)
+            openLogin();
         }
+    };
+
+    const handleAuthSuccess = () => {
+        closeAllModals();
+        navigate('/profile');
     };
 
     const handleSearch = () => {
@@ -73,7 +93,7 @@ const Header = () => {
                             <a href="https://www.instagram.com/moki_ua_" target="_blank" rel="noreferrer" aria-label="Instagram">
                                 <img className="icon" src="/img/instagram_logo.svg" alt="instagram" />
                             </a>
-                            <a href="#" aria-label="Telegram">
+                            <a href="https://t.me/moki_market" aria-label="Telegram">
                                 <img className="icon" src="/img/telegram_logo.svg" alt="telegram" />
                             </a>
                         </div>
@@ -85,11 +105,19 @@ const Header = () => {
                 </div>
             </div>
 
-            <AuthenticationModal
-                isOpen={isAuthOpen}  // Передаємо isOpen замість open
-                onClose={handleCloseAuthModal}
-                onSuccess={() => navigate('/profile')} // Передаємо як анонімну функцію
-            />
+            {/*<AuthenticationModal*/}
+            {/*    isOpen={isAuthOpen}*/}
+            {/*    onClose={closeAllModals}*/}
+            {/*    onSuccess={handleAuthSuccess}*/}
+            {/*    onSwitchToRegister={openRegister} // Передаємо функцію перемикання*/}
+            {/*/>*/}
+
+            {/*<RegistrationModal*/}
+            {/*    isOpen={isRegisterOpen}*/}
+            {/*    onClose={closeAllModals}*/}
+            {/*    onSuccess={handleAuthSuccess}*/}
+            {/*    onSwitchToLogin={openLogin} // Передаємо функцію повернення*/}
+            {/*/>*/}
 
             <header className="header">
                 <div className="container">
@@ -147,9 +175,16 @@ const Header = () => {
                                 </button>
                             </div>
 
-                            <Link to="/profile/wishlist" className="icon-heart user-actions-icon">
-                                <img src="/img/fav.svg" alt="fav" />
-                            </Link>
+                            {/*<Link to="/profile/wishlist" className="icon-heart user-actions-icon">*/}
+                            {/*    <img src="/img/fav.svg" alt="fav" />*/}
+                            {/*</Link>*/}
+
+                            <div className="user-actions-icon">
+                                <button onClick={handleCabinetClick} className="icon-cart-btn">
+                                    <img src="/img/fav.svg" alt="fav" />
+                                </button>
+                            </div>
+
 
                             <div className="user-actions-icon">
                                 <button

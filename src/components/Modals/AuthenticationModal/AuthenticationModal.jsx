@@ -5,7 +5,7 @@ import { authService } from '../../../services/authService';
 
 import './AuthenticationModal.css';
 
-const AuthenticationModal = ({ isOpen, onClose, onSuccess }) => {
+const AuthenticationModal = ({ isOpen, onClose, onSuccess, onSwitchToRegister }) => {
     if (!isOpen) return null;
 
     const [loading, setLoading] = useState(false);
@@ -47,10 +47,9 @@ const AuthenticationModal = ({ isOpen, onClose, onSuccess }) => {
 
                 <form className="auth-form" onSubmit={handleSubmit}>
 
-
                     <section className="auth-form-section">
 
-                        <div className="input-group user-info-input">
+                        <div className="auth-input-group">
                             <input
                                 name="email"
                                 type="email"
@@ -62,7 +61,7 @@ const AuthenticationModal = ({ isOpen, onClose, onSuccess }) => {
                                 required
                             />
                         </div>
-                        <div className="input-group user-info-input password-wrapper">
+                        <div className="auth-input-group password-wrapper">
                             <input
                                 name="password"
                                 type={showPassword ? "text" : "password"}
@@ -89,7 +88,7 @@ const AuthenticationModal = ({ isOpen, onClose, onSuccess }) => {
                 </form>
 
                 <div>
-                    <button className="registration-btn" >
+                    <button className="registration-btn" onClick={onSwitchToRegister}>
                         Створити аккаунт
                     </button>
                 </div>
