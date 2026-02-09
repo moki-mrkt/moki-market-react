@@ -45,34 +45,29 @@ const Home = () => {
         <main className="hero-section">
             <div className="container hero__grid">
 
-                {/* Верхня частина: Сайдбар + Банер */}
                 <div className="main-section">
                     <Sidebar />
                     <HeroSlider />
                 </div>
 
-                {/* Секції товарів */}
                 {newProducts.length > 0 && (
                     <div className="new-goods">
                         <ProductSlider title="Новинки" products={newProducts} />
                     </div>
                 )}
 
-                {/* Секція "Акції" */}
                 {discountProducts.length > 0 && (
                     <div className="discount-goods">
                         <ProductSlider title="Акційні пропозиції" products={discountProducts} />
                     </div>
                 )}
 
-                {/* Секція "Хіт продажів" */}
                 {bestsellers.length > 0 && (
                     <div className="bestseller">
                         <ProductSlider title="Хіт продажів" products={bestsellers} />
                     </div>
                 )}
 
-                {/* Відгуки */}
                 <Feedbacks />
 
             </div>

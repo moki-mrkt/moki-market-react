@@ -1,6 +1,8 @@
 import axios from 'axios';
 
-export const API_URL = 'http://localhost:8080/v1/api'; // Ваша адреса бекенду
+import {URLS} from '../constants/urls.js';
+
+export const API_URL = URLS.backend_api;
 
 const api = axios.create({
     baseURL: API_URL,
@@ -9,7 +11,6 @@ const api = axios.create({
     },
 });
 
-// 1. Request Interceptor: Додає Access Token до кожного запиту
 api.interceptors.request.use(
     (config) => {
         const token = localStorage.getItem('accessToken');
@@ -45,7 +46,6 @@ export const refreshTokens = async (originalRequest) => {
     return api(originalRequest);
 };
 
-// 2. Response Interceptor: Обробляє помилку 401 (Unauthorized)
 api.interceptors.response.use(
     (response) => response,
     async (error) => {
@@ -67,9 +67,9 @@ api.interceptors.response.use(
                 const currentPath = window.location.pathname;
 
                 if (currentPath.startsWith('/admin-ui')) {
-                    window.location.href = '/admin-ui/login'; // Створіть цей роут, якщо його немає
+                    window.location.href = '/admin-ui/login';
                 } else {
-                    // Інакше -> на звичайний логін
+
                     window.location.href = '/login';
                 }
             }

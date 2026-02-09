@@ -1,7 +1,7 @@
 import api from './api';
 
 export const authService = {
-    // Логін
+
     login: async (email, password) => {
 
         console.log("Api: " + email + " " + password)

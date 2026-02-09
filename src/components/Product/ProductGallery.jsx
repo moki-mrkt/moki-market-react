@@ -4,10 +4,13 @@ import { FreeMode, Thumbs } from 'swiper/modules';
 
 import './Product.css';
 
+import {URLS} from '../../constants/urls';
+
+const image_api =  URLS.s3_bucket;
+
 const ProductGallery = ({ images, fallbackImage }) => {
     const [thumbsSwiper, setThumbsSwiper] = useState(null);
 
-    // Якщо картинок немає, показуємо заглушку
     const displayImages = images && images.length > 0 ? images : [{ url: fallbackImage }];
 
     return (
@@ -22,7 +25,7 @@ const ProductGallery = ({ images, fallbackImage }) => {
                 {displayImages.map((img, index) => (
                     <SwiperSlide key={index}>
                         <img
-                            src={`http://localhost:9000/moki-images/${img.imageId || img}`}
+                            src={`${image_api}${img.imageId || img}`}
                             alt={`Product view ${index + 1}`}
                         />
                     </SwiperSlide>
@@ -48,7 +51,7 @@ const ProductGallery = ({ images, fallbackImage }) => {
                 >
                     {displayImages.map((img, index) => (
                         <SwiperSlide key={index}>
-                            <img   src={`http://localhost:9000/moki-images/${img.imageId || img}`} alt={`Thumb ${index + 1}`} />
+                            <img   src={`${image_api}${img.imageId || img}`} alt={`Thumb ${index + 1}`} />
                         </SwiperSlide>
                     ))}
                 </Swiper>

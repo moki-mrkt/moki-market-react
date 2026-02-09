@@ -6,7 +6,6 @@ import ProductCard from '../ProductCard/ProductCard';
 import 'swiper/css';
 import 'swiper/css/navigation';
 import './ProductSlider.css';
-import {data} from "react-router-dom"; // Стилі для заголовків і слайдера
 
 const ProductSlider = ({ title, products }) => {
 
@@ -16,11 +15,9 @@ const ProductSlider = ({ title, products }) => {
     return (
         <div className="product-slider-section">
 
-            {/* Заголовок і кнопки тепер в одному контейнері, щоб легше позиціонувати */}
             <div className="slider-header">
                 <h2 className="main-title">{title}</h2>
 
-                {/* Кнопки навігації */}
                 <div className="slider-buttons">
                     <button ref={prevRef} className="slider-arrow arrow-prev">
                         <img src="/img/left-arrow.svg" alt="Prev" />

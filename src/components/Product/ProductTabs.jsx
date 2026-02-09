@@ -31,7 +31,7 @@ const ProductTabs = ({ description, characteristics }) => {
 
                 {/* Вкладка Опис */}
                 <div className={`tab-pane ${activeTab === 'description' ? 'active' : ''}`} id="description">
-                    {/* Кнопка акордеону для мобільного */}
+
                     <button
                         className={`mobile-accordion-btn ${activeTab === 'description' ? 'active' : ''}`}
                         onClick={() => handleTabClick(activeTab === 'description' ? '' : 'description')}
@@ -44,7 +44,6 @@ const ProductTabs = ({ description, characteristics }) => {
                     </div>
                 </div>
 
-                {/* Вкладка Характеристики */}
                 <div className={`tab-pane ${activeTab === 'characteristics' ? 'active' : ''}`} id="characteristics">
                     <button
                         className={`mobile-accordion-btn ${activeTab === 'characteristics' ? 'active' : ''}`}

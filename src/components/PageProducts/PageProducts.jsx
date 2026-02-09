@@ -20,9 +20,6 @@ const PageGoods = ({ initialFilters = {} }) => {
     const [products, setProducts] = useState([]);
     const [loading, setLoading] = useState(true);
 
-    const [minPriceRange, setMinPriceRange] = useState(0);
-    const [maxPriceRange, setMaxPriceRange] = useState(9999);
-
     const [currentPage, setCurrentPage] = useState(0);
     const [totalPages, setTotalPages] = useState(0);
 
@@ -373,21 +370,6 @@ const PageGoods = ({ initialFilters = {} }) => {
                             </div>
                         )}
 
-                        {/*<div className="filter-group">*/}
-                        {/*    <h4 >Країна</h4>*/}
-                        {/*    <ul className="filter-list">*/}
-                        {/*        {['Україна', 'Туреччина'].map((item) => (*/}
-                        {/*            <li key={item}>*/}
-                        {/*                <label className="checkbox-label">*/}
-                        {/*                    <input type="checkbox" />*/}
-                        {/*                    <span className="checkmark"></span>*/}
-                        {/*                    <span>{item}</span>*/}
-                        {/*                </label>*/}
-                        {/*            </li>*/}
-                        {/*        ))}*/}
-                        {/*    </ul>*/}
-                        {/*</div>*/}
-
                         <button className="btn-apply" onClick={applyFilters}>Застосувати</button>
                     </aside>
 
@@ -456,12 +438,11 @@ const PageGoods = ({ initialFilters = {} }) => {
                     </div>
                 </div>
 
-                {/* 3. Динамічна секція SEO */}
                 <section className="category-description">
                     <h2 className="seo-title">{seoContent.title}</h2>
 
                     <div className="seo-content">
-                        {/* Рендеримо абзаци вступу */}
+
                         {seoContent.intro.map((paragraph, index) => (
                             <p key={index}>{paragraph}</p>
                         ))}

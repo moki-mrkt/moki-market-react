@@ -26,7 +26,6 @@ const InfoPage = () => {
 
                     <div className="info-grid">
 
-                        {/* Сайдбар з NavLink */}
                         <aside className="info-sidebar">
                             <ul className="info-nav">
                                 {navItems.map(item => (
@@ -42,7 +41,6 @@ const InfoPage = () => {
                             </ul>
                         </aside>
 
-                        {/* Тут буде рендеритись вибрана під-сторінка */}
                         <div className="info-content">
                             <Outlet />
                         </div>

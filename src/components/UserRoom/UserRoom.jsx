@@ -4,14 +4,13 @@ import { NavLink, Outlet, Link } from 'react-router-dom';
 import './UserRoom.css';
 
 const UserRoom = () => {
-    // Стан для мобільного меню сайдбару
+
     const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
     return (
         <section className="account-section container">
             <h2 className="user-room-title">Особистий кабінет</h2>
 
-            {/* Картка користувача */}
             <div className="user-summary-card">
                 <div className="user-summary-info">
                     <div className="user-avatar-circle">

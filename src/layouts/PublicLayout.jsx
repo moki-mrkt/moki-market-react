@@ -13,7 +13,7 @@ const PublicLayout = () => {
             <CartDrawer isOpen={isCartOpen} onClose={() => setIsCartOpen(false)} />
 
             <main className="main-content">
-                {/* Outlet — це місце, куди підставлятимуться Home, Catalog і т.д. */}
+
                 <Outlet />
             </main>
 

@@ -38,12 +38,11 @@ const PageProduct = () => {
     const productBreadcrumbs = [
         { path: '/', breadcrumb: 'Головна' },
         { path: '/catalog', breadcrumb: 'Каталог' },
-        // Додаємо категорію тільки якщо вона є
+
         ...(categorySlug ? [{
             path: `/catalog/${categorySlug}`,
             breadcrumb: categoryName
         }] : []),
-        // Остання крихта - назва товару (без посилання, бо це поточна сторінка)
         { path: null, breadcrumb: product?.name || 'Товар' }
     ];
 
@@ -102,13 +101,11 @@ const PageProduct = () => {
                     <div className="product-card">
                         <div className="product-header">
 
-                            {/* Галерея зображень */}
                             <div className="product-gallery-wrapper">
                                 <ProductGallery images={product.images || []}
                                                 fallbackImage="../../img/categories/nuts.png" />
                             </div>
 
-                            {/* Інформація про товар */}
                             <div className="product-info">
                                 <div className="product-info-top">
                                     <h2 className="product-name">{product.name}</h2>
@@ -138,17 +135,7 @@ const PageProduct = () => {
                                                 ))}
                                             </div>
                                         }
-                                        {/*<div className="product-stars">*/}
-                                        {/*    {[...Array(5)].map((_, i) => (*/}
-                                        {/*        <img*/}
-                                        {/*            key={i}*/}
-                                        {/*            src="/img/star.svg"*/}
-                                        {/*            alt="star"*/}
-                                        {/*            style={{ opacity: (product.rating || 0) > i ? 1 : 0.3 }}*/}
-                                        {/*        />*/}
-                                        {/*    ))}*/}
-                                        {/*</div>*/}
-                                        {/*{product.rating > 0 && ( <span className="product-rating-value">{product.rating}</span>)}*/}
+
                                     </div>
 
                                     <div className="price-block">
@@ -158,7 +145,6 @@ const PageProduct = () => {
                                             <span className="current-price-text">грн/</span>
                                             <span className="current-price-text unit-of-measurement">шт</span>
                                         </div>
-                                        {/* Логіка старої ціни, якщо є знижка */}
                                         {hasDiscount == true && (
                                             <div className="old-price">
                                                 <span className="old-price-value">{oldPrice}</span>
@@ -199,7 +185,6 @@ const PageProduct = () => {
                             </div>
                         </div>
 
-                        {/* Таби з описом */}
                         <ProductTabs description={product.description}
                                      characteristics={product.characteristics}/>
                     </div>

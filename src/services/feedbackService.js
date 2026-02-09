@@ -2,7 +2,7 @@ import api from './api';
 
 export const feedbackService = {
     getAll: async (page, size) => {
-        // Припускаємо, що endpoint виглядає так
+
         const response = await api.get('/feedbacks/all', {
             params: { page, size }
         });

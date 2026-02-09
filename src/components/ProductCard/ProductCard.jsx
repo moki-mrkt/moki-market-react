@@ -2,25 +2,20 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import './ProductCard.css';
 
-import { useCart } from '../CartContext/CartContext.jsx'; // <--- Імпорт хука
+import { useCart } from '../CartContext/CartContext.jsx';
 
-const image_api = 'http://localhost:9000/moki-images/';
+import {URLS} from '../../constants/urls';
+
+const image_api =  URLS.s3_bucket;
 
 const ProductCard = ({product
-                         // id,
-                         // name,
-                         // initOfMeasure,
-                         // valueOfInitOfMeasure,
-                         // price,
-                         // images,
-                         // discount,
-                         // rating = 0
+
                      }) => {
 
-    const { addToCart } = useCart(); // <--- Дістаємо функцію
+    const { addToCart } = useCart();
 
     const handleBuyClick = (e) => {
-        e.preventDefault(); // Щоб не переходило на сторінку товару при кліку на кнопку
+        e.preventDefault();
         addToCart(product);
     };
 
