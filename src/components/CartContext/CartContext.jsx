@@ -24,7 +24,7 @@ export const CartProvider = ({ children }) => {
     }, [cartItems]);
 
     // 3. Функції управління
-    const addToCart = (product, quantity = 1) => {
+    const addToCart = (product, quantity = 1, setCartOpen = true) => {
         setCartItems(prev => {
             const existing = prev.find(item => item.id === product.id);
             if (existing) {
@@ -38,7 +38,7 @@ export const CartProvider = ({ children }) => {
             // Якщо немає, додаємо новий
             return [...prev, { ...product, quantity }];
         });
-        setIsCartOpen(true); // Відкриваємо шторку при додаванні
+        setIsCartOpen(setCartOpen);
     };
 
     const removeFromCart = (id) => {

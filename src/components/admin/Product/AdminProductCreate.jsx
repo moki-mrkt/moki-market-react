@@ -12,7 +12,9 @@ import {
     Paper,
     Select,
     TextField,
-    Typography
+    Typography,
+    Alert,
+    AlertTitle
 } from '@mui/material';
 import DeleteIcon from '@mui/icons-material/Delete';
 import AddIcon from '@mui/icons-material/Add';
@@ -24,6 +26,7 @@ import ImageUploader from './ImageUploader.jsx';
 import {productService} from '../../../services/productService.js';
 
 import {CATEGORY_CONFIG} from '../../../constants/categories.js';
+import {mapErrorMessage} from '../../../constants/productErrorMessages.js';
 
 const AdminProductCreate = () => {
 
@@ -34,6 +37,8 @@ const AdminProductCreate = () => {
 
     const [loading, setLoading] = useState(false);
     const [fetching, setFetching] = useState(false);
+
+    const [error, setError] = useState(null);
 
     const [selectedImages, setSelectedImages] = useState([]);
 
@@ -63,7 +68,7 @@ const AdminProductCreate = () => {
             const product = await productService.getById(id);
 
             console.log(product)
-            // 1. Заповнюємо прості поля
+
             setFormData({
                 name: product.name,
                 productCategory: product.productCategory,
@@ -86,19 +91,16 @@ const AdminProductCreate = () => {
                 setCharacteristics(charsArray.length > 0 ? charsArray : [{ name: '', value: '' }]);
             }
 
-            // 3. Перетворюємо картинки у формат ImageUploader
-            // Бекенд повертає: [{ imageUrl: '...', isMain: true }]
-            // Uploader очікує: [{ preview: '...', uploadedUrl: '...', loading: false }]
             if (product.images) {
                 const formattedImages = product.images.map(img => ({
                     file: null,
-                    imageId: img.imageId, // Файлу немає, бо це вже на сервері
-                    preview: img.imageUrl, // Використовуємо URL як прев'ю
-                    uploadedUrl: img.imageUrl, // URL вже є
+                    imageId: img.imageId,
+                    preview: img.imageUrl,
+                    uploadedUrl: img.imageUrl,
                     loading: false,
                     error: false
                 }));
-                // Сортуємо так, щоб головна (isMain) була першою, якщо треба
+
                 setSelectedImages(formattedImages);
             }
 
@@ -111,16 +113,6 @@ const AdminProductCreate = () => {
         }
     };
 
-    // const addChar = () => setCharacteristics([...characteristics, { name: '', value: '' }]);
-    //
-    // const removeChar = (index) => {
-    //     const newChars = [...characteristics];
-    //     newChars.splice(index, 1);
-    //     setCharacteristics(newChars);
-    // };
-
-    // --- Стан для динамічних полів ---
-    // Характеристики (масив пар ключ-значення, який потім перетворимо в об'єкт)
     const [characteristics, setCharacteristics] = useState([
         { key: '', value: '' }
     ]);
@@ -130,7 +122,6 @@ const AdminProductCreate = () => {
         { imageId: '', isMain: true, sortOrder: 0, altText: '' }
     ]);
 
-    // --- Обробники змін ---
 
     const handleChange = (e) => {
         const { name, value } = e.target;
@@ -138,9 +129,10 @@ const AdminProductCreate = () => {
             ...prev,
             [name]: value
         }));
+
+        if (error) setError(null);
     };
 
-    // Обробка характеристик
     const handleCharChange = (index, field, value) => {
         const newChars = [...characteristics];
         newChars[index][field] = value;
@@ -156,11 +148,11 @@ const AdminProductCreate = () => {
         setCharacteristics(newChars);
     };
 
-    // --- SUBMIT ---
+
     const handleSubmit = async (e) => {
         e.preventDefault();
+        setError(null);
 
-        // Перевірка: чи всі фото завантажились?
         const pendingUploads = selectedImages.some(img => img.loading);
         if (pendingUploads) {
             alert("Будь ласка, зачекайте завершення завантаження фото!");
@@ -170,8 +162,7 @@ const AdminProductCreate = () => {
         setLoading(true);
 
         try {
-            console.log(selectedImages)
-            // 1. Беремо тільки ті фото, які успішно завантажились (мають uploadedUrl)
+
             const validImages = selectedImages
                 .filter(img => img.uploadedUrl && !img.error)
                 .map((img, index) => ({
@@ -181,9 +172,6 @@ const AdminProductCreate = () => {
                     altText: 'photo'
                 }));
 
-            console.log(validImages)
-
-            console.log(characteristics)
             const charMap = {};
             characteristics.forEach(c => {
                 const k = c.key?.trim();
@@ -191,7 +179,6 @@ const AdminProductCreate = () => {
                 if(k && v) charMap[k] = v;
             });
 
-            // 2. Формуємо об'єкт
             const productPayload = {
                 ...formData,
                 price: parseFloat(formData.price),
@@ -204,20 +191,34 @@ const AdminProductCreate = () => {
             console.log(productPayload)
 
             if (isEditMode) {
-                // ОНОВЛЕННЯ
                 await productService.updateProduct(id, productPayload);
             } else {
-                // СТВОРЕННЯ
                 await productService.createProduct(productPayload);
             }
 
             navigate('/admin-ui/products');
 
         } catch (error) {
-            console.error("Помилка створення:", error);
+
+            if (error && error.status === 400) {
+                const data = error;
+
+                if (data.info) {
+
+                    const allErrors = Object.values(data.info)
+                        .map(msg => mapErrorMessage(msg))
+                        .join('\n');
+
+                    setError(allErrors);
+                } else {
+                    setError("Перевірте введені дані");
+                }
+            }
         } finally {
             setLoading(false);
         }
+
+        window.scrollTo(0, 0);
     };
 
     if (fetching) {
@@ -236,14 +237,25 @@ const AdminProductCreate = () => {
                 </Typography>
             </Box>
 
+            {error && (
+                <Alert
+                    severity="error"
+                    sx={{ mb: 3 }}
+                    onClose={() => setError(null)}
+                    style={{ whiteSpace: 'pre-line' }}
+                >
+                    <AlertTitle>Помилка</AlertTitle>
+                    {error}
+                </Alert>
+            )}
+
             <Grid container spacing={2}>
 
-                {/* ЛІВА КОЛОНКА - Основна інформація */}
                 <Grid size={{ xs: 12, md: 7 }}>
                     <Paper sx={{ p: 3, mb: 3, borderRadius: 3, boxShadow: 'none', border: '1px solid #E5E7EB', gap: '10px'}}>
 
                         <Typography variant="h6" sx={{ mb: 2 }}>Загальна інформація</Typography>
-                        <Grid sx={{ mb: 3, width: '40%' }} sm={6}>
+                        <Grid sx={{ mb: 3, width: '60%' }} sm={6}>
                             <TextField
                                 fullWidth
                                 label="Назва товару" name="name"

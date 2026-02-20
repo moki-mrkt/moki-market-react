@@ -45,10 +45,8 @@ const PageGoods = ({ initialFilters = {} }) => {
 
         const fetchProducts = async () => {
 
-            console.log("params");
             const backendCategory = getEnumFromSlug(categorySlug);
 
-            console.log("params");
             if (!backendCategory && !searchQuery && !appliedFilters.hasDiscount) {
                 console.error(`Unknown category slug: ${categorySlug}`);
                 setLoading(false);

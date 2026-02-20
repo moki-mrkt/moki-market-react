@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { useParams } from 'react-router-dom';
+import {useNavigate, useParams} from 'react-router-dom';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import { Navigation } from 'swiper/modules';
 
@@ -24,6 +24,8 @@ import './Product.css';
 
 const PageProduct = () => {
 
+    const navigate = useNavigate();
+
     const { addToCart } = useCart();
     const [qty, setQty] = useState(1);
 
@@ -46,6 +48,11 @@ const PageProduct = () => {
         { path: null, breadcrumb: product?.name || 'Товар' }
     ];
 
+    const handleForBuyOneClick = (product) => {
+        addToCart(product, 1, false );
+        navigate('/checkout');
+    };
+
     useEffect(() => {
 
         const fetchProductData = async () => {
@@ -64,7 +71,6 @@ const PageProduct = () => {
                         });
 
                         const content = similar.products.content || [];
-                        console.log(content);
                         setSimilarProducts(content.filter(p => p.id !== data.id));
                     }
                 }
@@ -83,6 +89,8 @@ const PageProduct = () => {
 
     if (loading) return <div className="loader">Завантаження...</div>;
     if (!product) return <div className="not-found">Товар не знайдено</div>;
+
+
 
     const hasDiscount = product.discount && product.discount > 0;
     const currentPrice = hasDiscount ? (product.price  - (product.price * product.discount / 100)).toFixed(2) : product.price
@@ -162,22 +170,22 @@ const PageProduct = () => {
                                         </div>
 
                                         <button className="btn-wishlist-desktop">
-                                            <img src="../../img/fav_heart.svg" alt="fav" />
+                                            <img src="/img/fav_heart.svg" alt="fav" />
                                             <span>Додати в список бажаного</span>
                                         </button>
 
                                         <button className="btn-wishlist-mobile">
-                                            <img src="../../img/fav_heart.svg" alt="fav" />
+                                            <img src="/img/fav_heart.svg" alt="fav" />
                                         </button>
                                     </div>
 
                                     <div className="product-buttons-row">
                                         <button className="btn-cart-primary" onClick={() => addToCart(product, qty)}>
-                                            <img src="../../img/white_cart.png" alt="cart" />
+                                            <img src="/img/white_cart.png" alt="cart" />
                                             До кошика
                                         </button>
-                                        <button className="btn-one-click">
-                                            <img src="../../img/blue_cart.png" alt="buy" />
+                                        <button className="btn-one-click" onClick={() => handleForBuyOneClick(product)}>
+                                            <img src="/img/blue_cart.png" alt="buy" />
                                             Купити в один клік
                                         </button>
                                     </div>

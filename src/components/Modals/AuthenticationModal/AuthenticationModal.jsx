@@ -1,16 +1,14 @@
-import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
+import React, {useEffect, useState} from 'react';
+import toast, { Toaster } from 'react-hot-toast';
 
 import { authService } from '../../../services/authService';
 
 import './AuthenticationModal.css';
 
-const AuthenticationModal = ({ isOpen, onClose, onSuccess, onSwitchToRegister }) => {
-    if (!isOpen) return null;
+const AuthenticationModal = ({ isOpen, onClose, onSuccess, onSwitchToRegister, onSwitchToForgotPassword}) => {
 
     const [loading, setLoading] = useState(false);
     const [showPassword, setShowPassword] = useState(false);
-    const [error, setError] = useState('');
 
     const [credentials, setCredentials] = useState({ email: '', password: '' });
 
@@ -18,16 +16,42 @@ const AuthenticationModal = ({ isOpen, onClose, onSuccess, onSwitchToRegister })
         setCredentials({ ...credentials, [e.target.name]: e.target.value });
     };
 
+    useEffect(() => {
+        if (!isOpen) {
+            setCredentials({ email: '', password: '' });
+        }
+    }, [isOpen]);
+
+    if (!isOpen) return null;
+
     const handleSubmit = async (e) => {
         e.preventDefault();
         setLoading(true);
         try {
-            console.log(credentials);
             const response = await authService.login(credentials.email, credentials.password);
             onSuccess(response);
             onClose();
         } catch (err) {
-            setError('Невірний email або пароль');
+
+            console.log(err)
+
+            if (err.response && err.response.status === 401) {
+                toast.error('Невірна пошта або пароль', {
+                    duration: 4000,
+                    position: 'top-right',
+                    style: {
+                        paddingLeft: '25px',
+                    }
+                });
+            } else {
+                toast.error('Помилка авторизації',{
+                    duration: 4000,
+                    position: 'top-right',
+                    style: {
+                        width: '300px',
+                    }
+                });
+            }
         } finally {
             setLoading(false);
         }
@@ -38,7 +62,7 @@ const AuthenticationModal = ({ isOpen, onClose, onSuccess, onSwitchToRegister })
             <div className="auth-modal-content" onClick={(e) => e.stopPropagation()}>
 
                 <div className="auth-close-bnt">
-                    <button className="close-btn" onClick={onClose}>
+                    <button className="close-btn-img" onClick={onClose}>
                         <img  src="/img/cross.svg" alt="close"/>
                     </button>
                 </div>
@@ -58,7 +82,6 @@ const AuthenticationModal = ({ isOpen, onClose, onSuccess, onSwitchToRegister })
                                 placeholder="Пошта"
                                 value={credentials.email}
                                 onChange={handleChange}
-                                required
                             />
                         </div>
                         <div className="auth-input-group password-wrapper">
@@ -70,7 +93,6 @@ const AuthenticationModal = ({ isOpen, onClose, onSuccess, onSwitchToRegister })
                                 placeholder="Пароль"
                                 value={credentials.password}
                                 onChange={handleChange}
-                                required
                             />
                             <button
                                 type="button"
@@ -94,9 +116,11 @@ const AuthenticationModal = ({ isOpen, onClose, onSuccess, onSwitchToRegister })
                 </div>
 
 
-                <Link to={"/catalog"} className="forgot-password">
+                <div>
+                    <button className="forgot-password" onClick={onSwitchToForgotPassword}>
                         Забули пароль?
-                </Link>
+                    </button>
+                </div>
             </div>
         </div>
     );

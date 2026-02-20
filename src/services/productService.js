@@ -34,8 +34,6 @@ export const productService = {
     getDiscount: (page = 0, size = 10) => request(`/products/discount?page=${page}&size=${size}`).then(data => data.content || data),
     getBestsellers: (page = 0, size = 10) => request(`/products/bestsellers?page=${page}&size=${size}`).then(data => data.content || data),
 
-    getByCategory: (category, page = 0, size = 3) => request(`/products/category/${category}?page=${page}&size=${size}`),
-
     getAllProducts: (page = 0, size = 10, query = '', sort = null) => {
         const params = new URLSearchParams();
 

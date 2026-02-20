@@ -69,7 +69,7 @@ const Footer = () => {
 
                         <div className="contact-group">
                             <span className="contact-label">Адреса</span>
-                            <span className="contact-text">Героїв Майдану 23, Харків</span>
+                            <span className="contact-text">вул. Чугуївська, 78</span>
                         </div>
                     </div>
 

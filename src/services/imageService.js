@@ -1,4 +1,4 @@
-import api from './api';
+import {privateApi} from './api';
 
 const request = async (endpoint, method = 'GET', body = null, isFormData = false) => {
     const config = {
@@ -13,8 +13,7 @@ const request = async (endpoint, method = 'GET', body = null, isFormData = false
     }
 
     try {
-        console.log(`Request to: ${endpoint}`);
-        const response = await api(config);
+        const response = await privateApi(config);
         return response.data;
     } catch (error) {
         console.error("API Request Error:", error);

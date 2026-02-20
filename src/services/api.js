@@ -4,14 +4,21 @@ import {URLS} from '../constants/urls.js';
 
 export const API_URL = URLS.backend_api;
 
-const api = axios.create({
+export const publicApi = axios.create({
     baseURL: API_URL,
     headers: {
         'Content-Type': 'application/json',
     },
 });
 
-api.interceptors.request.use(
+const privateApi = axios.create({
+    baseURL: API_URL,
+    headers: {
+        'Content-Type': 'application/json',
+    },
+});
+
+privateApi.interceptors.request.use(
     (config) => {
         const token = localStorage.getItem('accessToken');
 
@@ -27,9 +34,7 @@ export const refreshTokens = async (originalRequest) => {
 
     const refreshToken = localStorage.getItem('refreshToken');
 
-    if (!refreshToken) {
-        throw new Error('No refresh token');
-    }
+    if (!refreshToken) throw new Error('No refresh token');
 
     const response = await axios.post(`${API_URL}/auth/refresh`, {
         refreshToken: refreshToken
@@ -40,13 +45,16 @@ export const refreshTokens = async (originalRequest) => {
     localStorage.setItem('accessToken', accessToken);
     localStorage.setItem('refreshToken', newRefreshToken);
 
-    api.defaults.headers.common['Authorization'] = `Bearer ${accessToken}`;
+    privateApi.defaults.headers.common['Authorization'] = `Bearer ${accessToken}`;
+
+    // processQueue(null, accessToken);
+
     originalRequest.headers['Authorization'] = `Bearer ${accessToken}`;
 
-    return api(originalRequest);
+    return privateApi(originalRequest);
 };
 
-api.interceptors.response.use(
+privateApi.interceptors.response.use(
     (response) => response,
     async (error) => {
         const originalRequest = error.config;
@@ -60,8 +68,6 @@ api.interceptors.response.use(
                 return refreshTokens(originalRequest);
 
             } catch (refreshError) {
-
-                console.error("Session expired", refreshError);
                 localStorage.clear();
 
                 const currentPath = window.location.pathname;
@@ -70,7 +76,7 @@ api.interceptors.response.use(
                     window.location.href = '/admin-ui/login';
                 } else {
 
-                    window.location.href = '/login';
+                    window.location.href = '/';
                 }
             }
         }
@@ -79,4 +85,5 @@ api.interceptors.response.use(
     }
 );
 
-export default api;
+export { privateApi };
+export default publicApi;

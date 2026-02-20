@@ -1,11 +1,10 @@
-import api from './api';
+import { publicApi } from './api';
 
 export const authService = {
 
     login: async (email, password) => {
 
-        console.log("Api: " + email + " " + password)
-        const response = await api.post('/auth/login', { email, password });
+        const response = await publicApi.post('/auth/login', { email, password });
 
         if (response.data.accessToken) {
             localStorage.setItem('accessToken', response.data.accessToken);

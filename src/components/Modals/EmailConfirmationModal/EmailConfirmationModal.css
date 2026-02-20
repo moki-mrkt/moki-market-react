@@ -1,0 +1,100 @@
+.confirm-modal-content {
+    display: flex;
+    flex-direction: column;
+    background: white;
+
+    padding: 40px;
+    border-radius: 16px;
+    width: 100%;
+    max-width: 660px;
+    text-align: center;
+
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+    animation: slideUp 0.3s ease;
+}
+
+.confirm-close-btn {
+    display: flex;
+    justify-content: flex-end;
+}
+
+/* Використовуємо існуючий клас кнопки закриття, якщо він у вас глобальний, або залишаємо цей */
+.close-btn-img {
+    border: none;
+    background: transparent;
+    cursor: pointer;
+}
+
+.confirm-modal-title {
+    font-size: 36px;
+    color: #061F7C;
+    margin-top: 10px;
+    margin-bottom: 20px;
+    font-weight: 700;
+}
+
+.confirm-modal-section {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-bottom: 30px; /* Трохи більший відступ до кнопки "Повернутись" */
+    padding: 0 20px;
+}
+
+.confirm-modal-text {
+    font-size: 24px;
+    color: #0E2CA4;
+    margin: 0;
+    line-height: 1.4;
+}
+
+.confirm-return-to-auth {
+    color: white;
+    font-size: 24px;
+    padding: 10px 20px;
+    background: #0E2CA4;
+    border: none;
+    border-radius: 16px;
+    cursor: pointer;
+}
+
+.confirm-return-to-auth:hover {
+    background-color: #061F7C;
+}
+
+@media (max-width: 768px) {
+    .confirm-modal-content {
+        padding: 20px;
+        width: 100%;
+        max-width: 335px;
+    }
+
+    .confirm-close-btn {
+        border: none;
+        background: transparent;
+    }
+
+    .confirm-close-btn img {
+        width: 11px;
+        height: 11px;
+    }
+
+    .confirm-modal-title {
+        font-size: 24px;
+        margin-top: 5px;
+        margin-bottom: 15px;
+    }
+
+    .confirm-modal-section {
+        margin-bottom: 20px;
+        padding: 0;
+    }
+
+    .confirm-modal-text {
+        font-size: 16px; /* Оптимальний розмір для читання на телефоні */
+    }
+
+    .confirm-return-to-auth {
+        font-size: 16px;
+    }
+}

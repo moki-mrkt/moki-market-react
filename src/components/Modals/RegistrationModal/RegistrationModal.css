@@ -19,13 +19,17 @@
 
     display: flex;
     flex-direction: column;
-    gap: 30px;
+    gap: 10px;
 
     width: 100%;
-
     margin-bottom: 15px;
-
 }
+
+.reg-close-btn-img {
+    border: none;
+    background: transparent;
+}
+
 
 .reg-modal-title {
     font-size: 32px;
@@ -65,7 +69,7 @@
     justify-content: center;
 }
 
-.password-toggle-btn {
+.reg-password-toggle-btn {
     position: absolute;
     right: 30px;
     background: none;
@@ -77,6 +81,12 @@
     opacity: 0.6;
     transition: opacity 0.2s;
 }
+
+.reg-password-toggle-btn img {
+    width: 40px;
+    height: 28px;
+}
+
 
 .reg-checkout-input::placeholder {
     color: #7B8CC6;
@@ -90,11 +100,14 @@
     width: 100%;
 }
 
+
+
 .reg-btn {
     background-color: #0E2CA4;
     color: white;
     border: none;
     padding: 0;
+    margin-top: 10px;
     border-radius: 20px;
     font-size: 24px;
     font-weight: 500;
@@ -112,6 +125,7 @@
     width: 100%;
     padding-left: 10px;
 }
+
 .reg-modal-info {
     text-align: start;
     margin-top: 0;
@@ -145,7 +159,7 @@
     align-items: center;
     cursor: pointer;
     font-size: 18px;
-    color: #7B8CC6;
+    color: #061F7C;
     user-select: none;
     text-align: left;
     line-height: 1.2;
@@ -154,7 +168,7 @@
 .checkmark {
     height: 24px;
     width: 24px;
-    background-color: transparent; /* Колір фону як у інпутів */
+    background-color: transparent;
     border: 1px solid #061F7C;
     border-radius: 6px;
     margin-right: 15px;
@@ -220,6 +234,26 @@
     border-bottom: 1px solid #0E2CA4;
 }
 
+.inputWrapperStyle {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    position: relative;
+    margin-bottom: 20px;
+}
+
+.errorStyle {
+    color: #d32f2f;
+    font-size: 12px;
+    margin-top: 4px;
+    margin-left: 20px;
+    text-align: start;
+    position: absolute;
+    top: 100%;
+    white-space: nowrap;
+    pointer-events: none;
+}
+
 .reg-checkout-input:-webkit-autofill,
 .reg-checkout-input:-webkit-autofill:hover,
 .reg-checkout-input:-webkit-autofill:focus,
@@ -230,4 +264,131 @@
     -webkit-text-fill-color: #0E2CA4 !important;
 
     transition: background-color 5000s ease-in-out 0s;
+}
+
+@media (max-width: 768px) {
+
+    .reg-modal-content {
+
+        padding: 20px;
+        max-width: 336px;
+        max-height: 625px;
+    }
+
+    .reg-close-btn-img {
+        border: none;
+        background: transparent;
+    }
+
+    .reg-close-btn-img img {
+        width: 11px;
+        height: 11px;
+    }
+
+    .reg-form-section {
+
+        gap: 8px;
+
+        width: 100%;
+        margin-bottom: 5px;
+    }
+
+    .reg-modal-title {
+        font-size: 20px;
+        margin-top: 5px;
+        margin-bottom: 13px;
+        font-weight: 600;
+    }
+
+    .reg-row-inputs {
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+    }
+
+    .reg-checkout-input {
+        height: 36px;
+        border-radius: 8px;
+
+        font-size: 16px;
+        font-weight: 400;
+        padding-left: 15px;
+
+    }
+
+    .reg-checkout-input::placeholder {
+        color: #7B8CC6;
+        font-size: 16px;
+        font-weight: 400;
+    }
+
+
+    .reg-password-toggle-btn {
+        right: 10px;
+    }
+
+    .reg-password-toggle-btn img {
+        width: 20px;
+        height: 14px;
+    }
+
+    .reg-btn {
+        margin-top: 5px;
+        border-radius: 12px;
+        font-size: 14px;
+        font-weight: 500;
+        width: 195px;
+        height: 30px;
+    }
+
+    .reg-modal-info-block {
+        width: 100%;
+        padding-left: 10px;
+    }
+
+    .reg-modal-info {
+        font-size: 14px;
+        margin-bottom: 0;
+    }
+
+    .reg-modal-text {
+       font-size: 10px;
+    }
+
+    .reg-modal-terms {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+
+    .custom-checkbox-label {
+        font-size: 12px;
+        color: #061F7C;
+        line-height: 1;
+    }
+
+    .checkmark {
+        height: 15px;
+        width: 15px;
+        border-radius: 4px;
+        margin-right: 15px;
+    }
+
+    .return-to-auth {
+        font-size: 12px;
+        color: #0E2CA4;
+        padding: 0;
+    }
+
+
+    .inputWrapperStyle {
+        margin-bottom: 10px;
+    }
+
+    .errorStyle {
+        font-size: 10px;
+        margin-top: 2px;
+        margin-left: 10px;
+    }
+
 }

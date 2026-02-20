@@ -1,14 +1,4 @@
 
-/*.checkout-section {*/
-/*  padding-top: 40px;*/
-/*  padding-bottom: 80px;*/
-/*  background-color: #FCF9EC;*/
-/*  !* Додайте фонові зображення (фрукти), якщо вони є у assets *!*/
-/*  !*background-image: url('../img/background/apple_bg.svg'), url('../img/background/orange_bg.svg');*!*/
-/*  background-repeat: no-repeat;*/
-/*  background-position: left 100px, right 200px;*/
-/*}*/
-
 .checkout-grid {
     margin-top: 54px;
     margin-bottom: 110px;
@@ -183,8 +173,17 @@ input:-webkit-autofill:active {
     flex-grow: 1;
 }
 
-#department::placeholder {
+.checkout-select::placeholder {
     color: #7B8CC6;
+}
+
+.checkout-select:-webkit-autofill,
+.checkout-select:-webkit-autofill:hover,
+.checkout-select:-webkit-autofill:focus,
+.checkout-select:-webkit-autofill:active {
+    -webkit-box-shadow: 0 0 0 30px transparent inset !important;
+    -webkit-text-fill-color: #061F7C !important;
+    transition: background-color 5000s ease-in-out 0s;
 }
 
 .checkout-select {

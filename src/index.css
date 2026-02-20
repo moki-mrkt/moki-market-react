@@ -120,6 +120,15 @@ main {
     justify-content: center;
 }
 
+.moki-toast {
+    width: 350px;
+    height: 80px;
+    font-size: 20px;
+    margin-top: 50px;
+
+    padding-left: 50px;
+}
+
 @media (max-width: 768px) {
 
     .container {
@@ -134,5 +143,14 @@ main {
 
     .goods-block {
         height: 270px;
+    }
+
+    .moki-toast {
+        width: 150px;
+        height: 40px;
+        font-size: 10px !important;
+        margin-top: 10px;
+        padding-left: 10px !important;
+
     }
 }

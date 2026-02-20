@@ -1,30 +1,30 @@
-import api from './api';
+import {privateApi} from './api';
 
 export const orderService = {
     createOrder: async (orderData) => {
-        const response = await api.post('/orders', orderData);
+        const response = await privateApi.post('/orders', orderData);
         return response.data;
     },
 
     update: async (id, orderData) => {
-        const response = await api.patch(`/orders/${id}`, orderData);
+        const response = await privateApi.patch(`/orders/${id}`, orderData);
         return response.data;
     },
 
     getById: async (id)  => {
-        const response = await api.get(`/orders/${id}`);
+        const response = await privateApi.get(`/orders/${id}`);
         return response.data;
     },
 
     getAllOrders: async (page, size) => {
 
-        const response = await api.get('/orders', {
+        const response = await privateApi.get('/orders', {
             params: { page, size }
         });
         return response.data;
     },
 
     deleteOrder: async (id) => {
-        await api.delete(`/orders/cancel/${id}`);
+        await privateApi.delete(`/orders/cancel/${id}`);
     }
 };

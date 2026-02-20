@@ -307,32 +307,65 @@ const Checkout = () => {
                                     </label>
                                 </div>
 
-                                <div className="row-inputs delivery-selects">
-                                    <div className="select-wrapper">
-                                        <label>
-                                            <select
+                                <div className="row-inputs">
+                                        <div className="input-group">
+                                            <input
+                                                type="text"
+                                                id="region"
                                                 className="checkout-select"
-                                                name="city"
-                                                value={formData.city}
-                                                onChange={handleSelectChange}
+                                                placeholder="Область"
+                                                value={formData.region}
+                                                onChange={handleInputChange}
                                                 required
-                                            >
-                                                <option value="" disabled>Вибрати місто</option>
-                                                <option value="Київ">Київ</option>
-                                                <option value="Харків">Харків</option>
-                                                <option value="Полтава">Полтава</option>
-                                                <option value="Дніпро">Дніпро</option>
-                                            </select>
-                                        </label>
+                                            />
+                                            <label htmlFor="department" className="floating-label"></label>
+                                        </div>
+                                        <div className="input-group">
+                                            <input
+                                                type="text"
+                                                id="city"
+                                                className="checkout-select"
+                                                placeholder="Населений пункт"
+                                                value={formData.city}
+                                                onChange={handleInputChange}
+                                                required
+                                            />
+                                            <label htmlFor="department" className="floating-label"></label>
+                                        </div>
+                                </div>
+                                <div className="row-inputs">
+                                    <div className="input-group">
+                                        <input
+                                            type="text"
+                                            id="street"
+                                            className="checkout-select"
+                                            placeholder="Вулиця"
+                                            value={formData.street}
+                                            onChange={handleInputChange}
+                                        />
+                                        <label htmlFor="department" className="floating-label"></label>
                                     </div>
                                     <div className="input-group">
                                         <input
                                             type="text"
-                                            id="department" // Важливо: id має співпаати з полем в formData
+                                            id="houseNumber"
                                             className="checkout-select"
-                                            placeholder="Номер відделення"
+                                            placeholder="Номер будинка"
+                                            value={formData.houseNumber}
+                                            onChange={handleInputChange}
+                                        />
+                                        <label htmlFor="department" className="floating-label"></label>
+                                    </div>
+                                </div>
+                                <div className="row-inputs">
+                                    <div >
+                                        <input
+                                            type="text"
+                                            id="department"
+                                            className="checkout-select"
+                                            placeholder="Номер відділення"
                                             value={formData.department}
-                                            onChange={handleInputChange} // Використовуємо обробник для текстових полів
+                                            onChange={handleInputChange}
                                             required
                                         />
                                         <label htmlFor="department" className="floating-label"></label>

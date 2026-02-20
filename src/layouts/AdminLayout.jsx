@@ -124,7 +124,7 @@ const AdminLayout = () => {
                     <Toolbar disableGutters sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '0 10px' }}>
 
                         <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
-                            <img src="/icon.svg" alt="logo" style={{ height: 40, width: 40 }} />
+                            <img src="/img/icon.svg" alt="logo" style={{ height: 40, width: 40 }} />
                         </Box>
                         <Typography variant="h6" sx={{ fontSize: '16px', fontWeight: 'bold' }}>
                             Адмін панель

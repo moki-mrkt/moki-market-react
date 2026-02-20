@@ -363,8 +363,7 @@
 }
 
 .category-description {
-    /* Відступ від товарів зверху */
-    margin-bottom: 153px; /* Відступ до футера */
+    margin-bottom: 153px;
     color: #0E2CA4;
     position: relative;
 }
@@ -412,7 +411,6 @@
     font-weight: 600;
 }
 
-/* === МОБІЛЬНА АДАПТАЦІЯ (Додати в кінець src/css/page_goods.css) === */
 @media (max-width: 768px) {
 
     .desktop-sort,

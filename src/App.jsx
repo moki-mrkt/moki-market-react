@@ -37,14 +37,23 @@ import UserInfo from './components/UserRoom/tabs/UserInfo';
 import UserOrders from './components/UserRoom/tabs/UserOrders';
 import UserWishlist from './components/UserRoom/tabs/UserWishlist';
 import UserReviews from './components/UserRoom/tabs/UserReviews';
+import ActivateAccount from "./utils/ActivateAccount.jsx";
+import {Toaster} from "react-hot-toast";
+import React from "react";
 
 function App() {
     const location = useLocation();
 
     return (
         <CartProvider>
+            <Toaster position="top-right"
+                     toastOptions={{
+                         className: 'moki-toast',
+                     }}
+                     reverseOrder={false} />
         <Routes>
 
+            <Route path="/activate" element={<ActivateAccount />} />
             <Route path="admin-ui/login" element={<LoginPage />} />
 
             {/* --- ГІЛКА МАГАЗИНУ (PUBLIC) --- */}

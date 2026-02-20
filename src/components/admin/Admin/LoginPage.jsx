@@ -12,8 +12,6 @@ const LoginPage = () => {
     // Щоб повернути юзера туди, куди він хотів зайти
     const from = location.state?.from?.pathname || '/admin-ui/products';
 
-     console.log(from);
-
     const [credentials, setCredentials] = useState({ email: '', password: '' });
     const [error, setError] = useState('');
     const [loading, setLoading] = useState(false);
@@ -29,7 +27,6 @@ const LoginPage = () => {
 
         try {
             await authService.login(credentials.email, credentials.password);
-            // Успішний вхід -> переходимо на головну або захищену сторінку
             navigate(from, { replace: true });
         } catch (err) {
             setError('Невірний email або пароль');

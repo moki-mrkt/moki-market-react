@@ -8,12 +8,16 @@ import { authService } from '../../services/authService';
 import './Header.css';
 
 import AuthenticationModal from "../Modals/AuthenticationModal/AuthenticationModal";
-import RegistrationModal from "../Modals/RegistrationModal/RegistrationModal"; // Імпортуємо нову модалку
+import RegistrationModal from "../Modals/RegistrationModal/RegistrationModal";
+import ForgotPassword from "../Modals/ForgotPassword/ForgotPasswordModal.jsx";
+import EmailConfirmationModal from "../Modals/EmailConfirmationModal/EmailConfirmationModal.jsx";
 
 const Header = () => {
 
     const [isAuthOpen, setIsAuthOpen] = useState(false);
     const [isRegisterOpen, setIsRegisterOpen] = useState(false);
+    const [isForgotPasswordOpen, setIsForgotPasswordOpen] = useState(false);
+    const [isEmailConfirmationOpen, setIsEmailConfirmationOpen] = useState(false);
 
     const navigate = useNavigate();
 
@@ -24,8 +28,10 @@ const Header = () => {
     const [searchTerm, setSearchTerm] = useState('');
 
     const openLogin = () => {
-        setIsRegisterOpen(false);
         setIsAuthOpen(true);
+        setIsRegisterOpen(false);
+        setIsForgotPasswordOpen(false);
+        setIsEmailConfirmationOpen(false);
     };
 
     const openRegister = () => {
@@ -33,9 +39,21 @@ const Header = () => {
         setIsRegisterOpen(true);
     };
 
+    const openForgotPassword = () => {
+        setIsAuthOpen(false);
+        setIsForgotPasswordOpen(true);
+    };
+
+    const openEmailConfirmation = () => {
+      setIsRegisterOpen(false);
+      setIsEmailConfirmationOpen(true)
+    };
+
     const closeAllModals = () => {
         setIsAuthOpen(false);
         setIsRegisterOpen(false);
+        setIsForgotPasswordOpen(false);
+        setIsEmailConfirmationOpen(false);
     };
 
     const handleCabinetClick = () => {
@@ -49,6 +67,10 @@ const Header = () => {
     const handleAuthSuccess = () => {
         closeAllModals();
         navigate('/profile');
+    };
+
+    const handleForgotPasswordSuccess = () => {
+        closeAllModals();
     };
 
     const handleSearch = () => {
@@ -71,10 +93,6 @@ const Header = () => {
     const handleClear = () => {
         setSearchTerm('');
         document.querySelector('.search-input').focus();
-    };
-
-    const handleCloseAuthModal = () => {
-        setIsAuthOpen(false);
     };
 
     const closeMenu = () => {
@@ -105,26 +123,40 @@ const Header = () => {
                 </div>
             </div>
 
-            {/*<AuthenticationModal*/}
-            {/*    isOpen={isAuthOpen}*/}
-            {/*    onClose={closeAllModals}*/}
-            {/*    onSuccess={handleAuthSuccess}*/}
-            {/*    onSwitchToRegister={openRegister} // Передаємо функцію перемикання*/}
-            {/*/>*/}
+            <AuthenticationModal
+                isOpen={isAuthOpen}
+                onClose={closeAllModals}
+                onSuccess={handleAuthSuccess}
+                onSwitchToRegister={openRegister}
+                onSwitchToForgotPassword={openForgotPassword}
+            />
 
-            {/*<RegistrationModal*/}
-            {/*    isOpen={isRegisterOpen}*/}
-            {/*    onClose={closeAllModals}*/}
-            {/*    onSuccess={handleAuthSuccess}*/}
-            {/*    onSwitchToLogin={openLogin} // Передаємо функцію повернення*/}
-            {/*/>*/}
+            <RegistrationModal
+                isOpen={isRegisterOpen}
+                onClose={closeAllModals}
+                onSuccess={openEmailConfirmation}
+                onSwitchToLogin={openLogin}
+            />
+
+            <ForgotPassword
+                isOpen={isForgotPasswordOpen}
+                onClose={closeAllModals}
+                onSuccess={handleForgotPasswordSuccess}
+                onSwitchToLogin={openLogin}
+            />
+
+            <EmailConfirmationModal
+                isOpen={isEmailConfirmationOpen}
+                onClose={closeAllModals}
+                onSwitchToLogin={openLogin}
+            />
 
             <header className="header">
                 <div className="container">
                     <div className="header__content">
 
                         <Link to="/" className="logo" onClick={closeMenu}>
-                            <img src="/icon.svg" alt="MOKI" />
+                            <img src="/img/icon.svg" alt="MOKI" />
                         </Link>
 
                         <button
@@ -165,19 +197,11 @@ const Header = () => {
                         </div>
 
                         <div className="user-actions">
-                            {/*<Link to="/profile" className="icon-user user-actions-icon">*/}
-                            {/*    <img src="/img/user.svg" alt="user" />*/}
-                            {/*</Link>*/}
-
                             <div className="user-actions-icon">
                                 <button onClick={handleCabinetClick} className="icon-cart-btn">
                                     <img src="/img/user.svg" alt="User room" />
                                 </button>
                             </div>
-
-                            {/*<Link to="/profile/wishlist" className="icon-heart user-actions-icon">*/}
-                            {/*    <img src="/img/fav.svg" alt="fav" />*/}
-                            {/*</Link>*/}
 
                             <div className="user-actions-icon">
                                 <button onClick={handleCabinetClick} className="icon-cart-btn">
@@ -211,7 +235,7 @@ const Header = () => {
                 <div className={`mobile-menu-drawer ${isMenuOpen ? 'active' : ''}`}>
                     <div className="mobile-menu-header">
                         <Link to="/" className="mobile-logo" onClick={closeMenu}>
-                            <img src="/icon.svg" alt="MOKI" />
+                            <img src="/img/icon.svg" alt="MOKI" />
                         </Link>
                         <button className="close-menu-btn" aria-label="Close menu" onClick={closeMenu}>&times;</button>
                     </div>
