@@ -13,11 +13,15 @@ export const authService = {
         return response.data;
     },
 
-    logoutUser: () => {
+    logoutUser: (openLoginAfter = false) => {
         localStorage.removeItem('accessToken');
         localStorage.removeItem('refreshToken');
 
-        window.location.href = '/';
+        if (openLoginAfter) {
+            window.location.href = '/?login=true';
+        } else {
+            window.location.href = '/';
+        }
     },
 
     logoutAdmin: () => {

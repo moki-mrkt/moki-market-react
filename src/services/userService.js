@@ -1,4 +1,4 @@
-import { publicApi } from './api';
+import { publicApi, privateApi } from './api';
 
 export const userService = {
     registration: async (userCreateDTO) => {
@@ -8,9 +8,23 @@ export const userService = {
         return response.status;
     },
 
-    activate: async (token) => {
-        const response = await publicApi.patch(`/users/activation?token=${token}`);
+    getProfile: async () => {
+        const response = await privateApi.get('/users/profile');
+        return response.data;
+    },
 
-        return response.status;
+    updateProfile: async (userData) => {
+        const response = await privateApi.patch('/users/profile', userData);
+        return response.data;
+    },
+
+    updateAvatar: async (newImageKey) => {
+        const response = await privateApi.patch('/users/profile/avatar', { imageId: newImageKey });
+        return response.data;
+    },
+
+    deleteAvatar: async () => {
+        const response = await privateApi.patch('/users/profile/avatar', { imageId: null });
+        return response.data;
     }
 };

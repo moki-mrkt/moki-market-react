@@ -4,6 +4,7 @@ import toast, { Toaster } from 'react-hot-toast';
 import { authService } from '../../../services/authService';
 
 import './AuthenticationModal.css';
+// import '../../../styles/PasswordTogle.css';
 
 const AuthenticationModal = ({ isOpen, onClose, onSuccess, onSwitchToRegister, onSwitchToForgotPassword}) => {
 
@@ -32,8 +33,6 @@ const AuthenticationModal = ({ isOpen, onClose, onSuccess, onSwitchToRegister, o
             onSuccess(response);
             onClose();
         } catch (err) {
-
-            console.log(err)
 
             if (err.response && err.response.status === 401) {
                 toast.error('Невірна пошта або пароль', {

@@ -1,8 +1,9 @@
 import React, { useEffect, useRef } from 'react';
 import { useSearchParams, useNavigate } from 'react-router-dom';
 import { accountSecurity } from "../services/accountSecurity.js";
+import { authService } from "../services/authService.js";
 
-const ActivateAccount = () => {
+const ConfirmEmail = () => {
     const [searchParams] = useSearchParams();
     const navigate = useNavigate();
     const hasFetched = useRef(false);
@@ -18,26 +19,27 @@ const ActivateAccount = () => {
             return;
         }
 
-        const activateUser = async () => {
+        const confirmChange = async () => {
             try {
+                await accountSecurity.confirmEmailChange(token);
 
-                await accountSecurity.activate(token);
+                if (authService.isAuthenticated()) authService.logoutUser();
 
-                navigate('/?activation=success', { replace: true });
-
+                navigate('/?email-changed=success&login=true', { replace: true });
             } catch (error) {
-                console.error('Помилка активації:', error);
-                navigate('/?activation=error', { replace: true });
+                console.error('Помилка підтвердження пошти:', error);
+                navigate('/?email-changed=error', { replace: true });
             }
         };
 
-        activateUser();
+        confirmChange();
     }, [searchParams, navigate]);
+
     return (
         <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}>
-            <h2>Перевірка токена...</h2>
+            <h2>Підтвердження зміни пошти...</h2>
         </div>
     );
 };
 
-export default ActivateAccount;
+export default ConfirmEmail;

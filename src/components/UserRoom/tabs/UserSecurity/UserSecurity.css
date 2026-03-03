@@ -1,0 +1,183 @@
+.security-title {
+    margin-bottom: 20px;
+}
+
+.email-form {
+    margin-bottom: 20px;
+}
+
+.email-change-input {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 20px;
+}
+
+.security-modal-info-block {
+    width: 100%;
+    padding-left: 10px;
+    margin-bottom: 10px;
+}
+
+.security-modal-info {
+    text-align: start;
+    margin-top: 0;
+
+    color: #061F7C;
+    margin-bottom: 5px;
+}
+
+.security-modal-text {
+    text-align: start;
+    margin: 0;
+    color: #7B8CC6;
+}
+
+
+.security-password-wrapper {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.security-password-toggle-btn {
+    position: absolute;
+    right: 20px;
+    background: none;
+    border: none;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    padding: 0;
+    opacity: 0.6;
+    transition: opacity 0.2s;
+}
+
+.security-password-toggle-btn:hover {
+    opacity: 1;
+}
+
+.security-password-toggle-btn img {
+    width: 35px;
+    height: 25px;
+}
+
+.security-error-style {
+    color: #d32f2f;
+    font-size: 14px;
+    margin-top: 1px;
+    margin-left: 20px;
+    text-align: start;
+    position: absolute;
+    top: 100%;
+    white-space: nowrap;
+    pointer-events: none;
+}
+
+.email-success-block {
+    display: flex !important;;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    padding: 40px;
+    margin-bottom: 20px;
+}
+
+.email-success-content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    max-width: 600px;
+
+}
+
+.email-success-text {
+    font-size: 22px;
+    color: #061F7C;
+    margin: 0;
+    line-height: 1.5;
+}
+
+.highlight-email {
+    display: inline-block;
+    margin-top: 10px;
+    font-weight: 600;
+    color: #0E2CA4;
+    background-color: #F0F4FA; /* Легкий синій фон для виділення пошти */
+    padding: 5px 15px;
+    border-radius: 8px;
+}
+
+.email-success-hint {
+    font-size: 16px;
+    color: #7B8CC6;
+    margin-bottom: 30px;
+    line-height: 1.4;
+}
+
+/* Кнопка повернення до форми (робимо її прозорою з рамкою) */
+.return-btn {
+    background-color: transparent !important;
+    color: #0E2CA4 !important;
+    border: 2px solid #0E2CA4 !important;
+    font-weight: 500;
+    width: auto !important;
+    padding: 0 30px;
+}
+
+.return-btn:hover {
+    background-color: #F0F4FA !important;
+}
+
+
+@media (max-width: 768px) {
+
+    .security-title {
+        margin-bottom: 10px;
+    }
+
+    .security-password-toggle-btn img {
+        width: 25px !important;
+        height: 20px  !important;
+    }
+
+    .security-password-toggle-btn {
+        right: 20px !important;
+    }
+
+    .security-error-style {
+        font-size: 12px;
+        margin-top: 2px;
+        margin-left: 10px;
+    }
+
+    .security-modal-info-block {
+        width: 100%;
+        padding-left: 10px;
+    }
+
+    .security-modal-info {
+        font-size: 14px;
+        margin-bottom: 0;
+    }
+
+    .security-modal-text {
+        font-size: 12px;
+    }
+
+    .email-form {
+        margin-bottom: 10px;
+    }
+
+    .email-success-text {
+        font-size: 18px;
+    }
+
+    .highlight-email {
+        padding: 5px 10px;
+        word-break: break-all;
+    }
+
+}

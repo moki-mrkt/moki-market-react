@@ -23,77 +23,10 @@ const ImageUploader = ({ selectedImages, setSelectedImages }) => {
     const [croppedAreaPixels, setCroppedAreaPixels] = useState(null);
     const [currentFileName, setCurrentFileName] = useState('');
 
-    // const handleImageChange = async (e) => {
-    //     const files = Array.from(e.target.files);
-    //     if (files.length === 0) return;
-    //
-    //     const currentCount = selectedImages.length;
-    //     const availableSlots = MAX_IMAGES - currentCount;
-    //
-    //     if (files.length > availableSlots) {
-    //         alert(`Можна завантажити максимум ${MAX_IMAGES} фото. Вибрано забагато файлів.`);
-    //         return;
-    //     }
-    //
-    //     const filesToUpload = files.slice(0, availableSlots);
-    //
-    //     const newPlaceholders = filesToUpload.map(file => ({
-    //         file: file,
-    //         preview: URL.createObjectURL(file),
-    //         loading: true,
-    //         error: false,
-    //         key: null,
-    //         uploadedUrl: null,
-    //         imageId: null
-    //     }));
-    //
-    //     // file: null,
-    //     //     imageId: img.imageId, // Файлу немає, бо це вже на сервері
-    //     //     preview: img.imageUrl, // Використовуємо URL як прев'ю
-    //     //     uploadedUrl: img.imageUrl, // URL вже є
-    //     //     loading: false,
-    //     //     error: false
-    //
-    //     setSelectedImages(prev => [...prev, ...newPlaceholders]);
-    //
-    //     e.target.value = '';
-    //
-    //     for (let i = 0; i < newPlaceholders.length; i++) {
-    //         const currentImg = newPlaceholders[i];
-    //
-    //         try {
-    //             const response = await imageService.uploadImage(currentImg.file);
-    //
-    //             setSelectedImages(prev => prev.map(item => {
-    //                 if (item.preview === currentImg.preview) {
-    //                     return {
-    //                         ...item,
-    //                         loading: false,
-    //                         key: response.key,
-    //                         uploadedUrl: response.url,
-    //                         imageId: response.key
-    //                     };
-    //                 }
-    //                 return item;
-    //             }));
-    //
-    //         } catch (error) {
-    //             console.error("Upload failed", error);
-    //             setSelectedImages(prev => prev.map(item => {
-    //                 if (item.preview === currentImg.preview) {
-    //                     return { ...item, loading: false, error: true };
-    //                 }
-    //                 return item;
-    //             }));
-    //         }
-    //     }
-    // };
-
     const handleFileSelect = (e) => {
         const file = e.target.files[0];
         if (!file) return;
 
-        // Перевірка ліміту
         if (selectedImages.length >= MAX_IMAGES) {
             alert(`Максимум ${MAX_IMAGES} фото.`);
             return;
@@ -101,42 +34,29 @@ const ImageUploader = ({ selectedImages, setSelectedImages }) => {
 
         setCurrentFileName(file.name);
 
-        // Читаємо файл як URL для кропера
         const reader = new FileReader();
         reader.addEventListener('load', () => {
             setImageSrc(reader.result);
             setIsCropOpen(true);
-            // Скидаємо зум і кроп для нового фото
             setZoom(1);
             setCrop({ x: 0, y: 0 });
         });
         reader.readAsDataURL(file);
 
-        // Очищаємо інпут, щоб можна було вибрати той самий файл повторно
         e.target.value = '';
     };
 
-    // 2. Зберігаємо координати при зміні кропу
     const onCropComplete = (croppedArea, croppedAreaPixels) => {
         setCroppedAreaPixels(croppedAreaPixels);
     };
 
     const handleCropConfirm = async () => {
         try {
-            setIsCropOpen(false); // Закриваємо модалку
+            setIsCropOpen(false);
 
             const croppedBlob = await getCroppedImg(imageSrc, croppedAreaPixels, '#FFFFFF');
             const croppedFile = new File([croppedBlob], currentFileName, { type: "image/jpeg" });
 
-            // // Отримуємо обрізаний Blob
-            // const croppedBlob = await getCroppedImg(imageSrc, croppedAreaPixels);
-            //
-            // // Перетворюємо Blob назад у File (для uploadImage)
-            // const croppedFile = new File([croppedBlob], currentFileName, { type: "image/jpeg" });
-
-            // --- Починаємо процес завантаження (як було у вас раніше) ---
-
-            // Створюємо плейсхолдер
             const previewUrl = URL.createObjectURL(croppedFile);
             const newPlaceholder = {
                 file: croppedFile,
@@ -150,16 +70,15 @@ const ImageUploader = ({ selectedImages, setSelectedImages }) => {
 
             setSelectedImages(prev => [...prev, newPlaceholder]);
 
-            // Відправляємо на сервер
             try {
-                const response = await imageService.uploadImage(croppedFile);
+                const response = await imageService.uploadImage('products', croppedFile);
 
                 setSelectedImages(prev => prev.map(item => {
                     if (item.preview === previewUrl) {
                         return {
                             ...item,
                             loading: false,
-                            key: response.key, // або response.imageId залежно від вашого API
+                            key: response.key,
                             uploadedUrl: response.url,
                             imageId: response.key
                         };
@@ -179,7 +98,6 @@ const ImageUploader = ({ selectedImages, setSelectedImages }) => {
         } catch (e) {
             console.error("Crop failed", e);
         } finally {
-            // Очистка
             setImageSrc(null);
         }
     };
@@ -192,7 +110,6 @@ const ImageUploader = ({ selectedImages, setSelectedImages }) => {
                 await imageService.deleteImage(imageToRemove.key);
             } catch (error) {
                 console.error("Помилка видалення:", error);
-                // Можна додати сповіщення користувачу
             }
         }
 
@@ -205,36 +122,6 @@ const ImageUploader = ({ selectedImages, setSelectedImages }) => {
             return newImages;
         });
     };
-
-    const handleCloseCropper = () => {
-        setIsCropOpen(false);
-        setImageSrc(null);
-    };
-
-
-    // const handleRemoveImage = async (index) => {
-    //     const imageToRemove = selectedImages[index];
-    //
-    //     if (imageToRemove.uploadedUrl) {
-    //         try {
-    //             console.log(imageToRemove);
-    //             await imageService.deleteImage(imageToRemove.key);
-    //             console.log("Файл видалено з сервера:", imageToRemove.uploadedUrl);
-    //         } catch (error) {
-    //             console.error("Помилка видалення файлу з сервера:", error);
-    //             alert("Не вдалося видалити файл з сервера, але ми приберемо його зі списку.");
-    //         }
-    //     }
-    //
-    //     setSelectedImages(prev => {
-    //         const newImages = [...prev];
-    //         if (newImages[index].preview) {
-    //             URL.revokeObjectURL(newImages[index].preview);
-    //         }
-    //         newImages.splice(index, 1);
-    //         return newImages;
-    //     });
-    // };
 
     return (
         <Box sx={{ mb: 3 }}>
@@ -277,9 +164,6 @@ const ImageUploader = ({ selectedImages, setSelectedImages }) => {
                         {!img.loading && !img.error && (
                             <CheckCircleIcon color="success" sx={{ position: 'absolute', bottom: 4, right: 4, bgcolor: 'white', borderRadius: '50%', fontSize: 20 }} />
                         )}
-                        {/*{!img.loading && img.error && (*/}
-                        {/*    <ErrorIcon color="error" sx={{ position: 'absolute', bottom: 4, right: 4, bgcolor: 'white', borderRadius: '50%', fontSize: 20 }} />*/}
-                        {/*)}*/}
 
                         <IconButton
                             size="small"

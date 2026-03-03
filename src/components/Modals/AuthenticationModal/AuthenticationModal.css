@@ -81,6 +81,25 @@
     font-weight: 400;
 }
 
+.auth-btn {
+    background-color: #0E2CA4;
+    color: white;
+    border: none;
+    padding: 0;
+    border-radius: 20px;
+    font-size: 28px;
+    font-weight: 500;
+    cursor: pointer;
+    width: 70%;
+    height: 60px;
+    transition: background-color 0.2s;
+}
+
+.auth-btn:hover {
+    background-color: #061F7C;
+}
+
+
 .password-wrapper {
     position: relative;
     display: flex;
@@ -109,25 +128,6 @@
     width: 35px;
     height: 25px;
 }
-
-.auth-btn {
-    background-color: #0E2CA4;
-    color: white;
-    border: none;
-    padding: 0;
-    border-radius: 20px;
-    font-size: 28px;
-    font-weight: 500;
-    cursor: pointer;
-    width: 70%;
-    height: 60px;
-    transition: background-color 0.2s;
-}
-
-.auth-btn:hover {
-    background-color: #061F7C;
-}
-
 
 .registration-btn {
     background: white;
@@ -220,12 +220,6 @@
         box-sizing: border-box;
     }
 
-    .auth-checkout-input::placeholder {
-        color: #7B8CC6;
-        font-size: 16px;
-        font-weight: 400;
-    }
-
     .password-toggle-btn {
         right: 30px;
     }
@@ -233,6 +227,12 @@
     .password-toggle-btn img {
         width: 20px;
         height: 14px;
+    }
+
+    .auth-checkout-input::placeholder {
+        color: #7B8CC6;
+        font-size: 16px;
+        font-weight: 400;
     }
 
     .auth-btn {
@@ -249,7 +249,7 @@
     .registration-btn {
         border: 1px solid #061F7C;
 
-        margin-bottom: 10px;
+        margin-bottom: 5px;
         border-radius: 8px;
         font-size: 14px;
         width: 70%;

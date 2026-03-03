@@ -26,11 +26,11 @@ const request = async (endpoint, method = 'GET', body = null, isFormData = false
 };
 
 export const imageService = {
-    uploadImage: async (file) => {
+    uploadImage: async (folder, file) => {
         const formData = new FormData();
         formData.append('file', file);
 
-        return await request('/storage?folder=products', 'POST', formData, true);
+        return await request('/storage?folder=' + folder, 'POST', formData, true);
     },
 
     deleteImage: async (key) => {

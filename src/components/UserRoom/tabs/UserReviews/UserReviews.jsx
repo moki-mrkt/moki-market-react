@@ -1,6 +1,8 @@
 // src/components/UserRoom/tabs/UserReviews.jsx
 import React from 'react';
 
+import './UserReviews.css';
+
 const UserReviews = () => {
     return (
         <div className="reviews-header">

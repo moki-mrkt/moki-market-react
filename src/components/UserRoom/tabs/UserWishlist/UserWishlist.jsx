@@ -1,6 +1,7 @@
-// src/components/UserRoom/tabs/UserWishlist.jsx
+
 import React from 'react';
-import ProductCard from '../../ProductCard/ProductCard'; // Імпорт вашого компонента
+import ProductCard from '../../../ProductCard/ProductCard.jsx'; 
+import './UserWishlist.css';
 
 const UserWishlist = () => {
     // Тут мають бути реальні дані з контексту або API

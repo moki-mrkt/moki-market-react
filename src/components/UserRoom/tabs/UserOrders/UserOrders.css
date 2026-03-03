@@ -1,0 +1,221 @@
+.orders-table-wrapper {
+    overflow-x: auto;
+    overflow-y: auto;
+    max-height: 400px;
+    padding-right: 5px;
+}
+
+.orders-table {
+    width: 100%;
+    border-collapse: collapse;
+    min-width: 600px;
+
+}
+
+.view-link {
+    color: #0E2CA4;
+    text-decoration: none;
+    font-weight: 600;
+}
+
+.view-link:hover {
+    text-decoration: underline;
+}
+
+.orders-table td {
+    padding: 20px 0;
+    color: #0E2CA4;
+    font-size: 18px;
+    font-weight: 500;
+    border-bottom: 1px solid #AEBED2;
+}
+
+.status-processing {
+    color: #0E2CA4;
+}
+
+.orders-table th {
+    text-align: left;
+    color: #AEBED2;
+    font-weight: 500;
+    padding-bottom: 15px;
+    border-bottom: 1px solid #AEBED2;
+    font-size: 16px;
+}
+
+#orders.account-tab {
+    background-color: transparent;
+    border: none;
+    padding: 0;
+}
+
+#orders-list-view {
+    background-color: white;
+    border: 2px solid #0E2CA4;
+    border-radius: 20px;
+    padding: 40px;
+}
+
+.details-main-card {
+    background-color: white;
+    border: 2px solid #0E2CA4;
+    border-radius: 20px;
+    padding: 40px 40px 30px 40px;
+
+}
+
+.address-card {
+    background-color: white;
+    border: 2px solid #0E2CA4;
+    border-radius: 20px;
+    padding: 30px;
+}
+
+.details-header {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 15px;
+}
+
+.back-link:hover {
+    color: #0E2CA4;
+}
+
+.details-row {
+    display: flex;
+    justify-content: space-between;
+    padding: 15px 0;
+    font-size: 18px;
+    color: #0E2CA4;
+}
+
+.back-link {
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: #7B8CC6;
+    font-size: 16px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 0;
+    font-weight: 600;
+}
+
+.details-row.header-row {
+    color: #AEBED2;
+    font-size: 14px;
+    border-bottom: 1px solid #AEBED2;
+}
+
+.price-text {
+    font-weight: 600;
+}
+
+.details-divider {
+    border-top: 1px solid #AEBED2;
+    margin: 10px 0;
+}
+
+.summary-row {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 15px;
+    font-size: 18px;
+    color: #0E2CA4;
+}
+
+.summary-row .highlight {
+    font-weight: 600;
+}
+
+.details-summary {
+    margin-top: 20px;
+}
+
+.address-card {
+    border: 2px solid #0E2CA4;
+    border-radius: 20px;
+    padding: 30px;
+    margin-top: 40px;
+    background-color: white;
+}
+
+.address-info p {
+    margin: 0 0 8px 0;
+    color: #0E2CA4;
+    font-size: 18px;
+}
+
+.address-info .user-name-small {
+    font-weight: 600;
+    margin-bottom: 12px;
+}
+
+@media (max-width: 768px) {
+
+    #orders-list-view {
+        padding: 20px;
+    }
+
+    .orders-table {
+        min-width: 0;
+    }
+
+    .orders-table th,
+    .orders-table td {
+        font-size: 14px;
+        padding: 10px 5px;
+        white-space: nowrap;
+    }
+
+    .status-processing {
+        display: none;
+    }
+
+    /* --- Деталі замовлення --- */
+    .details-main-card,
+    .address-card {
+        padding: 20px;
+        margin-top: 10px;
+    }
+
+    .details-row {
+        font-size: 14px;
+        flex-wrap: wrap;
+        gap: 10px;
+    }
+
+    .details-row span:first-child {
+        max-width: 70%;
+    }
+
+    .total {
+        font-weight: 700;
+    }
+
+    .back-link-and-status {
+        width: 100%;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+    }
+
+    .status-block {
+        padding: 1px 8px;
+        height: 100%;
+        background: #0E2CA4;
+        color: white;
+        border-radius: 20px;
+    }
+
+    .summary-row {
+        font-size: 16px;
+    }
+
+    .address-info p {
+        font-size: 16px;
+    }
+
+}

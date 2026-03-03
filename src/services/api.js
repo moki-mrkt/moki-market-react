@@ -47,8 +47,6 @@ export const refreshTokens = async (originalRequest) => {
 
     privateApi.defaults.headers.common['Authorization'] = `Bearer ${accessToken}`;
 
-    // processQueue(null, accessToken);
-
     originalRequest.headers['Authorization'] = `Bearer ${accessToken}`;
 
     return privateApi(originalRequest);
@@ -64,10 +62,11 @@ privateApi.interceptors.response.use(
             originalRequest._retry = true;
 
             try {
-
+                console.log("Refresh token")
                 return refreshTokens(originalRequest);
 
             } catch (refreshError) {
+                console.log("Clean token")
                 localStorage.clear();
 
                 const currentPath = window.location.pathname;
@@ -75,7 +74,6 @@ privateApi.interceptors.response.use(
                 if (currentPath.startsWith('/admin-ui')) {
                     window.location.href = '/admin-ui/login';
                 } else {
-
                     window.location.href = '/';
                 }
             }

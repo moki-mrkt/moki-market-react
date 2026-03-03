@@ -1,5 +1,7 @@
-import React, { useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import React, {useEffect, useState} from 'react';
+import {Link, useLocation, useNavigate} from 'react-router-dom';
+
+import toast, { Toaster } from 'react-hot-toast';
 
 import {useCart} from "../CartContext/CartContext.jsx";
 
@@ -20,6 +22,7 @@ const Header = () => {
     const [isEmailConfirmationOpen, setIsEmailConfirmationOpen] = useState(false);
 
     const navigate = useNavigate();
+    const location = useLocation();
 
     const { cartCount, setIsCartOpen } = useCart();
 
@@ -55,6 +58,46 @@ const Header = () => {
         setIsForgotPasswordOpen(false);
         setIsEmailConfirmationOpen(false);
     };
+
+    useEffect(() => {
+
+        const searchParams = new URLSearchParams(location.search);
+        let shouldCleanUrl = false;
+
+        const emailStatus = searchParams.get('email-changed');
+        if (emailStatus === 'success') {
+            toast.success('Пошту успішно змінено! Будь ласка, увійдіть заново.');
+            shouldCleanUrl = true;
+        } else if (emailStatus === 'error') {
+            toast.error('Помилка підтвердження або посилання застаріло.');
+            shouldCleanUrl = true;
+        }
+
+        const activationStatus = searchParams.get('activation');
+        if (activationStatus === 'success') {
+            toast.success('Акаунт активований!', {
+                duration: 4000,
+                style: { width: '380px' }
+            });
+            openLogin();
+            shouldCleanUrl = true;
+        } else if (activationStatus === 'error') {
+            toast.error('Помилка активації.', {
+                duration: 4000,
+                style: { width: '300px' }
+            });
+            shouldCleanUrl = true;
+        }
+
+        if (searchParams.get('login') === 'true') {
+            openLogin();
+            shouldCleanUrl = true;
+        }
+
+        if (shouldCleanUrl) {
+            navigate(location.pathname, { replace: true });
+        }
+    }, [location.search, navigate]);
 
     const handleCabinetClick = () => {
         if (authService.isAuthenticated()) {

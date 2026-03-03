@@ -33,13 +33,15 @@ import AdminOrderEdit from "./components/admin/Order/AdminOrderEdit.jsx";
 import AdminFeedbacks from "./components/admin/Feedback/AdminFeedbacks.jsx";
 
 import UserRoom from './components/UserRoom/UserRoom';
-import UserInfo from './components/UserRoom/tabs/UserInfo';
-import UserOrders from './components/UserRoom/tabs/UserOrders';
-import UserWishlist from './components/UserRoom/tabs/UserWishlist';
-import UserReviews from './components/UserRoom/tabs/UserReviews';
+import UserInfo from './components/UserRoom/tabs/UserInfo/UserInfo.jsx';
+import UserSecurity from './components/UserRoom/tabs/UserSecurity/UserSecurity.jsx';
+import UserOrders from './components/UserRoom/tabs/UserOrders/UserOrders.jsx';
+import UserWishlist from './components/UserRoom/tabs/UserWishlist/UserWishlist.jsx';
+import UserReviews from './components/UserRoom/tabs/UserReviews/UserReviews.jsx';
 import ActivateAccount from "./utils/ActivateAccount.jsx";
 import {Toaster} from "react-hot-toast";
 import React from "react";
+import ConfirmEmail from "./utils/ConfirmEmail.jsx";
 
 function App() {
     const location = useLocation();
@@ -54,6 +56,7 @@ function App() {
         <Routes>
 
             <Route path="/activate" element={<ActivateAccount />} />
+            <Route path="/confirm-email" element={<ConfirmEmail />} />
             <Route path="admin-ui/login" element={<LoginPage />} />
 
             {/* --- ГІЛКА МАГАЗИНУ (PUBLIC) --- */}
@@ -68,16 +71,15 @@ function App() {
 
                 <Route path="*" element={<NotFoundPage />} />
 
-                <Route path="profile" element={<UserRoom />}>
-                    {/* Редірект за замовчуванням на 'info' */}
+                <Route path="profile" element={
+                    <PrivateRoute>
+                      <UserRoom />
+                    </PrivateRoute>
+                }>
                     <Route index element={<Navigate to="info" replace />} />
 
-                    <Route path="info" element={
-                        <PrivateRoute>
-                            <UserInfo />
-                        </PrivateRoute>
-                    }
-                    />
+                    <Route path="info" element={<UserInfo />}/>
+                    <Route path="security" element={<UserSecurity />}/>
                     <Route path="orders" element={<UserOrders />} />
                     <Route path="wishlist" element={<UserWishlist />} />
                     <Route path="reviews" element={<UserReviews />} />

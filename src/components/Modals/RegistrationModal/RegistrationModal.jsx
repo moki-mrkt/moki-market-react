@@ -206,7 +206,6 @@ const RegistrationModal = ({ isOpen, onClose, onSwitchToLogin, onSuccess }) => {
                                         onClick={() => setShowPassword(!showPassword)}
                                         style={{top: '50%', transform: 'translateY(-50%)'}}
                                     >
-                                        {/*<img className="reg-password-toggle-btn-img" src={showPassword ? "/img/eye-off.svg" : "/img/eye.svg"} alt="toggle visibility"/>*/}
                                         <img src={showPassword ? "/img/eye-off.svg" : "/img/eye.svg"} alt="toggle visibility"/>
                                     </button>
                                 </div>
