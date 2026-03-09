@@ -29,27 +29,19 @@ const CartDrawer = ({ isOpen, onClose }) => {
 
     if (!isCartOpen) return null;
 
-    const handleClose = () => {
-        setIsCartOpen(false);
-    };
+    const handleClose = () => setIsCartOpen(false);
 
     const handleCheckout = () => {
         setIsCartOpen(false);
         navigate('/checkout');
     };
 
-    // Хелпер для зміни кількості (викликає функцію з контексту)
     const handleQuantityChange = (id, currentQty, delta) => {
         const newQty = currentQty + delta;
         updateQuantity(id, newQty);
     };
 
-    // Хелпер для отримання картинки (підтримує і мок-дані, і реальний DTO з бекенду)
-    const getImageUrl = (item) => {
-        if (item.image) return item.image;
-        if (item.images && item.images.length > 0) return item.images[0].imageUrl;
-        return '/placeholder.png'; // Заглушка, якщо фото немає
-    };
+    console.log(cartItems)
 
     return (
         <div className="cart-overlay" onClick={handleClose}>
@@ -78,13 +70,15 @@ const CartDrawer = ({ isOpen, onClose }) => {
                         cartItems.map(item => (
                             <div className="cart-item" key={item.id}>
                                 <div className="cart-img">
-                                    <img src={getImageUrl(item)} alt={item.name} />
+                                    <img src={item.image || '/placeholder.png'} alt={item.name} />
                                 </div>
 
                                 <div className="cart-info">
                                     <div>
                                         <h4 className="cart-name">{item.name}</h4>
                                     </div>
+
+                                    {/*<span className="item-old-price">{item.itemTotal.toFixed(2)}₴ </span>*/}
 
                                     <div className="cart-controls">
                                         <div className="qty-and-trash">
@@ -111,12 +105,26 @@ const CartDrawer = ({ isOpen, onClose }) => {
                                                 <img src="/img/trash.svg" alt="delete" />
                                             </button>
                                         </div>
-                                        <div className="item-price action-mobile">{(item.priceWithDiscount * item.quantity).toFixed(2)} ₴</div>
+                                        <div className="item-price action-mobile">
+                                            {item.itemTotal.toFixed(2)} ₴
+                                        </div>
+                                    </div>
+
+                                    <div className="price-per-unit">
+                                        { item.priceWithoutDiscount !== item.price && (
+                                            <span className="item-price-without-discount">
+                                                     {item.priceWithoutDiscount}₴
+                                           </span>
+                                        )}
+                                        <span className="item-current-price">{item.price.toFixed(2)}₴ за шт.</span>
                                     </div>
                                 </div>
 
                                 <div className="cart-price-action-desktop">
-                                    <span className="item-price">{(item.priceWithDiscount * item.quantity).toFixed(2)} ₴</span>
+                                    <div>
+                                        <span className="item-price">{item.itemTotal.toFixed(2)}₴</span>
+                                    </div>
+
                                     <button
                                         className="remove-btn"
                                         onClick={() => removeFromCart(item.id)}
@@ -133,7 +141,7 @@ const CartDrawer = ({ isOpen, onClose }) => {
                     <div className="cart-drawer-footer">
                         <div className="total-price">
                             <span>Разом:</span>
-                            <span>{cartTotal} ₴</span>
+                            <span>{Number(cartTotal).toFixed(2)} ₴</span>
                         </div>
                         <div className="cart-footer-btn">
                             <button className="btn-checkout" onClick={handleCheckout}>

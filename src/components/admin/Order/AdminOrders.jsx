@@ -62,7 +62,7 @@ const AdminOrders = () => {
     const handleDelete = async (id) => {
         if (window.confirm('Ви впевнені, що хочете відмінити це замовлення?')) {
             try {
-                await orderService.deleteOrder(id);
+                await orderService.cancelOrder(id);
                 await loadOrders();
             } catch (error) {
                 console.error("Не вдалося видалити:", error);

@@ -1,0 +1,113 @@
+.cancel-modal-content {
+    max-width: 750px;
+    text-align: center;
+}
+
+.cancel-modal-title {
+    font-size: 30px;
+    color: #061F7C;
+    margin-top: 10px;
+    margin-bottom: 10px;
+}
+
+.cancel-modal-body {
+    margin-bottom: 10px;
+    color: #374151;
+    line-height: 1.5;
+}
+
+.cancel-warning {
+    color: #EF4444;
+    margin-top: 10px;
+    margin-bottom: 10px;
+    font-size: 20px;
+    font-weight: 500;
+}
+
+.cancel-text {
+    color: #0E2CA4;
+    font-size: 26px;
+    font-weight: 500;
+    margin: 0;
+}
+
+.cancel-modal-actions {
+    display: flex;
+    gap: 15px;
+    justify-content: space-between;
+}
+
+.cancel-btn-outline {
+    background-color: transparent;
+    border: 2px solid #F0D051;
+    color: #0E2CA4;
+    transition: all 0.2s;
+    font-size: 24px;
+}
+
+.cancel-btn-outline:hover:not(:disabled) {
+    background-color: #FEF9E6;
+}
+
+/* Кнопка "Так, скасувати" */
+.cancel-btn-danger {
+    background-color: #EF4444;
+    color: white;
+    border: none;
+    transition: all 0.2s;
+    font-size: 24px;
+}
+
+.cancel-btn-danger:hover:not(:disabled) {
+    background-color: #DC2626;
+}
+
+.cancel-btn-outline:disabled,
+.cancel-btn-danger:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+@media (max-width: 768px) {
+    .cancel-modal-content {
+        max-width: 350px;
+    }
+
+    .cancel-modal-title {
+        font-size: 20px;
+        margin-top: 5px;
+        margin-bottom: 5px;
+    }
+
+    .cancel-modal-body {
+        margin-bottom: 5px;
+    }
+
+    .cancel-warning {
+        margin-top: 5px;
+        margin-bottom: 5px;
+        font-size: 16px;
+    }
+
+    .cancel-text {
+        font-size: 16px;
+    }
+
+    .cancel-modal-actions {
+        gap: 10px;
+        justify-content: space-between;
+    }
+
+    .cancel-btn-outline {
+        border: 1px solid #F0D051;
+        transition: all 0.2s;
+        font-size: 16px;
+        margin-top: 5px;
+    }
+
+    .cancel-btn-danger {
+        font-size: 16px;
+        margin-top: 5px;
+    }
+
+}

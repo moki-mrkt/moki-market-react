@@ -10,10 +10,12 @@ export const authService = {
             localStorage.setItem('accessToken', response.data.accessToken);
             localStorage.setItem('refreshToken', response.data.refreshToken);
         }
+
         return response.data;
     },
 
     logoutUser: (openLoginAfter = false) => {
+
         localStorage.removeItem('accessToken');
         localStorage.removeItem('refreshToken');
 
@@ -30,7 +32,6 @@ export const authService = {
         window.location.href = '/admin-ui/login';
     },
 
-    // Перевірка, чи ми залогінені (проста перевірка наявності токена)
     isAuthenticated: () => {
         return !!localStorage.getItem('accessToken');
     }

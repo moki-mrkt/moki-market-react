@@ -1,13 +1,15 @@
 import React, {useEffect, useState} from 'react';
 import toast, { Toaster } from 'react-hot-toast';
 
+import { useCart } from '../../CartContext/CartContext.jsx';
 import { authService } from '../../../services/authService';
 
 import './AuthenticationModal.css';
-// import '../../../styles/PasswordTogle.css';
+import {cartService} from "../../../services/cartService.js";
 
 const AuthenticationModal = ({ isOpen, onClose, onSuccess, onSwitchToRegister, onSwitchToForgotPassword}) => {
 
+    const { syncCartWithServer } = useCart();
     const [loading, setLoading] = useState(false);
     const [showPassword, setShowPassword] = useState(false);
 
@@ -28,30 +30,42 @@ const AuthenticationModal = ({ isOpen, onClose, onSuccess, onSwitchToRegister, o
     const handleSubmit = async (e) => {
         e.preventDefault();
         setLoading(true);
-        try {
-            const response = await authService.login(credentials.email, credentials.password);
-            onSuccess(response);
-            onClose();
-        } catch (err) {
 
+        let loginResponse;
+
+        try {
+            loginResponse = await authService.login(credentials.email, credentials.password);
+        } catch (err) {
             if (err.response && err.response.status === 401) {
                 toast.error('Невірна пошта або пароль', {
-                    duration: 4000,
-                    position: 'top-right',
-                    style: {
-                        paddingLeft: '25px',
-                    }
+                    duration: 4000, position: 'top-right', style: { paddingLeft: '25px' }
                 });
             } else {
-                toast.error('Помилка авторизації',{
-                    duration: 4000,
-                    position: 'top-right',
-                    style: {
-                        width: '300px',
-                    }
+                toast.error('Помилка авторизації', {
+                    duration: 4000, position: 'top-right', style: { width: '300px' }
                 });
             }
+            setLoading(false);
+            return;
+        }
+
+        try {
+            const guestCart = JSON.parse(localStorage.getItem('guest_cart')) || [];
+
+            if (guestCart.length > 0) {
+                for (const item of guestCart) {
+                    const productIdToUse = item.id || item.productId;
+                    await cartService.addToCart(productIdToUse, item.quantity);
+                }
+                localStorage.removeItem('guest_cart');
+            }
+
+            await syncCartWithServer();
+        } catch (err) {
+            console.error("Помилка при перенесенні кошика на бекенд:", err);
         } finally {
+            onSuccess(loginResponse);
+            onClose();
             setLoading(false);
         }
     };

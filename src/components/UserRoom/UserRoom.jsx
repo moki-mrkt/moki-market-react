@@ -9,9 +9,11 @@ import { authService } from '../../services/authService';
 import { imageService } from '../../services/imageService';
 
 import './UserRoom.css';
+import {useCart} from "../CartContext/CartContext.jsx";
 
 const UserRoom = () => {
 
+    const { clearCart } = useCart();
     const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
     const [user, setUser] = useState(null);
@@ -94,6 +96,8 @@ const UserRoom = () => {
 
     const handleLogout = () => {
         authService.logoutUser();
+        clearCart();
+        localStorage.removeItem('guest_cart');
     };
 
     if (loading) return <div style={{textAlign: 'center', marginTop: '50px'}}>Завантаження...</div>;

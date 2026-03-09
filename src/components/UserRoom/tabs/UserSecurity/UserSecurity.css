@@ -105,7 +105,7 @@
     margin-top: 10px;
     font-weight: 600;
     color: #0E2CA4;
-    background-color: #F0F4FA; /* Легкий синій фон для виділення пошти */
+    background-color: #F0F4FA;
     padding: 5px 15px;
     border-radius: 8px;
 }
@@ -117,7 +117,6 @@
     line-height: 1.4;
 }
 
-/* Кнопка повернення до форми (робимо її прозорою з рамкою) */
 .return-btn {
     background-color: transparent !important;
     color: #0E2CA4 !important;
@@ -144,7 +143,7 @@
     }
 
     .security-password-toggle-btn {
-        right: 20px !important;
+        right: 10px !important;
     }
 
     .security-error-style {

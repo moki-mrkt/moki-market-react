@@ -2,12 +2,15 @@ import React, { useState } from 'react';
 import {Link, useOutletContext} from 'react-router-dom';
 import { userService } from '../../../../services/userService.js';
 import { authService } from '../../../../services/authService.js';
+import { cartService } from '../../../../services/cartService.js';
 import toast from 'react-hot-toast';
 
 import './UserInfo.css';
+import {useCart} from "../../../CartContext/CartContext.jsx";
 
 const UserInfo = () => {
 
+    const { clearCart } = useCart();
     const { user, setUser } = useOutletContext();
     const [isSaving, setIsSaving] = useState(false);
     const [errors, setErrors] = useState({});
@@ -70,6 +73,17 @@ const UserInfo = () => {
         }
     };
 
+    const handlePostOfficeChange = (e) => {
+        const value = e.target.value;
+
+        if (!value.startsWith('№ ')) {
+            setFormData(prev => ({ ...prev, postOffice: '№ ' }));
+            return;
+        }
+
+        setFormData(prev => ({ ...prev, postOffice: value }));
+    };
+
     const handleSubmit = async (e) => {
         e.preventDefault();
 
@@ -110,8 +124,10 @@ const UserInfo = () => {
         }
     };
 
-    const handleLogout = async () => {
+    const handleLogout = () => {
         authService.logoutUser();
+        clearCart();
+        localStorage.removeItem('guest_cart');
     };
 
     return (
@@ -202,7 +218,7 @@ const UserInfo = () => {
                         className="account-input"
                         placeholder="Відділення пошти"
                         value={formData.postOffice}
-                        onChange={handleChange}
+                        onChange={handlePostOfficeChange}
                     />
                 </div>
 

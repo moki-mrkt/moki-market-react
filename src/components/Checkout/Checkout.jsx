@@ -2,10 +2,14 @@ import React, { useState, useEffect, useMemo } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import Breadcrumbs from '../Breadcrumbs/Breadcrumbs';
 import { useCart } from '../CartContext/CartContext';
+
 import { orderService } from '../../services/orderService';
+import { authService } from '../../services/authService';
+import { userService } from '../../services/userService';
 
 import './Checkout.css';
 import SuccessOrderModal from "../Modals/SuccessOrderModal/SuccessOrderModal.jsx";
+import toast from "react-hot-toast";
 
 const Checkout = () => {
     const navigate = useNavigate();
@@ -29,8 +33,51 @@ const Checkout = () => {
         paymentType: 'card',
         city: '',
         region: '',
-        department: '',
+        postOffice: '№',
+        street: '',
+        houseNumber: '',
+        apartment: ''
     });
+
+    useEffect(() => {
+        const fetchUserData = async () => {
+            if (authService.isAuthenticated()) {
+                try {
+                    const userData = await userService.getProfile();
+
+                    const reverseDeliveryMap = {
+                        'NOVA_POSHTA': 'nova_poshta',
+                        'UKR_POSHTA': 'ukr_poshta'
+                    };
+
+                    setFormData(prev => ({
+                        ...prev,
+                        email: userData.email || prev.email,
+                        firstName: userData.firstName || prev.firstName,
+                        lastName: userData.lastName || userData.secondName || prev.lastName,
+                        phoneNumber: userData.phoneNumber ? userData.phoneNumber : prev.phoneNumber,
+
+                        deliveryType: userData.deliveryInfo?.deliveryType
+                            ? reverseDeliveryMap[userData.deliveryInfo.deliveryType] || prev.deliveryType
+                            : prev.deliveryType,
+
+                        city: userData.deliveryInfo?.city || prev.city,
+                        region: userData.deliveryInfo?.region || prev.region,
+
+                        postOffice: userData.deliveryInfo?.postOffice || prev.postOffice,
+
+                        street: userData.deliveryInfo?.street || prev.street,
+                        houseNumber: userData.deliveryInfo?.house || prev.houseNumber,
+                        apartment: userData.deliveryInfo?.apartment || prev.apartment
+                    }));
+                } catch (error) {
+                    console.error("Помилка завантаження даних користувача:", error);
+                }
+            }
+        };
+
+        fetchUserData();
+    }, []);
 
     const { originalTotal, discountAmount, finalTotal } = useMemo(() => {
         let original = 0;
@@ -72,15 +119,22 @@ const Checkout = () => {
             return;
         }
 
-        if (!/^\d*$/.test(value.slice(1))) {
-            return; // Якщо ввели букву, ігноруємо
-        }
+        if (!/^\d*$/.test(value.slice(1))) return;
 
-        if (value.length > 13) {
+        if (value.length > 13) return;
+
+        setFormData(prev => ({ ...prev, phoneNumber: value }));
+    };
+
+    const handlePostOfficeChange = (e) => {
+        const value = e.target.value;
+
+        if (!value.startsWith('№ ')) {
+            setFormData(prev => ({ ...prev, postOffice: '№ ' }));
             return;
         }
 
-        setFormData(prev => ({ ...prev, phoneNumber: value }));
+        setFormData(prev => ({ ...prev, postOffice: value }));
     };
 
     const handleRadioChange = (e) => {
@@ -94,16 +148,11 @@ const Checkout = () => {
         updateQuantity(id, newQty);
     };
 
-    const handleSelectChange = (e) => {
-        const { name, value } = e.target;
-        setFormData(prev => ({ ...prev, [name]: value }));
-    };
-
     const handleSubmit = async (e) => {
         e.preventDefault();
 
         if (formData.phoneNumber.length !== 13) {
-            alert("Будь ласка, введіть повний номер телефону (+380...)");
+            toast.error('Будь ласка, введіть повний номер телефону (+380...)');
             return;
         }
 
@@ -132,29 +181,29 @@ const Checkout = () => {
             })),
 
             addressDTO: {
-                city: formData.city || "Не вказано",
-                region: "",
-                department: formData.department || "Не вказано",
-                street: "",
-                houseNumber: "",
-                apartment: ""
+                city: formData.city || "",
+                region: formData.region || "",
+                department: formData.postOffice || "",
+                street: formData.street || "",
+                houseNumber: formData.houseNumber || "",
+                apartment: formData.apartment ||  ""
             }
         };
-
-        console.log("Відправка JSON:", JSON.stringify(orderPayload, null, 2));
 
         try {
             const response = await orderService.createOrder(orderPayload);
             setOrderNumber(response.orderNumber)
+
             setIsSuccessModalOpen(true);
+            clearCart();
+
         } catch (error) {
             console.error("Помилка замовлення:", error);
-            alert("Сталася помилка при оформленні. Перевірте дані.");
+            toast.error('Сталася помилка при оформленні. Перевірте дані.');
         }
     };
 
     const handleCloseModal = () => {
-        clearCart();
         setIsSuccessModalOpen(false);
         navigate('/');
     };
@@ -170,7 +219,7 @@ const Checkout = () => {
         { path: null, breadcrumb: 'Оформлення замовлення' }
     ];
 
-    if (cartItems.length === 0) {
+    if (cartItems.length === 0 && !isSuccessModalOpen) {
         return (
             <section className="hero-section">
                 <div className="container" style={{ textAlign: 'center', padding: '100px 0' }}>
@@ -212,7 +261,6 @@ const Checkout = () => {
                                         placeholder=" "
                                         value={formData.email}
                                         onChange={handleInputChange}
-                                        required
                                     />
                                     <label htmlFor="email" className="floating-label">E-mail</label>
                                 </div>
@@ -228,7 +276,7 @@ const Checkout = () => {
                                         required
                                         maxLength={13}
                                     />
-                                    <label htmlFor="phoneNumber" className="floating-label">Телефон</label>
+                                    <label htmlFor="phoneNumber" className="floating-label">Телефон*</label>
                                 </div>
 
                                 <div className="row-inputs user-info-input">
@@ -242,7 +290,7 @@ const Checkout = () => {
                                             onChange={handleInputChange}
                                             required
                                         />
-                                        <label htmlFor="firstName" className="floating-label">Ім'я</label>
+                                        <label htmlFor="firstName" className="floating-label">Ім'я*</label>
                                     </div>
                                     <div className="input-group">
                                         <input
@@ -254,7 +302,7 @@ const Checkout = () => {
                                             onChange={handleInputChange}
                                             required
                                         />
-                                        <label htmlFor="lastName" className="floating-label">Прізвище</label>
+                                        <label htmlFor="lastName" className="floating-label">Прізвище*</label>
                                     </div>
                                 </div>
 
@@ -318,7 +366,7 @@ const Checkout = () => {
                                                 onChange={handleInputChange}
                                                 required
                                             />
-                                            <label htmlFor="department" className="floating-label"></label>
+                                            <label htmlFor="postOffice" className="floating-label"></label>
                                         </div>
                                         <div className="input-group">
                                             <input
@@ -330,7 +378,7 @@ const Checkout = () => {
                                                 onChange={handleInputChange}
                                                 required
                                             />
-                                            <label htmlFor="department" className="floating-label"></label>
+                                            <label htmlFor="postOffice" className="floating-label"></label>
                                         </div>
                                 </div>
                                 <div className="row-inputs">
@@ -343,7 +391,7 @@ const Checkout = () => {
                                             value={formData.street}
                                             onChange={handleInputChange}
                                         />
-                                        <label htmlFor="department" className="floating-label"></label>
+                                        <label htmlFor="postOffice" className="floating-label"></label>
                                     </div>
                                     <div className="input-group">
                                         <input
@@ -354,21 +402,21 @@ const Checkout = () => {
                                             value={formData.houseNumber}
                                             onChange={handleInputChange}
                                         />
-                                        <label htmlFor="department" className="floating-label"></label>
+                                        <label htmlFor="postOffice" className="floating-label"></label>
                                     </div>
                                 </div>
                                 <div className="row-inputs">
                                     <div >
                                         <input
                                             type="text"
-                                            id="department"
+                                            id="postOffice"
                                             className="checkout-select"
                                             placeholder="Номер відділення"
-                                            value={formData.department}
-                                            onChange={handleInputChange}
+                                            value={formData.postOffice}
+                                            onChange={handlePostOfficeChange}
                                             required
                                         />
-                                        <label htmlFor="department" className="floating-label"></label>
+                                        <label htmlFor="postOffice" className="floating-label"></label>
                                     </div>
                                 </div>
                             </section>
@@ -445,7 +493,7 @@ const Checkout = () => {
                                             </div>
 
                                             <div className="checkout-controls">
-                                                <div className="checkout-qty-and-trash">
+                                                <div className="checkout-qty-and-price">
                                                     <div className="checkout-qty-counter">
                                                         <button
                                                             className="checkout-btn-minus"
@@ -460,17 +508,29 @@ const Checkout = () => {
                                                             onClick={() => handleQuantityChange(item.id, item.quantity, 1)}
                                                         >+</button>
                                                     </div>
-                                                    <button
-                                                        type="button"
-                                                        className="checkout-remove-btn checkout-action-mobile"
-                                                        onClick={() => removeFromCart(item.id)}
-                                                    >
-                                                        <img src="/img/trash.svg" alt="delete" />
-                                                    </button>
+                                                    <div className="checkout-item-price checkout-action-mobile">
+                                                        {(itemPrice * itemQty).toFixed(0)} грн
+                                                    </div>
                                                 </div>
-                                                <div className="checkout-item-price checkout-action-mobile">
-                                                    {priceWithDiscount.toFixed(0)} грн
-                                                </div>
+
+                                                <button
+                                                    type="button"
+                                                    className="checkout-remove-btn checkout-action-mobile"
+                                                    onClick={() => removeFromCart(item.id)}
+                                                >
+                                                    <img src="/img/trash.svg" alt="delete" />
+                                                </button>
+                                            </div>
+
+                                            <div>
+                                                { item.priceWithoutDiscount !== item.price && (
+                                                    <span className="checkout-price-without-discount">
+                                                         {item.priceWithoutDiscount}₴
+                                                    </span>
+                                                )}
+                                                <span className="checkout-current-price">
+                                                    {item.price.toFixed(2)}₴ за шт.
+                                                </span>
                                             </div>
                                         </div>
 

@@ -89,9 +89,9 @@ const ReviewsTab = () => {
                         <div className="review-user">
                             <div className="avatar-circle">
                                 <img
-                                    src={review.userImageUrl || "/img/white_user.png"}
+                                    src={review.userImageUrl || "/img/white_user.svg"}
                                     alt={review.firstNameUser}
-                                    style={{ objectFit: 'cover', width: '100%', height: '100%', borderRadius: '50%' }}
+                                    style={{ objectFit: 'cover', width: '75%', height: '75%' }}
                                 />
                             </div>
                             <div className="user-meta">

@@ -16,6 +16,13 @@ export const orderService = {
         return response.data;
     },
 
+    getOrdersByUser: async (page, size) => {
+        const response = await privateApi.get('/orders/user', {
+            params: { page, size }
+        });
+        return response.data;
+    },
+
     getAllOrders: async (page, size) => {
 
         const response = await privateApi.get('/orders', {
@@ -24,7 +31,8 @@ export const orderService = {
         return response.data;
     },
 
-    deleteOrder: async (id) => {
+    cancelOrder: async (id) => {
         await privateApi.delete(`/orders/cancel/${id}`);
     }
+
 };

@@ -1,64 +1,164 @@
-import React, { createContext, useContext, useState, useEffect } from 'react';
+import React, { createContext, useContext, useState, useEffect, useRef } from 'react';
+
+import { authService } from '../../services/authService';
+import { cartService } from '../../services/cartService';
 
 const CartContext = createContext();
 
 export const useCart = () => useContext(CartContext);
 
 export const CartProvider = ({ children }) => {
-    // 1. Ініціалізуємо стан з localStorage
-    const [cartItems, setCartItems] = useState(() => {
-        try {
-            const storedCart = localStorage.getItem('guest_cart');
-            return storedCart ? JSON.parse(storedCart) : [];
-        } catch (error) {
-            console.error("Помилка читання кошика:", error);
-            return [];
-        }
+
+    const updateTimeouts = useRef({});
+
+    const [cartItems, setCartItems] = useState([]);
+    const [isCartOpen, setIsCartOpen] = useState(false);
+    const [serverTotal, setServerTotal] = useState(null);
+
+    const mapDtoToItem = (dtoItem) => ({
+        id: dtoItem.productId,
+        name: dtoItem.productName,
+        image: dtoItem.productImage,
+        price: dtoItem.currentPrice,
+        priceWithoutDiscount: dtoItem.productPrice,
+        quantity: dtoItem.quantity,
+        itemTotal: dtoItem.totalPrice
     });
 
-    const [isCartOpen, setIsCartOpen] = useState(false);
+    const mapProductToItem = (product, qty) => {
 
-    // 2. Слідкуємо за змінами і пишемо в localStorage
+        console.log(product);
+        const price = product.priceWithDiscount || product.price;
+        const image = product.image || (product.images && product.images.length > 0 ? product.images[0].imageUrl : '/placeholder.png');
+        return {
+            id: product.id,
+            name: product.name || product.productName,
+            image: image,
+            price: price,
+            priceWithoutDiscount: product.price,
+            quantity: qty,
+            itemTotal: price * qty
+        };
+    };
+
     useEffect(() => {
-        localStorage.setItem('guest_cart', JSON.stringify(cartItems));
+        if (authService.isAuthenticated()) {
+            syncCartWithServer();
+        } else {
+            try {
+                const storedCart = localStorage.getItem('guest_cart');
+                if (storedCart) setCartItems(JSON.parse(storedCart));
+            } catch (error) {
+                console.error("Помилка читання кошика:", error);
+            }
+        }
+    }, []);
+
+    useEffect(() => {
+        if (!authService.isAuthenticated()) {
+            localStorage.setItem('guest_cart', JSON.stringify(cartItems));
+        }
     }, [cartItems]);
 
-    // 3. Функції управління
-    const addToCart = (product, quantity = 1, setCartOpen = true) => {
+    const syncCartWithServer = async () => {
+        try {
+            const serverCart = await cartService.getCart();
+            if (serverCart && serverCart.items) {
+                setCartItems(serverCart.items.map(mapDtoToItem));
+                setServerTotal(serverCart.totalCartPrice);
+            }
+        } catch (error) {
+            console.error("Помилка синхронізації кошика з сервером:", error);
+        }
+    };
+
+    const addToCart = async (product, quantity = 1, setCartOpen = true) => {
+        const newItem = mapProductToItem(product, quantity);
+
         setCartItems(prev => {
-            const existing = prev.find(item => item.id === product.id);
+            const existing = prev.find(item => item.id === newItem.id);
             if (existing) {
-                // Якщо товар вже є, збільшуємо кількість
                 return prev.map(item =>
-                    item.id === product.id
-                        ? { ...item, quantity: item.quantity + quantity }
+                    item.id === newItem.id
+                        ? { ...item, quantity: item.quantity + quantity, itemTotal: item.price * (item.quantity + quantity) }
                         : item
                 );
             }
-            // Якщо немає, додаємо новий
-            return [...prev, { ...product, quantity }];
+            return [...prev, newItem];
         });
+
         setIsCartOpen(setCartOpen);
+
+        if (authService.isAuthenticated()) {
+            try {
+                setServerTotal(null);
+                const updatedCartDto = await cartService.addToCart(product.id, quantity);
+
+                // Записуємо нормалізовані дані
+                setCartItems(updatedCartDto.items.map(mapDtoToItem));
+                setServerTotal(updatedCartDto.totalCartPrice);
+            } catch (error) {
+                console.error("Помилка збереження товару в БД", error);
+            }
+        }
     };
 
-    const removeFromCart = (id) => {
-        setCartItems(prev => prev.filter(item => item.id !== id));
+    const removeFromCart = async (productId) => {
+        setCartItems(prev => prev.filter(item => item.id !== productId));
+
+        if (authService.isAuthenticated()) {
+            try {
+                setServerTotal(null);
+                const updatedCartDto = await cartService.removeFormCart(productId);
+
+                setCartItems(updatedCartDto.items.map(mapDtoToItem));
+                setServerTotal(updatedCartDto.totalCartPrice);
+            } catch (error) {
+                console.error("Помилка видалення товару з БД", error);
+            }
+        }
     };
 
-    const updateQuantity = (id, newQuantity) => {
+    const updateQuantity = async (id, newQuantity) => {
         if (newQuantity < 1) return;
+
         setCartItems(prev =>
-            prev.map(item => item.id === id ? { ...item, quantity: newQuantity } : item)
+            prev.map(item => item.id === id
+                ? { ...item, quantity: newQuantity, itemTotal: item.price * newQuantity }
+                : item)
         );
+
+        if (authService.isAuthenticated()) {
+
+            if (updateTimeouts.current[id]) {
+                clearTimeout(updateTimeouts.current[id]);
+            }
+
+            updateTimeouts.current[id] = setTimeout(async() => {
+                try {
+                    setServerTotal(null);
+                    const updatedCartDto = await cartService.updateQuantity(id, newQuantity);
+
+                    setCartItems(updatedCartDto.items.map(mapDtoToItem));
+                    setServerTotal(updatedCartDto.totalCartPrice);
+                } catch (error) {
+                    console.error("Помилка оновлення кількості в БД", error);
+                } finally {
+                    delete updateTimeouts.current[id];
+                }
+             }, 800);
+        }
     };
 
     const clearCart = () => {
         setCartItems([]);
+        setServerTotal(null);
     };
 
-    // Підрахунки
     const cartCount = cartItems.reduce((acc, item) => acc + item.quantity, 0);
-    const cartTotal = cartItems.reduce((acc, item) => acc + (item.priceWithDiscount * item.quantity), 0);
+    const cartTotal = serverTotal !== null
+        ? serverTotal
+        : cartItems.reduce((acc, item) => acc + item.itemTotal, 0);
 
     return (
         <CartContext.Provider value={{
@@ -70,7 +170,8 @@ export const CartProvider = ({ children }) => {
             isCartOpen,
             setIsCartOpen,
             cartCount,
-            cartTotal
+            cartTotal,
+            syncCartWithServer
         }}>
             {children}
         </CartContext.Provider>

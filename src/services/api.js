@@ -18,6 +18,21 @@ const privateApi = axios.create({
     },
 });
 
+let isRefreshing = false;
+let failedQueue = [];
+
+
+const processQueue = (error, token = null) => {
+    failedQueue.forEach(prom => {
+        if (error) {
+            prom.reject(error);
+        } else {
+            prom.resolve(token);
+        }
+    });
+    failedQueue = [];
+};
+
 privateApi.interceptors.request.use(
     (config) => {
         const token = localStorage.getItem('accessToken');
@@ -36,18 +51,20 @@ export const refreshTokens = async (originalRequest) => {
 
     if (!refreshToken) throw new Error('No refresh token');
 
-    const response = await axios.post(`${API_URL}/auth/refresh`, {
-        refreshToken: refreshToken
-    });
+    const response = await axios.post(`${API_URL}/auth/refresh`, {refreshToken: refreshToken});
 
-    const { accessToken, refreshToken: newRefreshToken } = response.data;
+    const newAccessToken = response.data.accessToken;
 
-    localStorage.setItem('accessToken', accessToken);
-    localStorage.setItem('refreshToken', newRefreshToken);
+    // Зберігаємо нові токени
+    localStorage.setItem('accessToken', newAccessToken);
+    localStorage.setItem('refreshToken', response.data.refreshToken);
 
-    privateApi.defaults.headers.common['Authorization'] = `Bearer ${accessToken}`;
+    // Оновлюємо заголовок поточного запиту
+    privateApi.defaults.headers.common['Authorization'] = 'Bearer ' + newAccessToken;
+    originalRequest.headers['Authorization'] = 'Bearer ' + newAccessToken;
 
-    originalRequest.headers['Authorization'] = `Bearer ${accessToken}`;
+    // Виконуємо всі запити, які чекали в черзі
+    processQueue(null, newAccessToken);
 
     return privateApi(originalRequest);
 };
@@ -59,14 +76,26 @@ privateApi.interceptors.response.use(
 
         if (error.response?.status === 401 && !originalRequest._retry) {
 
+            if (isRefreshing) {
+                return new Promise(function(resolve, reject) {
+                    failedQueue.push({ resolve, reject });
+                }).then(token => {
+                    originalRequest.headers['Authorization'] = 'Bearer ' + token;
+                    return privateApi(originalRequest);
+                }).catch(err => {
+                    return Promise.reject(err);
+                });
+            }
+
             originalRequest._retry = true;
+            isRefreshing = true;
 
             try {
-                console.log("Refresh token")
-                return refreshTokens(originalRequest);
+                return await refreshTokens(originalRequest);
 
             } catch (refreshError) {
-                console.log("Clean token")
+
+                processQueue(refreshError, null);
                 localStorage.clear();
 
                 const currentPath = window.location.pathname;
@@ -76,6 +105,10 @@ privateApi.interceptors.response.use(
                 } else {
                     window.location.href = '/';
                 }
+
+                return Promise.reject(refreshError);
+            } finally {
+                isRefreshing = false;
             }
         }
 
