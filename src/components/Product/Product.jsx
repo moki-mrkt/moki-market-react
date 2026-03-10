@@ -11,7 +11,7 @@ import 'swiper/css/free-mode';
 import Breadcrumbs from '../Breadcrumbs/Breadcrumbs';
 import ProductSlider from '../ProductSlider/ProductSlider';
 
-import { useCart } from '../CartContext/CartContext.jsx';
+import { useCart } from '../../contexts/CartContext.jsx';
 
 import { getLabelFromSlug } from '../../constants/categories';
 

@@ -1,63 +1,24 @@
 import React, {useEffect, useState} from 'react';
 import {Link, useLocation, useNavigate} from 'react-router-dom';
 
-import toast, { Toaster } from 'react-hot-toast';
+import toast from 'react-hot-toast';
 
-import {useCart} from "../CartContext/CartContext.jsx";
+import {useCart} from "../../contexts/CartContext.jsx";
+import { useModal } from '../../contexts/ModalContext.jsx';
 
 import { authService } from '../../services/authService';
 
 import './Header.css';
 
-import AuthenticationModal from "../Modals/AuthenticationModal/AuthenticationModal";
-import RegistrationModal from "../Modals/RegistrationModal/RegistrationModal";
-import ForgotPassword from "../Modals/ForgotPassword/ForgotPasswordModal.jsx";
-import EmailConfirmationModal from "../Modals/EmailConfirmationModal/EmailConfirmationModal.jsx";
-
 const Header = () => {
 
-    const [isAuthOpen, setIsAuthOpen] = useState(false);
-    const [isRegisterOpen, setIsRegisterOpen] = useState(false);
-    const [isForgotPasswordOpen, setIsForgotPasswordOpen] = useState(false);
-    const [isEmailConfirmationOpen, setIsEmailConfirmationOpen] = useState(false);
+    const { openLogin} = useModal();
 
     const navigate = useNavigate();
     const location = useLocation();
-
     const { cartCount, setIsCartOpen } = useCart();
-
     const [isMenuOpen, setIsMenuOpen] = useState(false);
-
     const [searchTerm, setSearchTerm] = useState('');
-
-    const openLogin = () => {
-        setIsAuthOpen(true);
-        setIsRegisterOpen(false);
-        setIsForgotPasswordOpen(false);
-        setIsEmailConfirmationOpen(false);
-    };
-
-    const openRegister = () => {
-        setIsAuthOpen(false);
-        setIsRegisterOpen(true);
-    };
-
-    const openForgotPassword = () => {
-        setIsAuthOpen(false);
-        setIsForgotPasswordOpen(true);
-    };
-
-    const openEmailConfirmation = () => {
-      setIsRegisterOpen(false);
-      setIsEmailConfirmationOpen(true)
-    };
-
-    const closeAllModals = () => {
-        setIsAuthOpen(false);
-        setIsRegisterOpen(false);
-        setIsForgotPasswordOpen(false);
-        setIsEmailConfirmationOpen(false);
-    };
 
     useEffect(() => {
 
@@ -107,13 +68,12 @@ const Header = () => {
         }
     };
 
-    const handleAuthSuccess = () => {
-        closeAllModals();
-        navigate('/profile');
-    };
-
-    const handleForgotPasswordSuccess = () => {
-        closeAllModals();
+    const handleWishlistClick = () => {
+        if (authService.isAuthenticated()) {
+            navigate('/profile/wishlist');
+        } else {
+            openLogin();
+        }
     };
 
     const handleSearch = () => {
@@ -165,34 +125,6 @@ const Header = () => {
                     </div>
                 </div>
             </div>
-
-            <AuthenticationModal
-                isOpen={isAuthOpen}
-                onClose={closeAllModals}
-                onSuccess={handleAuthSuccess}
-                onSwitchToRegister={openRegister}
-                onSwitchToForgotPassword={openForgotPassword}
-            />
-
-            <RegistrationModal
-                isOpen={isRegisterOpen}
-                onClose={closeAllModals}
-                onSuccess={openEmailConfirmation}
-                onSwitchToLogin={openLogin}
-            />
-
-            <ForgotPassword
-                isOpen={isForgotPasswordOpen}
-                onClose={closeAllModals}
-                onSuccess={handleForgotPasswordSuccess}
-                onSwitchToLogin={openLogin}
-            />
-
-            <EmailConfirmationModal
-                isOpen={isEmailConfirmationOpen}
-                onClose={closeAllModals}
-                onSwitchToLogin={openLogin}
-            />
 
             <header className="header">
                 <div className="container">
@@ -247,7 +179,7 @@ const Header = () => {
                             </div>
 
                             <div className="user-actions-icon">
-                                <button onClick={handleCabinetClick} className="icon-cart-btn">
+                                <button onClick={handleWishlistClick} className="icon-cart-btn">
                                     <img src="/img/fav.svg" alt="fav" />
                                 </button>
                             </div>
@@ -299,7 +231,7 @@ const Header = () => {
                                 <li><Link to="/catalog/super_food" onClick={closeMenu}><img className="sidebar-img" src="/img/all_goods.svg" alt="superfood" /><span>Суперфуд</span></Link></li>
                                 <li><Link to="/catalog/oils" onClick={closeMenu}><img className="sidebar-img" src="/img/discounts.svg" alt="oils" /><span>Олія та масла</span></Link></li>
                                 <li><Link to="/catalog/conservation" onClick={closeMenu}><img className="sidebar-img" src="/img/all_goods.svg" alt="conservation" /><span>Консервація</span></Link></li>
-                                <li><Link to="/catalog/snacks" onClick={closeMenu}><img className="sidebar-img" src="/img//nuts.svg" alt="snacks" /><span>Снеки та чіпси</span></Link></li>
+                                <li><Link to="/catalog/snacks" onClick={closeMenu}><img className="sidebar-img" src="/img/nuts.svg" alt="snacks" /><span>Снеки та чіпси</span></Link></li>
                                 <li><Link to="/catalog/spices" onClick={closeMenu}><img className="sidebar-img" src="/img/dried_fruits.svg" alt="spices" /><span>Спеції</span></Link></li>
                             </ul>
                         </aside>

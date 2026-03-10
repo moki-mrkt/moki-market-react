@@ -59,7 +59,7 @@
 }
 
 .wishlist-btn:hover img {
-  content: url("../../img/full-heart.svg");
+  content: url("../../img/heart-filled.svg");
 }
 
 .goods-image {

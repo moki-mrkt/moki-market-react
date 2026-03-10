@@ -9,7 +9,7 @@ import { authService } from '../../services/authService';
 import { imageService } from '../../services/imageService';
 
 import './UserRoom.css';
-import {useCart} from "../CartContext/CartContext.jsx";
+import {useCart} from "../../contexts/CartContext.jsx";
 
 const UserRoom = () => {
 

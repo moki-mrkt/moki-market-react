@@ -24,7 +24,7 @@ import PublicLayout from './layouts/PublicLayout.jsx';
 import AdminLayout from './layouts/AdminLayout.jsx';
 import AdminProductInfo from "./components/admin/Product/AdminProductInfo.jsx";
 
-import { CartProvider } from './components/CartContext/CartContext';
+import { CartProvider } from './contexts/CartContext.jsx';
 
 import NotFoundPage from "./components/NotFoundPage/NotFoundPage";
 import AdminOrders from "./components/admin/Order/AdminOrders.jsx";
@@ -42,83 +42,86 @@ import ActivateAccount from "./utils/ActivateAccount.jsx";
 import {Toaster} from "react-hot-toast";
 import React from "react";
 import ConfirmEmail from "./utils/ConfirmEmail.jsx";
+import {ModalProvider} from "./contexts/ModalContext.jsx";
 
 function App() {
     const location = useLocation();
 
     return (
         <CartProvider>
-            <Toaster position="top-right"
+            <ModalProvider>
+                <Toaster position="top-right"
                      toastOptions={{
                          className: 'moki-toast',
                      }}
                      reverseOrder={false} />
-        <Routes>
+                <Routes>
 
-            <Route path="/activate" element={<ActivateAccount />} />
-            <Route path="/confirm-email" element={<ConfirmEmail />} />
-            <Route path="admin-ui/login" element={<LoginPage />} />
+                    <Route path="/activate" element={<ActivateAccount />} />
+                    <Route path="/confirm-email" element={<ConfirmEmail />} />
+                    <Route path="admin-ui/login" element={<LoginPage />} />
 
-            {/* --- ГІЛКА МАГАЗИНУ (PUBLIC) --- */}
-            <Route path="/" element={<PublicLayout />}>
-                <Route index element={<Home key={location.pathname} />} />
-                <Route path="catalog" element={<Catalog />} />
-                <Route path="catalog/:categorySlug" element={<PageProducts />} />
-                <Route path="search" element={<PageProducts key={location.search} />} />
-                <Route path="product/:productId" element={<Product key={location.pathname} />} />
-                <Route path="checkout" element={<Checkout />} />
-                <Route path="promotions" element={<PageProducts initialFilters={{ hasDiscount: true }} />} />
+                    {/* --- ГІЛКА МАГАЗИНУ (PUBLIC) --- */}
+                    <Route path="/" element={<PublicLayout />}>
+                        <Route index element={<Home key={location.pathname} />} />
+                        <Route path="catalog" element={<Catalog />} />
+                        <Route path="catalog/:categorySlug" element={<PageProducts />} />
+                        <Route path="search" element={<PageProducts key={location.search} />} />
+                        <Route path="product/:productId" element={<Product key={location.pathname} />} />
+                        <Route path="checkout" element={<Checkout />} />
+                        <Route path="promotions" element={<PageProducts initialFilters={{ hasDiscount: true }} />} />
 
-                <Route path="*" element={<NotFoundPage />} />
+                        <Route path="*" element={<NotFoundPage />} />
 
-                <Route path="profile" element={
-                    <PrivateRoute>
-                      <UserRoom />
-                    </PrivateRoute>
-                }>
-                    <Route index element={<Navigate to="info" replace />} />
+                        <Route path="profile" element={
+                            <PrivateRoute>
+                              <UserRoom />
+                            </PrivateRoute>
+                        }>
+                            <Route index element={<Navigate to="info" replace />} />
 
-                    <Route path="info" element={<UserInfo />}/>
-                    <Route path="security" element={<UserSecurity />}/>
-                    <Route path="orders" element={<UserOrders />} />
-                    <Route path="wishlist" element={<UserWishlist />} />
-                    <Route path="reviews" element={<UserReviews />} />
-                </Route>
+                            <Route path="info" element={<UserInfo />}/>
+                            <Route path="security" element={<UserSecurity />}/>
+                            <Route path="orders" element={<UserOrders />} />
+                            <Route path="wishlist" element={<UserWishlist />} />
+                            <Route path="reviews" element={<UserReviews />} />
+                        </Route>
 
-                <Route path="info" element={<InfoPage />}>
-                    <Route index element={<Navigate to="about" replace />} />
-                    <Route path="about" element={<AboutTab />} />
-                    <Route path="reviews" element={<ReviewsTab />} />
-                    <Route path="payment" element={<PaymentTab />} />
-                    <Route path="return" element={<ReturnTab />} />
-                    <Route path="contacts" element={<ContactsTab />} />
-                    <Route path="terms" element={<TermsTab />} />
-                </Route>
-            </Route>
+                        <Route path="info" element={<InfoPage />}>
+                            <Route index element={<Navigate to="about" replace />} />
+                            <Route path="about" element={<AboutTab />} />
+                            <Route path="reviews" element={<ReviewsTab />} />
+                            <Route path="payment" element={<PaymentTab />} />
+                            <Route path="return" element={<ReturnTab />} />
+                            <Route path="contacts" element={<ContactsTab />} />
+                            <Route path="terms" element={<TermsTab />} />
+                        </Route>
+                    </Route>
 
-            {/* --- ГІЛКА АДМІНКИ (ADMIN) --- */}
-            <Route
-                path="/admin-ui/*"
-                element={
-                    <PrivateRoute>
-                        <AdminLayout />
-                    </PrivateRoute>
-                }
-            >
-                <Route index element={<Navigate to="products" replace />} />
-                <Route path="products" element={<AdminProducts />} />
-                <Route path="products/create" element={<AdminProductCreate />} />
-                <Route path="products/edit/:id" element={<AdminProductCreate />} />
-                <Route path="products/view/:id" element={<AdminProductInfo />} />
+                    {/* --- ГІЛКА АДМІНКИ (ADMIN) --- */}
+                    <Route
+                        path="/admin-ui/*"
+                        element={
+                            <PrivateRoute>
+                                <AdminLayout />
+                            </PrivateRoute>
+                        }
+                    >
+                        <Route index element={<Navigate to="products" replace />} />
+                        <Route path="products" element={<AdminProducts />} />
+                        <Route path="products/create" element={<AdminProductCreate />} />
+                        <Route path="products/edit/:id" element={<AdminProductCreate />} />
+                        <Route path="products/view/:id" element={<AdminProductInfo />} />
 
-                <Route path="orders" element={<AdminOrders />} />
-                <Route path="orders/view/:id" element={<AdminOrderInfo  key={location.pathname}/>} />
-                <Route path="orders/edit/:id" element={<AdminOrderEdit />} />
+                        <Route path="orders" element={<AdminOrders />} />
+                        <Route path="orders/view/:id" element={<AdminOrderInfo  key={location.pathname}/>} />
+                        <Route path="orders/edit/:id" element={<AdminOrderEdit />} />
 
-                <Route path="feedbacks" element={<AdminFeedbacks />} />
-            </Route>
+                        <Route path="feedbacks" element={<AdminFeedbacks />} />
+                    </Route>
 
-        </Routes>
+                </Routes>
+             </ModalProvider>
         </CartProvider>
     );
 }

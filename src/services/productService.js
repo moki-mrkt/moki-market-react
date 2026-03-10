@@ -1,9 +1,9 @@
-import api from './api';
+import {privateApi} from './api';
 
 const request = async (endpoint, method = 'GET', body = null) => {
     try {
 
-        const response = await api({
+        const response = await privateApi({
             url: endpoint,
             method: method,
             data: body

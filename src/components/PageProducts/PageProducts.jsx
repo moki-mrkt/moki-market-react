@@ -56,7 +56,6 @@ const PageGoods = ({ initialFilters = {} }) => {
             setLoading(true);
             try {
 
-                console.log("params");
                 const params = {
                     category: backendCategory,
                     query: searchQuery,
@@ -68,8 +67,6 @@ const PageGoods = ({ initialFilters = {} }) => {
                     subcategory: appliedFilters.subcategories.length > 0 ? appliedFilters.subcategories : null,
                     hasDiscount: appliedFilters.hasDiscount
                 };
-
-                console.log(params);
 
                 const response = await productService.search(params);
 

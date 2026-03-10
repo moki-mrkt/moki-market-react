@@ -1,7 +1,7 @@
 import React, {useEffect, useState} from 'react';
 import toast, { Toaster } from 'react-hot-toast';
 
-import { useCart } from '../../CartContext/CartContext.jsx';
+import { useCart } from '../../../contexts/CartContext.jsx';
 import { authService } from '../../../services/authService';
 
 import './AuthenticationModal.css';

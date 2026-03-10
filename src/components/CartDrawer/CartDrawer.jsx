@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
-import { useCart } from '../CartContext/CartContext.jsx';
+import { useCart } from '../../contexts/CartContext.jsx';
 
 import './CartDrawer.css';
 
@@ -40,8 +40,6 @@ const CartDrawer = ({ isOpen, onClose }) => {
         const newQty = currentQty + delta;
         updateQuantity(id, newQty);
     };
-
-    console.log(cartItems)
 
     return (
         <div className="cart-overlay" onClick={handleClose}>

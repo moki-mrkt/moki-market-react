@@ -1,7 +1,7 @@
 import React, { createContext, useContext, useState, useEffect, useRef } from 'react';
 
-import { authService } from '../../services/authService';
-import { cartService } from '../../services/cartService';
+import { authService } from '../services/authService.js';
+import { cartService } from '../services/cartService.js';
 
 const CartContext = createContext();
 

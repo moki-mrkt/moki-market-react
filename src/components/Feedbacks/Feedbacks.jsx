@@ -27,7 +27,6 @@ const Feedbacks = () => {
         fetchFeedbacks();
     }, []);
 
-    // Функція для форматування дати (з ISO в читабельний вигляд)
     const formatDate = (isoString) => {
         if (!isoString) return '';
         const date = new Date(isoString);
@@ -39,10 +38,9 @@ const Feedbacks = () => {
     };
 
     if (isLoading) {
-        return null; // Або спінер
+        return null;
     }
 
-    // Якщо відгуків немає, не показуємо секцію (або показуємо заглушку)
     if (feedbacks.length === 0) {
         return null;
     }
@@ -70,10 +68,8 @@ const Feedbacks = () => {
                             </div>
                         </div>
 
-                        {/* Дата створення */}
                         <div className="feedback-date">{formatDate(item.createdAt)}</div>
 
-                        {/* Текст коментаря */}
                         <p className="feedback-text">{item.comment}</p>
                     </div>
                 ))}

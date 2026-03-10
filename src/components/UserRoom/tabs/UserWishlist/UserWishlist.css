@@ -38,6 +38,25 @@
     border: 1px solid #E0E0E0;
 }
 
+.pag-text {
+    font-size: 20px;
+    padding: 5px;
+    color: #0E2CA4;
+    min-width: 130px;
+    text-align: center;
+}
+
+.pag-button {
+    font-size: 18px;
+    padding: 5px 15px;
+    cursor: pointer;
+    border: 2px solid #F0D051;
+    border-radius: 10px;
+    background: transparent;
+    color: #0E2CA4;
+    font-weight: 600;
+}
+
 @media (max-width: 768px) {
 
     .wishlist-goods-grid {
@@ -56,4 +75,13 @@
         padding-bottom: 10px;
     }
 
+    .pag-text {
+        min-width: 0 !important;
+        font-size: 12px;
+    }
+
+    .pag-button {
+        padding: 5px 10px;
+        font-size: 12px;
+    }
 }

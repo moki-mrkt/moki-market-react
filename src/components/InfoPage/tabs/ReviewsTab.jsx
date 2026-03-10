@@ -1,5 +1,8 @@
 import { useEffect, useState } from 'react';
 import { feedbackService } from '../../../services/feedbackService';
+import {URLS} from "../../../constants/urls.js";
+
+const image_api =  URLS.s3_bucket;
 
 const ReviewsTab = () => {
     const [reviews, setReviews] = useState([]);
@@ -85,13 +88,14 @@ const ReviewsTab = () => {
 
             <div className="review-cards">
                 {reviews.map((review) => (
+
                     <div className="review-card" key={review.id}>
                         <div className="review-user">
                             <div className="avatar-circle">
                                 <img
-                                    src={review.userImageUrl || "/img/white_user.svg"}
+                                    src={`${image_api}${review.userImageUrl}` || "/img/white_user.svg"}
                                     alt={review.firstNameUser}
-                                    style={{ objectFit: 'cover', width: '75%', height: '75%' }}
+                                    style={{ objectFit: 'cover', width: '100%', height: '100%', borderRadius: '50%' }}
                                 />
                             </div>
                             <div className="user-meta">

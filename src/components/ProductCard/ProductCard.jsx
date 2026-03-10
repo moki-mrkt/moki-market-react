@@ -1,24 +1,52 @@
-import React from 'react';
+import React, {useState} from 'react';
 import { Link } from 'react-router-dom';
 import './ProductCard.css';
 
-import { useCart } from '../CartContext/CartContext.jsx';
+import { useCart } from '../../contexts/CartContext.jsx';
 
 import {URLS} from '../../constants/urls';
+import {authService} from "../../services/authService.js";
+import {useModal} from "../../contexts/ModalContext.jsx";
+import {favoriteProductService} from "../../services/favoriteProductService.js";
+import toast from "react-hot-toast";
 
 const image_api =  URLS.s3_bucket;
 
-const ProductCard = ({product
+const ProductCard = ({product, onFavoriteToggle }) => {
 
-                     }) => {
-
+    const { openLogin } = useModal();
     const { addToCart } = useCart();
+    const [isFav, setIsFav] = useState(product.isFavorite || false);
 
     const handleBuyClick = (e) => {
         e.preventDefault();
         addToCart(product);
     };
 
+    const handleHeartClick = async (e) => {
+        e.preventDefault();
+
+        if (!authService.isAuthenticated()) {
+            openLogin();
+            return;
+        }
+
+        const previousState = isFav;
+        setIsFav(!isFav);
+
+        try {
+            if (previousState) {
+                await favoriteProductService.removeFavorite(product.id);
+                if (onFavoriteToggle) onFavoriteToggle(product.id, false);
+            } else {
+                await favoriteProductService.addFavorite(product.id);
+                if (onFavoriteToggle) onFavoriteToggle(product.id, true);
+            }
+        } catch (error) {
+            setIsFav(previousState);
+            toast.error("Не вдалося оновити улюблені");
+        }
+    };
 
     const mainImage = product.images && product.images.length > 0
         ? product.images.find(img => img.isMain) || product.images[0]
@@ -26,7 +54,7 @@ const ProductCard = ({product
 
     const imageUrl = mainImage
         ? `${image_api}${mainImage.imageId}`
-        : '/img/placeholder.png';
+        : '/img/icon.png';
 
     const hasDiscount = product.discount > 0;
     const currentPrice = hasDiscount
@@ -41,8 +69,10 @@ const ProductCard = ({product
 
                 {product.discount > 0 && <span className="discount-badge">-{product.discount}%</span>}
 
-                <button className="wishlist-btn" aria-label="Додати в обране">
-                    <img src="/img/fav_heart.svg" alt="fav" />
+                <button className="wishlist-btn" onClick={handleHeartClick} aria-label="Додати в обране">
+                    <img src={isFav ? "/img/heart-filled.svg" : "/img/heart-outline.svg"}
+                         alt="favorite"
+                    />
                 </button>
             </div>
 

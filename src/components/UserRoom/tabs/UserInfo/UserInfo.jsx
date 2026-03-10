@@ -6,7 +6,7 @@ import { cartService } from '../../../../services/cartService.js';
 import toast from 'react-hot-toast';
 
 import './UserInfo.css';
-import {useCart} from "../../../CartContext/CartContext.jsx";
+import {useCart} from "../../../../contexts/CartContext.jsx";
 
 const UserInfo = () => {
 
