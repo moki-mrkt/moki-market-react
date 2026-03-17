@@ -223,12 +223,12 @@ const Header = () => {
                             <ul className="mobile-sidebar-menu">
                                 <li><Link to="/catalog" onClick={closeMenu}><img className="sidebar-img" src="/img/all_goods.svg" alt="" /> <span>Всі товари</span></Link></li>
                                 <li><Link to="/promotions" onClick={closeMenu}><img className="sidebar-img" src="/img/discounts.svg" alt="" /> <span>Акційні товари</span></Link></li>
-                                <li><Link to="/catalog/dried_fruits" onClick={closeMenu}><img className="sidebar-img" src="/img/dried_fruits.svg" alt="" /> <span>Сухофрукти</span></Link></li>
-                                <li><Link to="/catalog/candies" onClick={closeMenu}><img className="sidebar-img" src="/img/sweets.svg" alt="candies" /> <span>Солодощі</span></Link></li>
+                                <li><Link to="/catalog/dried-fruits" onClick={closeMenu}><img className="sidebar-img" src="/img/dried_fruits.svg" alt="" /> <span>Сухофрукти</span></Link></li>
+                                <li><Link to="/catalog/sweets" onClick={closeMenu}><img className="sidebar-img" src="/img/sweets.svg" alt="sweets" /> <span>Солодощі</span></Link></li>
                                 <li><Link to="/catalog/nuts" onClick={closeMenu}><img className="sidebar-img" src="/img/nuts.svg" alt="nuts" /> <span>Горіхи</span></Link></li>
                                 <li><Link to="/catalog/coffee" onClick={closeMenu}><img className="sidebar-img" src="/img/coffee.svg" alt="coffee" /> <span>Кава</span></Link></li>
                                 <li><Link to="/catalog/tea" onClick={closeMenu}><img className="sidebar-img" src="/img/coffee.svg" alt="tea" /> <span>Чай</span></Link></li>
-                                <li><Link to="/catalog/super_food" onClick={closeMenu}><img className="sidebar-img" src="/img/all_goods.svg" alt="superfood" /><span>Суперфуд</span></Link></li>
+                                <li><Link to="/catalog/super-food" onClick={closeMenu}><img className="sidebar-img" src="/img/all_goods.svg" alt="superfood" /><span>Суперфуд</span></Link></li>
                                 <li><Link to="/catalog/oils" onClick={closeMenu}><img className="sidebar-img" src="/img/discounts.svg" alt="oils" /><span>Олія та масла</span></Link></li>
                                 <li><Link to="/catalog/conservation" onClick={closeMenu}><img className="sidebar-img" src="/img/all_goods.svg" alt="conservation" /><span>Консервація</span></Link></li>
                                 <li><Link to="/catalog/snacks" onClick={closeMenu}><img className="sidebar-img" src="/img/nuts.svg" alt="snacks" /><span>Снеки та чіпси</span></Link></li>

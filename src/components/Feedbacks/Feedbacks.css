@@ -4,39 +4,27 @@
 
 .feedbacks-grid {
     margin-top: 17px;
-
     display: flex;
     gap: 20px;
     justify-content: space-between;
-    margin-bottom: 30px; /* Отступ до кнопки "Усі відгуки" */
+    margin-bottom: 30px;
 }
 
 .feedback-card {
-    /* Рамка и фон */
-    border: 1px solid #1032A3; /* Синяя рамка */
-    border-radius: 20px;       /* Скругление углов */
+    border: 1px solid #1032A3;
+    border-radius: 20px;
     background-color: white;
-
-    /* Размеры */
-    flex: 1;             /* Все карточки одинаковой ширины */
-    padding: 20px;       /* Внутренний отступ */
-
-    /* Содержимое */
+    flex: 1;
+    padding: 20px;
     display: flex;
     flex-direction: column;
-    gap: 8px;            /* Расстояние между строками внутри */
-}
-
-.feedback-header {
-    display: flex;
-    align-items: center;
-    gap: 15px; /* Расстояние от имени до звезд */
+    gap: 8px;
 }
 
 .feedback-name {
     font-size: 20px;
     font-weight: 600;
-    color: #1032A3; /* Синий цвет имени */
+    color: #1032A3;
 }
 
 .feedback-stars {
@@ -45,18 +33,18 @@
 
     height: 15px;
     width: 15px;
-    color: #F0D051; /* Желтый цвет звезд */
+    color: #F0D051;
     letter-spacing: 2px;
 }
 
 .feedback-date {
     font-size: 14px;
-    color: #BDBDBD; /* Серый цвет */
+    color: #BDBDBD;
     margin-bottom: 5px;
 }
 
 .feedback-text {
-    font-size: 16px;
+    font-size: 20px;
     color: #1032A3;
     line-height: 1.4;
     margin: 0;
@@ -99,23 +87,9 @@
 
     .feedbacks-grid {
         display: grid;
-        grid-template-columns: 1fr 1fr; /* Два рівні стовпчики */
+        grid-template-columns: 1fr 1fr;
         gap: 10px;
-        flex-wrap: wrap; /* На випадок конфліктів */
-    }
-
-    .feedback-card {
-        padding: 15px;
-        border-radius: 15px;
-
-        gap: 0;
-
-        max-width: 180px;
-    }
-
-    .feedback-header {
-        display: flex;
-
+        flex-wrap: wrap;
     }
 
     .feedback-name {
@@ -124,7 +98,6 @@
     }
 
     .feedback-stars {
-
         display: flex;
         align-items: center;
         gap: 0;

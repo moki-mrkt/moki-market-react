@@ -29,12 +29,10 @@
 }
 
 .discount-badge {
-
   position: absolute;
   top: 10px;
   left: 0;
   z-index: 2;
-
   background-color: #0E2CA4;
   color: white;
   font-size: 15px;
@@ -112,25 +110,37 @@
 
 .goods-rating {
   display: flex;
-  align-items: center;
+  align-items: end;
   gap: 8px;
   font-size: 14px;
 }
 
+.goods-stars-and-rating {
+    height: 16px;
+    display: flex;
+    align-items: flex-end;
+    gap: 7px;
+}
+
 .goods-stars {
-  margin: auto 0;
+  margin: 0;
   color: #F0D051;
+  display: flex;
+  align-items: flex-end;
 }
 
 .goods-stars img {
   height: 15px;
   width: 15px;
+  display: block;
 }
 
 .card-rating-value {
-  font-size: 16px;
-  color: #0B3062;
-    margin-left: 5px;
+    font-size: 16px;
+    margin: 0;
+    padding: 0;
+    line-height: 0.8;
+    font-weight: 500;
 }
 
 .goods-price {
@@ -165,7 +175,6 @@
 
     pointer-events: none;
 }
-
 
 .buy-button {
   width: 100%;
@@ -264,6 +273,15 @@
   .goods-price span {
     font-size: 10px;
     height: 34px;
+  }
+
+  .goods-stars-and-rating {
+    height: 10px;
+    gap: 5px;
+  }
+
+  .card-rating-value {
+      font-size: 10px;
   }
 
   .goods-weight {

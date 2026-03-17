@@ -4,7 +4,6 @@ import './CancelOrderModal.css';
 const CancelOrderModal = ({ isOpen, onClose, onConfirm, orderNumber, isCanceling }) => {
     if (!isOpen) return null;
 
-    console.log("Modal")
     return (
 
         <div className="auth-modal-overlay" onClick={onClose}>

@@ -1,6 +1,6 @@
 
 export const CATEGORY_CONFIG = {
-    'dried_fruits': {
+    'dried-fruits': {
         enum: 'DRIED_FRUITS',
         label: 'Сухофрукти'
     },
@@ -8,11 +8,11 @@ export const CATEGORY_CONFIG = {
         enum: 'NUTS',
         label: 'Горіхи'
     },
-    'candies': {
-        enum: 'CANDIES',
-        label: 'Цукерки та солодощі'
+    'sweets': {
+        enum: 'SWEETS',
+        label: 'Cолодощі'
     },
-    'super_food': {
+    'super-food': {
         enum: 'SUPER_FOOD',
         label: 'Суперфуд'
     },
@@ -48,4 +48,12 @@ export const getEnumFromSlug = (slug) => {
 
 export const getLabelFromSlug = (slug) => {
     return CATEGORY_CONFIG[slug]?.label || slug;
+};
+
+export const getSlugFromEnum = (enumValue) => {
+    const foundSlug = Object.keys(CATEGORY_CONFIG).find(
+        key => CATEGORY_CONFIG[key].enum === enumValue
+    );
+
+    return foundSlug || enumValue?.toLowerCase();
 };

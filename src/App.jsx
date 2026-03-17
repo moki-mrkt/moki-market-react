@@ -67,7 +67,7 @@ function App() {
                         <Route path="catalog" element={<Catalog />} />
                         <Route path="catalog/:categorySlug" element={<PageProducts />} />
                         <Route path="search" element={<PageProducts key={location.search} />} />
-                        <Route path="product/:productId" element={<Product key={location.pathname} />} />
+                        <Route path="catalog/:categorySlug/:productSlug" element={<Product key={location.pathname} />} />
                         <Route path="checkout" element={<Checkout />} />
                         <Route path="promotions" element={<PageProducts initialFilters={{ hasDiscount: true }} />} />
 

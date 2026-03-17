@@ -1,8 +1,7 @@
 import { useEffect, useState } from 'react';
 import { feedbackService } from '../../../services/feedbackService';
 import {URLS} from "../../../constants/urls.js";
-
-const image_api =  URLS.s3_bucket;
+import FeedbackCard from "../../FeedbackCard/FeedbackCard.jsx";
 
 const ReviewsTab = () => {
     const [reviews, setReviews] = useState([]);
@@ -59,12 +58,6 @@ const ReviewsTab = () => {
         );
     };
 
-    const formatDate = (dateString) => {
-        if (!dateString) return '';
-        const date = new Date(dateString);
-        return date.toLocaleDateString('uk-UA');
-    };
-
     return (
         <div id="reviews" className="info-tab active">
             <h2 className="info-title">Відгуки про магазин</h2>
@@ -86,43 +79,16 @@ const ReviewsTab = () => {
                 </button>
             </div>
 
-            <div className="review-cards">
-                {reviews.map((review) => (
-
-                    <div className="review-card" key={review.id}>
-                        <div className="review-user">
-                            <div className="avatar-circle">
-                                <img
-                                    src={`${image_api}${review.userImageUrl}` || "/img/white_user.svg"}
-                                    alt={review.firstNameUser}
-                                    style={{ objectFit: 'cover', width: '100%', height: '100%', borderRadius: '50%' }}
-                                />
-                            </div>
-                            <div className="user-meta">
-                                <span className="name">{review.firstNameUser}</span>
-                                <div className="stars-and-date">
-                                    <span className="date">{formatDate(review.createdAt)}</span>
-                                    {renderStars(review.rating)}
-                                </div>
-                            </div>
-                        </div>
-
-                        <p className="review-text">{review.comment}</p>
-
-                        {review.answer && (
-                            <div className="admin-reply">
-                                <div className="admin-header">
-                                    <img src="/icon.png" alt="Moki" />
-                                    <div className="name-and-date">
-                                        <div className="name">Moki</div>
-                                        <div className="date">{formatDate(review.answeredAt)}</div>
-                                    </div>
-                                </div>
-                                <p className="review-text">{review.answer}</p>
-                            </div>
-                        )}
-                    </div>
-                ))}
+            <div className="product-reviews-list">
+                {loading ? (
+                    <p style={{ color: '#0E2CA4' }}>Завантаження відгуків...</p>
+                ) : reviews.length > 0 ? (
+                    reviews.map((feedback) => (
+                        <FeedbackCard key={feedback.id} feedback={feedback} />
+                    ))
+                ) : (
+                    <p style={{ color: '#94A3B8', fontSize: '16px', margin: '0' }}>Відгуків ще немає.</p>
+                )}
             </div>
 
             {page < totalPages - 1 && (

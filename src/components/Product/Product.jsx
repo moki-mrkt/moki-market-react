@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import {useNavigate, useParams} from 'react-router-dom';
+import {useLocation, useNavigate, useParams} from 'react-router-dom';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import { Navigation } from 'swiper/modules';
 
@@ -21,20 +21,26 @@ import ProductGallery from './ProductGallery';
 import ProductTabs from './ProductTabs';
 
 import './Product.css';
+import {authService} from "../../services/authService.js";
+import {favoriteProductService} from "../../services/favoriteProductService.js";
+import toast from "react-hot-toast";
 
-const PageProduct = () => {
+const Product = () => {
 
     const navigate = useNavigate();
+    const location = useLocation();
 
     const { addToCart } = useCart();
     const [qty, setQty] = useState(1);
 
-    const { productId } = useParams();
+    const { categorySlug, productSlug } = useParams();
+
     const [product, setProduct] = useState(null);
     const [loading, setLoading] = useState(true);
     const [similarProducts, setSimilarProducts] = useState([]);
 
-    const categorySlug = product?.productCategory?.toLowerCase();
+    const [isFav, setIsFav] = useState(false);
+
     const categoryName = categorySlug ? getLabelFromSlug(categorySlug) : 'Каталог';
 
     const productBreadcrumbs = [
@@ -59,10 +65,11 @@ const PageProduct = () => {
             setLoading(true);
             try {
 
-                const data = await productService.getById(productId);
+                const data = await productService.getBySlug(productSlug);
 
                 if (data) {
                     setProduct(data);
+                    setIsFav(data.isFavorite || false);
 
                     if (data.productCategory) {
                         const similar = await productService.search({
@@ -81,16 +88,12 @@ const PageProduct = () => {
             }
         };
 
-        if (productId) {
-            fetchProductData();
-            window.scrollTo(0, 0);
-        }
-    }, [productId]);
+        fetchProductData();
+        window.scrollTo(0, 0);
+    }, [productSlug]);
 
     if (loading) return <div className="loader">Завантаження...</div>;
     if (!product) return <div className="not-found">Товар не знайдено</div>;
-
-
 
     const hasDiscount = product.discount && product.discount > 0;
     const currentPrice = hasDiscount ? (product.price  - (product.price * product.discount / 100)).toFixed(2) : product.price
@@ -98,6 +101,29 @@ const PageProduct = () => {
     const oldPrice = hasDiscount ? product.price : null;
 
     const isAvailable = product.availability === 'IN_STOCK';
+
+    const handleHeartClick = async (e) => {
+        e.preventDefault();
+
+        if (!authService.isAuthenticated()) {
+            navigate(`${location.pathname}?login=true`);
+            return;
+        }
+
+        const previousState = isFav;
+        setIsFav(!isFav);
+
+        try {
+            if (previousState) {
+                await favoriteProductService.removeFavorite(product.id);
+            } else {
+                await favoriteProductService.addFavorite(product.id);
+            }
+        } catch (error) {
+            setIsFav(previousState);
+            toast.error("Не вдалося оновити улюблені");
+        }
+    };
 
     return (
         <>
@@ -118,17 +144,19 @@ const PageProduct = () => {
                                 <div className="product-info-top">
                                     <h2 className="product-name">{product.name}</h2>
 
+                                    <div className="product-rating-wrapper">
+                                        {product.rating > 0 ? (
+                                            <div className="product-rating">
+                                                <div className="product-stars">
+                                                    {[...Array(5)].map((_, index) => (
+                                                        <img
+                                                            key={index}
+                                                            src={index < product.rating ? "/img/star.svg" : "/img/star-outline.svg"}
+                                                            alt="star"
+                                                        />
 
-                                    <div className="product-rating">
-                                        {product.rating > 0 ? (<div className="product-stars">
-                                                {[...Array(5)].map((_, index) => (
-                                                    <img
-                                                        key={index}
-                                                        src={index < product.rating ? "/img/star.svg" : "/img/star-outline.svg"}
-                                                        alt="star"
-                                                    />
-
-                                                ))}
+                                                    ))}
+                                                </div>
                                                 <span className="product-rating-value"> {product.rating}</span>
                                             </div>)
                                             :
@@ -143,23 +171,27 @@ const PageProduct = () => {
                                                 ))}
                                             </div>
                                         }
-
                                     </div>
 
-                                    <div className="price-block">
-                                        <div className="current-price">
-
-                                            <span className="current-price-value">{currentPrice}</span>
-                                            <span className="current-price-text">грн/</span>
-                                            <span className="current-price-text unit-of-measurement">шт</span>
-                                        </div>
-                                        {hasDiscount == true && (
-                                            <div className="old-price">
-                                                <span className="old-price-value">{oldPrice}</span>
-                                                <span className="old-price-text">грн/</span>
-                                                <span className="old-price-text unit-of-measurement">шт</span>
+                                    <div>
+                                        <div className="price-block">
+                                            <div className="current-price">
+                                                <span className="current-price-value">{currentPrice}</span>
+                                                <span className="current-price-text">грн</span>
+                                                {/*<span className="current-price-text unit-of-measurement">шт</span>*/}
                                             </div>
-                                        )}
+                                            {hasDiscount === true && (
+                                                <div className="old-price">
+                                                    <span className="old-price-value">{oldPrice}</span>
+                                                    <span className="old-price-text">грн</span>
+                                                    {/*<span className="old-price-text unit-of-measurement">шт</span>*/}
+                                                </div>
+                                            )}
+                                        </div>
+                                    </div>
+                                    <div className="init-measure">
+                                        за <span> {product.valueOfInitOfMeasure}</span>
+                                        <span>{product.initOfMeasure}</span>
                                     </div>
                                 </div>
 
@@ -169,13 +201,18 @@ const PageProduct = () => {
                                             {isAvailable ? 'Є в наявності' : 'Немає в наявності'}
                                         </div>
 
-                                        <button className="btn-wishlist-desktop">
-                                            <img src="/img/fav_heart.svg" alt="fav" />
-                                            <span>Додати в список бажаного</span>
+                                        <button className="btn-wishlist-desktop" onClick={handleHeartClick}>
+                                            <img src={isFav ? "/img/heart-filled.svg" : "/img/heart-outline.svg"}
+                                                 alt="favorite"
+                                            />
+                                            <span>{isFav ? 'В списку бажаного' : 'Додати в список бажаного'}</span>
                                         </button>
 
-                                        <button className="btn-wishlist-mobile">
-                                            <img src="/img/fav_heart.svg" alt="fav" />
+                                        <button className="btn-wishlist-mobile" onClick={handleHeartClick}>
+                                            <img
+                                                src={isFav ? "/img/heart-filled.svg" : "/img/heart-outline.svg"}
+                                                alt="favorite"
+                                            />
                                         </button>
                                     </div>
 
@@ -193,13 +230,19 @@ const PageProduct = () => {
                             </div>
                         </div>
 
-                        <ProductTabs description={product.description}
-                                     characteristics={product.characteristics}/>
+                        <ProductTabs
+                            productId={product.id}
+                            description={product.description}
+                            characteristics={product.characteristics}
+                        />
                     </div>
 
                     {similarProducts.length > 0 && (
                         <div className="other-product">
-                            <ProductSlider title="Схожі товари" products={similarProducts} />
+                            <ProductSlider
+                                title="Схожі товари"
+                                products={similarProducts}
+                            />
                         </div>
                     )}
                 </div>
@@ -208,4 +251,4 @@ const PageProduct = () => {
     );
 };
 
-export default PageProduct;
+export default Product;

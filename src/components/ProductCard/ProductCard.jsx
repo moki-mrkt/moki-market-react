@@ -10,9 +10,13 @@ import {useModal} from "../../contexts/ModalContext.jsx";
 import {favoriteProductService} from "../../services/favoriteProductService.js";
 import toast from "react-hot-toast";
 
+import { getSlugFromEnum } from '../../constants/categories.js';
+
 const image_api =  URLS.s3_bucket;
 
 const ProductCard = ({product, onFavoriteToggle }) => {
+
+    const productUrl = `/catalog/${getSlugFromEnum(product.productCategory)}/${product.slug}`;
 
     const { openLogin } = useModal();
     const { addToCart } = useCart();
@@ -76,13 +80,13 @@ const ProductCard = ({product, onFavoriteToggle }) => {
                 </button>
             </div>
 
-            <Link to={`/product/${product.id}`} className="goods-image">
+            <Link to={productUrl} className="goods-image">
                 <img src={imageUrl} alt={product.name} />
             </Link>
 
             <div className="goods-info">
                 <div className="goods-title-weight">
-                    <Link to={`/product/${product.id}`} className="goods-title">
+                    <Link to={productUrl} className="goods-title">
                         {product.name}
                     </Link>
 
@@ -94,29 +98,31 @@ const ProductCard = ({product, onFavoriteToggle }) => {
                 <div className="goods-vip">
                     <div className="goods-rating">
 
+                        {product.rating > 0 ? (
+                                <div className="goods-stars-and-rating">
+                                    <div className="goods-stars">
+                                        {[...Array(5)].map((_, index) => (
+                                            <img
+                                                key={index}
+                                                src={index < product.rating ? "/img/star.svg" : "/img/star-outline.svg"}
+                                                alt="star"
+                                            />
 
-                        {product.rating > 0 ? (<div className="goods-stars">
-                            {[...Array(5)].map((_, index) => (
-                                <img
-                                    key={index}
-                                    src={index < product.rating ? "/img/star.svg" : "/img/star-outline.svg"}
-                                    alt="star"
-                                />
-
-                            ))}
-                            <span className="card-rating-value"> {product.rating}</span>
-                        </div>)
-                            :
-                            <div className="goods-stars">
-                                {[...Array(5)].map((_, index) => (
-                                    <img
-                                        key={index}
-                                        src="/img/star.svg"
-                                        alt="star"
-                                        style={{ opacity:  0.5 }}
-                                    />
-                                ))}
-                            </div>
+                                        ))}
+                                    </div>
+                                    <span className="card-rating-value">{product.rating}</span>
+                                </div>
+                            ) :
+                                <div className="goods-stars">
+                                    {[...Array(5)].map((_, index) => (
+                                        <img
+                                            key={index}
+                                            src="/img/star.svg"
+                                            alt="star"
+                                            style={{ opacity:  0.5 }}
+                                        />
+                                    ))}
+                                </div>
                         }
                     </div>
 

@@ -49,6 +49,8 @@ export const productService = {
 
     getById: (id) => request(`/products/${id}`),
 
+    getBySlug: (slug) => request(`/products/slug/${slug}`),
+
     createProduct: (productData) => {
         return request('/products', 'POST', productData);
     },
