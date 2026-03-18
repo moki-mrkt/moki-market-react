@@ -6,6 +6,7 @@ import { feedbackService } from '../../../../services/feedbackService';
 import DeleteFeedbackModal from '../../../../components/Modals/DeleteFeedbackModal/DeleteFeedbackModal';
 
 import './UserReviews.css';
+import FeedbackCard from "../../../FeedbackCard/FeedbackCard.jsx";
 
 const UserReviews = () => {
 
@@ -20,6 +21,14 @@ const UserReviews = () => {
 
     const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
 
+    const [productFeedbacks, setProductFeedbacks] = useState([]);
+    const [isProductLoading, setIsProductLoading] = useState(true);
+    const [productPage, setProductPage] = useState(0);
+    const [productTotalPages, setProductTotalPages] = useState(0);
+    const productPageSize = 3;
+
+    const [productFeedbackToDeleteId, setProductFeedbackToDeleteId] = useState(null);
+
     useEffect(() => {
         const fetchMyFeedback = async () => {
             try {
@@ -30,8 +39,7 @@ const UserReviews = () => {
                     setComment(data.comment);
                 }
             } catch (error) {
-                // Якщо помилка 404 (Не знайдено) - це означає, що відгуку ще немає, це нормально
-                console.log("Відгук про магазин ще не створено");
+
             } finally {
                 setIsLoading(false);
             }
@@ -39,6 +47,24 @@ const UserReviews = () => {
 
         fetchMyFeedback();
     }, []);
+
+    useEffect(() => {
+        const fetchMyProductFeedbacks = async () => {
+            setIsProductLoading(true);
+            try {
+                const data = await feedbackService.getUserFeedbacksAboutProducts(productPage, productPageSize);
+
+                setProductFeedbacks(data.content || data || []);
+                setProductTotalPages(data.page?.totalPages || data.totalPages || 0);
+            } catch (error) {
+
+            } finally {
+                setIsProductLoading(false);
+            }
+        };
+
+        fetchMyProductFeedbacks();
+    }, [productPage]);
 
 
     const handleSubmit = async (e) => {
@@ -68,7 +94,6 @@ const UserReviews = () => {
                 toast.success("Ваш відгук про магазин успішно додано!");
             }
         } catch (error) {
-            console.error("Помилка відправки відгуку:", error);
             if (error.response && (error.response.status === 400 || error.response.status === 409)) {
                 toast.error("Ви вже залишали відгук про наш магазин.");
             } else {
@@ -86,21 +111,28 @@ const UserReviews = () => {
 
     const confirmDeleteFeedback = async () => {
         try {
-            await feedbackService.delete(existingFeedback.id);
+            const targetId = productFeedbackToDeleteId || existingFeedback.id;
 
-            setExistingFeedback(null);
-            setRating(0);
-            setComment('');
+            await feedbackService.delete(targetId);
+
+            if (productFeedbackToDeleteId) {
+                setProductFeedbacks(prev => prev.filter(f => f.id !== targetId));
+            } else {
+                setExistingFeedback(null);
+                setRating(0);
+                setComment('');
+            }
+
             setIsDeleteModalOpen(false);
+            setProductFeedbackToDeleteId(null);
 
-            toast.success("Ваш відгук успішно видалено");
+            toast.success("Відгук успішно видалено");
         } catch (error) {
-            console.error("Помилка видалення відгуку:", error);
             toast.error("Не вдалося видалити відгук. Спробуйте пізніше.");
-            setIsDeleteModalOpen(false); // Все одно закриваємо модалку при помилці
+            setIsDeleteModalOpen(false);
+            setProductFeedbackToDeleteId(null);
         }
     };
-
     const handleEditClick = () => {
         setIsEditing(true);
         setRating(existingFeedback.rating);
@@ -231,7 +263,6 @@ const UserReviews = () => {
                                         type="button"
                                         className="save-btn"
                                         onClick={handleCancelEdit}
-                                        style={{ backgroundColor: 'transparent', color: '#EF4444', border: '1px solid #EF4444' }}
                                         disabled={isSubmitting}
                                     >
                                         Скасувати
@@ -243,10 +274,64 @@ const UserReviews = () => {
                 </div>
             )}
 
-            <form className="review-form" >
+            <div className="user-product-feedbacks" >
                 <h2 className="content-title">Ваші відгуки про продукти</h2>
-                <p className="reviews-text">Тут будуть відображатися ваші відгуки про товари.</p>
-            </form>
+
+                <div className="product-reviews-list" style={{ marginTop: '20px', transition: '0.3s', opacity: isProductLoading ? 0.5 : 1 }}>
+                    {isProductLoading && productFeedbacks.length === 0 ? (
+                        <p className="reviews-text">Завантаження...</p>
+                    ) : productFeedbacks.length > 0 ? (
+                        productFeedbacks.map((feedback) => (
+                            <div >
+                                <h3 className="feedback-product-name">{feedback.productName}:</h3>
+                                <FeedbackCard
+                                    key={feedback.id}
+                                    feedback={feedback}
+                                    showActions={true}
+                                    onDelete={(id) => {
+                                        setProductFeedbackToDeleteId(id);
+                                        setIsDeleteModalOpen(true);
+                                    }}
+                                />
+                            </div>
+                        ))
+                    ) : (
+                        <p className="reviews-text">У вас ще немає відгуків про товари. Перейдіть до каталогу та залиште свій перший відгук!</p>
+                    )}
+                </div>
+
+                {productTotalPages > 1 && (
+                    <div className="feedback-pag-block">
+                        <button
+                            onClick={() => setProductPage(p => p - 1)}
+                            className="pag-button"
+                            disabled={productPage === 0}
+                            style={{
+                                opacity: productPage > 0 ? 1 : 0.4,
+                                cursor: productPage > 0 ? 'pointer' : 'default'
+                            }}
+                        >
+                            Попередня
+                        </button>
+
+                        <span className="pag-text">
+                            Сторінка {productPage + 1} з {productTotalPages}
+                        </span>
+
+                        <button
+                            onClick={() => setProductPage(p => p + 1)}
+                            className="pag-button"
+                            disabled={productPage >= productTotalPages - 1}
+                            style={{
+                                opacity:  productPage < productTotalPages - 1 ? 1 : 0.4,
+                                cursor:  productPage < productTotalPages - 1 ? 'pointer' : 'default'
+                            }}
+                        >
+                            Наступна
+                        </button>
+                    </div>
+                )}
+            </div>
         </div>
     );
 };

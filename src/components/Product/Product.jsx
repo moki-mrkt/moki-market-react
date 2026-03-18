@@ -178,13 +178,11 @@ const Product = () => {
                                             <div className="current-price">
                                                 <span className="current-price-value">{currentPrice}</span>
                                                 <span className="current-price-text">грн</span>
-                                                {/*<span className="current-price-text unit-of-measurement">шт</span>*/}
                                             </div>
                                             {hasDiscount === true && (
                                                 <div className="old-price">
                                                     <span className="old-price-value">{oldPrice}</span>
                                                     <span className="old-price-text">грн</span>
-                                                    {/*<span className="old-price-text unit-of-measurement">шт</span>*/}
                                                 </div>
                                             )}
                                         </div>

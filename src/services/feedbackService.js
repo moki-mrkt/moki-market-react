@@ -25,6 +25,11 @@ export const feedbackService = {
         return response.data;
     },
 
+    getUserFeedbacksAboutProducts: async (page = 0, size = 10) => {
+        const response = await privateApi.get(`/feedbacks/products/my?page=${page}&size=${size}`);
+        return response.data;
+    },
+
 
     getProductFeedbacks: async (productId, page = 0, size = 10) => {
         const response = await publicApi.get(`/feedbacks/product/${productId}?page=${page}&size=${size}`);

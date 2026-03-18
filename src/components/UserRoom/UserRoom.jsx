@@ -44,7 +44,6 @@ const UserRoom = () => {
         const file = event.target.files[0];
         if (!file) return;
 
-        // Зчитуємо файл, щоб показати його в кропері (як ви робили в ImageUploader.jsx)
         const reader = new FileReader();
         reader.onload = () => {
             setSelectedImageSrc(reader.result);
@@ -52,7 +51,7 @@ const UserRoom = () => {
         };
         reader.readAsDataURL(file);
 
-        event.target.value = ''; // Очищаємо інпут
+        event.target.value = '';
     };
 
     const handleCropSave = async (croppedBlob) => {
@@ -155,7 +154,6 @@ const UserRoom = () => {
             <hr className="line-desktop" />
 
             <div className="account-grid">
-                {/* Сайдбар */}
                 <aside className={`account-sidebar ${isSidebarOpen ? 'open' : ''}`} id="accountSidebar">
 
                     <div className="sidebar-header" onClick={() => setIsSidebarOpen(!isSidebarOpen)}>
@@ -205,7 +203,6 @@ const UserRoom = () => {
                     </nav>
                 </aside>
 
-                {/* Тут буде відображатися контент вибраної вкладки */}
                 <div className="account-content">
                     <Outlet context={{ user, setUser }} />
                 </div>

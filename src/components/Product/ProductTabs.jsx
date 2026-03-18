@@ -39,7 +39,7 @@ const ProductTabs = ({ description, characteristics, productId }) => {
 
     const [page, setPage] = useState(0);
     const [totalPages, setTotalPages] = useState(0);
-    const pageSize = 4;
+    const pageSize = 1;
 
     const isAuth = authService.isAuthenticated();
 
@@ -251,7 +251,11 @@ const ProductTabs = ({ description, characteristics, productId }) => {
                                     <button
                                         onClick={() => setPage(p => p - 1)}
                                         className="pag-button"
-                                        style={{ visibility: page > 0 ? 'visible' : 'hidden' }}
+                                        disabled={page === 0}
+                                        style={{
+                                            opacity: page > 0 ? 1 : 0.4,
+                                            cursor:  page > 0 ? 'pointer' : 'default'
+                                        }}
                                     >
                                         Попередня
                                     </button>
@@ -263,7 +267,11 @@ const ProductTabs = ({ description, characteristics, productId }) => {
                                     <button
                                         onClick={() => setPage(p => p + 1)}
                                         className="pag-button"
-                                        style={{ visibility: page < totalPages - 1 ? 'visible' : 'hidden' }}
+                                        disabled={page >= totalPages - 1}
+                                        style={{
+                                            opacity:  page < totalPages - 1 ? 1 : 0.4,
+                                            cursor:  page < totalPages - 1 ? 'pointer' : 'default'
+                                        }}
                                     >
                                         Наступна
                                     </button>

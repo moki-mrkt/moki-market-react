@@ -122,6 +122,39 @@
     font-size: 20px;
 }
 
+.feedback-action-block {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 20px;
+    padding-top: 15px;
+    border-top: 1px solid #E2E8F0;
+}
+
+.feedback-to-product-btn {
+    background: transparent;
+    color: #0E2CA4;
+    border: 1px solid #0E2CA4;
+    padding: 8px 20px;
+    border-radius: 10px;
+    cursor: pointer;
+    font-size: 16px;
+    font-weight: 500;
+    transition: all 0.2s;
+}
+
+.feedback-delete-btn {
+    background: transparent;
+    color: #EF4444;
+    border: 1px solid #EF4444;
+    padding: 8px 10px;
+    border-radius: 10px;
+    cursor: pointer;
+    font-size: 16px;
+    font-weight: 500;
+    transition: all 0.2s;
+}
+
 @media (max-width: 768px) {
 
     .feedback-card {
@@ -167,6 +200,21 @@
     }
 
     .product-feedback-date {
+        font-size: 12px;
+    }
+
+    .feedback-action-block {
+        margin-top: 10px;
+        padding-top: 15px;
+    }
+
+    .feedback-to-product-btn {
+        padding: 8px 10px;
+        font-size: 12px;
+    }
+
+    .feedback-delete-btn {
+        padding: 8px 10px;
         font-size: 12px;
     }
 

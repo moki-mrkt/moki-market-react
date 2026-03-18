@@ -7,7 +7,6 @@
 }
 
 .reviews-header {
-    border-bottom: 1px solid #AEBED2;
     margin-bottom: 30px;
     padding-bottom: 15px;
 }
@@ -106,6 +105,14 @@
     color: #fff;
 }
 
+.feedback-product-name {
+    font-size: 24px;
+    color: #061F7C;
+    font-weight: 600;
+    margin-top: 0;
+    margin-bottom: 5px;
+}
+
 @media (max-width: 768px) {
     .rating-label {
         font-size: 18px;
@@ -136,5 +143,9 @@
         width: 60%;
         font-size: 18px;
         height: 45px;
+    }
+
+    .feedback-product-name {
+        font-size: 16px;
     }
 }
