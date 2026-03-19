@@ -133,6 +133,7 @@ const UserReviews = () => {
             setProductFeedbackToDeleteId(null);
         }
     };
+
     const handleEditClick = () => {
         setIsEditing(true);
         setRating(existingFeedback.rating);

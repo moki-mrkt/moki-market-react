@@ -6,6 +6,7 @@ import { authService } from '../../../services/authService';
 
 import './AuthenticationModal.css';
 import {cartService} from "../../../services/cartService.js";
+import {useLocation, useNavigate} from "react-router-dom";
 
 const AuthenticationModal = ({ isOpen, onClose, onSuccess, onSwitchToRegister, onSwitchToForgotPassword}) => {
 
@@ -63,11 +64,11 @@ const AuthenticationModal = ({ isOpen, onClose, onSuccess, onSwitchToRegister, o
             await syncCartWithServer();
         } catch (err) {
             console.error("Помилка при перенесенні кошика на бекенд:", err);
-        } finally {
-            onSuccess(loginResponse);
-            onClose();
-            setLoading(false);
         }
+
+
+        setLoading(false);
+        onSuccess();
     };
 
     return (

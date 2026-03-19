@@ -33,6 +33,5 @@ export const authService = {
     },
 
     isAuthenticated: () => {
-        return !!localStorage.getItem('accessToken');
-    }
+        return !!localStorage.getItem('accessToken') || !!localStorage.getItem('refreshToken');    }
 };

@@ -1,9 +1,13 @@
-import { useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { feedbackService } from '../../../services/feedbackService';
-import {URLS} from "../../../constants/urls.js";
 import FeedbackCard from "../../FeedbackCard/FeedbackCard.jsx";
+import {authService} from "../../../services/authService.js";
+import {useNavigate} from "react-router-dom";
 
 const ReviewsTab = () => {
+
+    const navigate = useNavigate();
+
     const [reviews, setReviews] = useState([]);
     const [storeRating, setStoreRating] = useState(0);
     const [totalReviews, setTotalReviews] = useState(0);
@@ -44,6 +48,14 @@ const ReviewsTab = () => {
         fetchReviews(nextPage);
     };
 
+    const handleAddFeedbackClick = () => {
+        if (authService.isAuthenticated()) {
+            navigate('/profile/reviews');
+        } else {
+            navigate(`${location.pathname}?login=true&redirect=reviews`);
+        }
+    };
+
     const renderStars = (rating) => {
         return (
             <div className="feed-stars">
@@ -73,7 +85,7 @@ const ReviewsTab = () => {
                     </div>
                 </div>
 
-                <button className="add-review-btn">
+                <button className="add-review-btn" onClick={handleAddFeedbackClick}>
                     <img src="/img/like.svg" alt="img-like" />
                     Додайте відгук
                 </button>

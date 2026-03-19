@@ -264,5 +264,15 @@
         text-decoration: underline;
     }
 
+    .auth-checkout-input:-webkit-autofill,
+    .auth-checkout-input:-webkit-autofill:hover,
+    .auth-checkout-input:-webkit-autofill:focus,
+    .auth-checkout-input:-webkit-autofill:active {
+
+        -webkit-box-shadow: 0 0 0 100px #FCF9EC inset !important;
+        -webkit-text-fill-color: #0E2CA4 !important;
+        transition: background-color 5000s ease-in-out 0s;
+    }
+
 
 }

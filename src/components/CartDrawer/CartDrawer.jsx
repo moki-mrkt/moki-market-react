@@ -5,7 +5,7 @@ import { useCart } from '../../contexts/CartContext.jsx';
 
 import './CartDrawer.css';
 
-const CartDrawer = ({ isOpen, onClose }) => {
+const CartDrawer = ({ isOpen }) => {
 
     const {
         isCartOpen,
@@ -41,6 +41,18 @@ const CartDrawer = ({ isOpen, onClose }) => {
         updateQuantity(id, newQty);
     };
 
+    const originalTotal = cartItems.reduce((acc, item) => acc + (item.priceWithoutDiscount * item.quantity), 0);
+    const finalTotal = Number(cartTotal);
+    const discountAmount = originalTotal > finalTotal ? originalTotal - finalTotal : 0;
+
+    const getItemsWord = (count) => {
+        const mod10 = count % 10;
+        const mod100 = count % 100;
+        if (mod10 === 1 && mod100 !== 11) return 'товар';
+        if ([2, 3, 4].includes(mod10) && ![12, 13, 14].includes(mod100)) return 'товари';
+        return 'товарів';
+    };
+
     return (
         <div className="cart-overlay" onClick={handleClose}>
             <div
@@ -68,15 +80,13 @@ const CartDrawer = ({ isOpen, onClose }) => {
                         cartItems.map(item => (
                             <div className="cart-item" key={item.id}>
                                 <div className="cart-img">
-                                    <img src={item.image || '/placeholder.png'} alt={item.name} />
+                                    <img src={item.image || '/img/icon.png'} alt={item.name} />
                                 </div>
 
                                 <div className="cart-info">
                                     <div>
                                         <h4 className="cart-name">{item.name}</h4>
                                     </div>
-
-                                    {/*<span className="item-old-price">{item.itemTotal.toFixed(2)}₴ </span>*/}
 
                                     <div className="cart-controls">
                                         <div className="qty-and-trash">
@@ -137,10 +147,29 @@ const CartDrawer = ({ isOpen, onClose }) => {
 
                 {cartItems.length > 0 && (
                     <div className="cart-drawer-footer">
-                        <div className="total-price">
-                            <span>Разом:</span>
-                            <span>{Number(cartTotal).toFixed(2)} ₴</span>
+                        <div className="order-totals">
+                            <div className="total-row final-total">
+                                <span>Разом</span>
+                            </div>
+
+                            <div className="total-row small-row">
+                                <span>{cartItems.length} {getItemsWord(cartItems.length)} на суму:</span>
+                                <span>{originalTotal.toFixed(2)} ₴</span>
+                            </div>
+
+                            {discountAmount > 0 && (
+                                <div className="total-row discount small-row">
+                                    <span>У тому числі знижка:</span>
+                                    <span>-{discountAmount.toFixed(2)} ₴</span>
+                                </div>
+                            )}
+
+                            <div className="total-row final-total">
+                                <span>До сплати:</span>
+                                <span>{finalTotal.toFixed(2)} ₴</span>
+                            </div>
                         </div>
+
                         <div className="cart-footer-btn">
                             <button className="btn-checkout" onClick={handleCheckout}>
                                 Оформити замовлення

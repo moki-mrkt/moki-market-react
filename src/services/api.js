@@ -45,7 +45,7 @@ privateApi.interceptors.request.use(
     (error) => Promise.reject(error)
 );
 
-export const refreshTokens = async (originalRequest) => {
+export const refreshTokens = async () => {
 
     const refreshToken = localStorage.getItem('refreshToken');
 
@@ -54,19 +54,22 @@ export const refreshTokens = async (originalRequest) => {
     const response = await axios.post(`${API_URL}/auth/refresh`, {refreshToken: refreshToken});
 
     const newAccessToken = response.data.accessToken;
+    const newRefreshToken = response.data.refreshToken;
 
-    // Зберігаємо нові токени
     localStorage.setItem('accessToken', newAccessToken);
-    localStorage.setItem('refreshToken', response.data.refreshToken);
+    if (newRefreshToken) {
+        localStorage.setItem('refreshToken', newRefreshToken);
+    }
 
     // Оновлюємо заголовок поточного запиту
     privateApi.defaults.headers.common['Authorization'] = 'Bearer ' + newAccessToken;
-    originalRequest.headers['Authorization'] = 'Bearer ' + newAccessToken;
 
-    // Виконуємо всі запити, які чекали в черзі
-    processQueue(null, newAccessToken);
-
-    return privateApi(originalRequest);
+    // originalRequest.headers['Authorization'] = 'Bearer ' + newAccessToken;
+    //
+    // processQueue(null, newAccessToken);
+    //
+    // return privateApi(originalRequest);
+    return newAccessToken;
 };
 
 privateApi.interceptors.response.use(
@@ -91,20 +94,23 @@ privateApi.interceptors.response.use(
             isRefreshing = true;
 
             try {
-                return await refreshTokens(originalRequest);
+                const newAccessToken = await refreshTokens();
+
+                originalRequest.headers['Authorization'] = 'Bearer ' + newAccessToken;
+
+                processQueue(null, newAccessToken);
+                isRefreshing = false;
+
+                return privateApi(originalRequest);
 
             } catch (refreshError) {
 
                 processQueue(refreshError, null);
+                isRefreshing = false;
+
                 localStorage.clear();
 
-                const currentPath = window.location.pathname;
-
-                if (currentPath.startsWith('/admin-ui')) {
-                    window.location.href = '/admin-ui/login';
-                } else {
-                    window.location.href = '/';
-                }
+                window.location.href = '/';
 
                 return Promise.reject(refreshError);
             } finally {
@@ -117,4 +123,3 @@ privateApi.interceptors.response.use(
 );
 
 export { privateApi };
-export default publicApi;

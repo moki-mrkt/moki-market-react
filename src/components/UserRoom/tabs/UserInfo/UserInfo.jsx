@@ -2,7 +2,6 @@ import React, { useState } from 'react';
 import {Link, useOutletContext} from 'react-router-dom';
 import { userService } from '../../../../services/userService.js';
 import { authService } from '../../../../services/authService.js';
-import { cartService } from '../../../../services/cartService.js';
 import toast from 'react-hot-toast';
 
 import './UserInfo.css';
@@ -71,17 +70,6 @@ const UserInfo = () => {
         if (errors[name]) {
             setErrors({ ...errors, [name]: null });
         }
-    };
-
-    const handlePostOfficeChange = (e) => {
-        const value = e.target.value;
-
-        if (!value.startsWith('№ ')) {
-            setFormData(prev => ({ ...prev, postOffice: '№ ' }));
-            return;
-        }
-
-        setFormData(prev => ({ ...prev, postOffice: value }));
     };
 
     const handleSubmit = async (e) => {
@@ -218,7 +206,7 @@ const UserInfo = () => {
                         className="account-input"
                         placeholder="Відділення пошти"
                         value={formData.postOffice}
-                        onChange={handlePostOfficeChange}
+                        onChange={handleChange}
                     />
                 </div>
 

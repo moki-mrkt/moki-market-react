@@ -21,12 +21,12 @@ const ContactsTab = () => (
             </div>
         </div>
 
-        <div className="map-section">
-            <h2 className="map-title">Карта</h2>
-            <div className="map-frame">
-                {/* Вставте сюди iframe карти Google Maps */}
-            </div>
-        </div>
+        {/*<div className="map-section">*/}
+        {/*    <h2 className="map-title">Карта</h2>*/}
+        {/*    <div className="map-frame">*/}
+        {/*        /!* Вставте сюди iframe карти Google Maps *!/*/}
+        {/*    </div>*/}
+        {/*</div>*/}
     </div>
 );
 

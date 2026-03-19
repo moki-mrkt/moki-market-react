@@ -7,7 +7,6 @@ export const cartService = {
     },
 
     updateQuantity: async (productId, quantity) => {
-        // Зверніть увагу, що тут PUT запит
         const response = await privateApi.put(`/cart/items/${productId}?quantity=${quantity}`);
         return response.data;
     },

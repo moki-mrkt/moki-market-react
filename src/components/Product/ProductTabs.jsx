@@ -44,6 +44,20 @@ const ProductTabs = ({ description, characteristics, productId }) => {
     const isAuth = authService.isAuthenticated();
 
     useEffect(() => {
+        const searchParams = new URLSearchParams(location.search);
+        const tabFromUrl = searchParams.get('tab');
+
+        if (tabFromUrl === 'reviews' || tabFromUrl === 'characteristics' || tabFromUrl === 'description') {
+            setActiveTab(tabFromUrl);
+
+            const tabsElement = document.querySelector('.product-tabs');
+            if (tabsElement) {
+                tabsElement.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            }
+        }
+    }, [location.search]);
+
+    useEffect(() => {
         if (activeTab === 'reviews' && productId) {
             loadFeedbacks();
         }
@@ -66,14 +80,12 @@ const ProductTabs = ({ description, characteristics, productId }) => {
         const fetchMyFeedback = async () => {
             if (isAuth && productId) {
                 try {
-                    console.log("Load");
                     const data = await feedbackService.getUserFeedbackAboutProduct(productId);
-                    console.log("Відгук поточного юзера:", data);
                     if (data) {
                         setUserFeedback(data);
                     }
                 } catch (error) {
-                    console.log("Відгук поточного юзера ще не створено");
+
                 }
             }
         };
@@ -84,27 +96,25 @@ const ProductTabs = ({ description, characteristics, productId }) => {
         e.preventDefault();
         if (rating === 0) { toast.error("Будь ласка, оберіть оцінку"); return; }
         if (!comment.trim()) { toast.error("Будь ласка, напишіть текст"); return; }
+        if (comment.length < 2 || comment.length > 1000) { toast.error("Текст повинен бути більше 2 або меньше 1000 символів"); return; }
 
         setIsSubmitting(true);
 
         try {
             if (isEditing && userFeedback) {
-                // ЛОГІКА ОНОВЛЕННЯ
                 const updatedFeedback = await feedbackService.update(userFeedback.id, { rating, comment });
                 setUserFeedback(updatedFeedback || { ...userFeedback, rating, comment });
                 setIsEditing(false);
                 toast.success("Ваш відгук успішно оновлено!");
             } else {
-                // ЛОГІКА СТВОРЕННЯ
                 const newFeedback = await feedbackService.createFeedback({ rating, comment, productId });
-                setUserFeedback(newFeedback); // Зберігаємо відгук, щоб сховати форму
+                setUserFeedback(newFeedback);
                 toast.success("Ваш відгук успішно додано!");
             }
             setRating(0);
             setComment('');
             loadFeedbacks();
         } catch (error) {
-            console.error("Помилка:", error);
             toast.error("Помилка при збереженні відгуку.");
         } finally {
             setIsSubmitting(false);
@@ -124,7 +134,7 @@ const ProductTabs = ({ description, characteristics, productId }) => {
     };
 
     const handleLoginClick = () => {
-        navigate(`${location.pathname}?login=true`);
+        navigate(`${location.pathname}?tab=reviews&login=true`);
     };
 
     const handleDeleteClick = (e) => {
@@ -142,7 +152,6 @@ const ProductTabs = ({ description, characteristics, productId }) => {
             loadFeedbacks();
             setIsDeleteModalOpen(false);
         } catch (error) {
-            console.error("Помилка видалення відгуку:", error);
             toast.error("Не вдалося видалити відгук. Спробуйте пізніше.");
             setIsDeleteModalOpen(false);
         }
@@ -241,13 +250,7 @@ const ProductTabs = ({ description, characteristics, productId }) => {
                             </div>
 
                             {totalPages > 1 && (
-                                <div className="pag-block"
-                                     style={{ marginTop: '30px',
-                                         display: 'flex',
-                                         justifyContent: 'center',
-                                         alignItems: 'center',
-                                         gap: '15px' }}
-                                >
+                                <div className="pag-block">
                                     <button
                                         onClick={() => setPage(p => p - 1)}
                                         className="pag-button"
@@ -260,7 +263,7 @@ const ProductTabs = ({ description, characteristics, productId }) => {
                                         Попередня
                                     </button>
 
-                                    <span className="pag-text" style={{ padding: '5px', color: '#0E2CA4', minWidth: '130px', textAlign: 'center' }}>
+                                    <span className="pag-text">
                                         Сторінка {page + 1} з {totalPages}
                                     </span>
 

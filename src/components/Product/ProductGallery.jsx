@@ -13,6 +13,10 @@ const ProductGallery = ({ images, fallbackImage }) => {
 
     const displayImages = images && images.length > 0 ? images : [{ url: fallbackImage }];
 
+    // const imageUrl = mainImage
+    //     ? `${image_api}${mainImage.imageId}`
+    //     : '/img/icon.png';
+    //
     return (
         <>
             {/* Головний слайдер */}
@@ -25,7 +29,8 @@ const ProductGallery = ({ images, fallbackImage }) => {
                 {displayImages.map((img, index) => (
                     <SwiperSlide key={index}>
                         <img
-                            src={`${image_api}${img.imageId || img}`}
+                            // src={item.image || '/img/icon.png'}
+                            src={ img.imageId ? `${image_api}${img.imageId }` : '/img/icon.png'}
                             alt={`Product view ${index + 1}`}
                         />
                     </SwiperSlide>

@@ -16,7 +16,7 @@ const image_api =  URLS.s3_bucket;
 
 const ProductCard = ({product, onFavoriteToggle }) => {
 
-    const productUrl = `/catalog/${getSlugFromEnum(product.productCategory)}/${product.slug}`;
+    const productUrl = `/products/${product.slug}`;
 
     const { openLogin } = useModal();
     const { addToCart } = useCart();

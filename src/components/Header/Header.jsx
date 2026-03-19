@@ -56,15 +56,20 @@ const Header = () => {
         }
 
         if (shouldCleanUrl) {
-            navigate(location.pathname, { replace: true });
+            const newSearch = searchParams.toString();
+            const newUrl = newSearch ? `${location.pathname}?${newSearch}` : location.pathname;
+
+            navigate(newUrl, { replace: true });
         }
     }, [location.search, navigate]);
 
     const handleCabinetClick = () => {
         if (authService.isAuthenticated()) {
-            navigate('/profile');
+            navigate('/profile/info');
+        } else if(location.pathname.startsWith('/products/')) {
+            navigate(`${location.pathname}?login=true`);
         } else {
-            openLogin();
+            navigate(`${location.pathname}?login=true&redirect=profile`);
         }
     };
 
@@ -72,7 +77,7 @@ const Header = () => {
         if (authService.isAuthenticated()) {
             navigate('/profile/wishlist');
         } else {
-            openLogin();
+            navigate(`${location.pathname}?login=true&redirect=wishlist`);
         }
     };
 
@@ -134,15 +139,19 @@ const Header = () => {
                             <img src="/img/icon.svg" alt="MOKI" />
                         </Link>
 
-                        <button
-                            className="burger-menu-btn"
-                            aria-label="Menu"
-                            onClick={toggleMenu}
-                        >
-                            <span></span>
-                            <span></span>
-                            <span></span>
-                        </button>
+                        <div className="menu-btn">
+                            <button
+                                className="burger-menu-btn"
+                                aria-label="Menu"
+                                onClick={toggleMenu}
+                            >
+                                <span></span>
+                                <span></span>
+                                <span></span>
+                            </button>
+                            <span className="menu-text">Меню</span>
+                        </div>
+
 
                         <nav className="main-menu">
                             <ul>
