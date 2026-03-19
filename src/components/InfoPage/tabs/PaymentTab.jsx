@@ -1,6 +1,13 @@
+import {Helmet} from "react-helmet-async";
+import React from "react";
+
 const PaymentTab = () => (
     <div id="payment" className="info-tab active">
-        <h2 className="info-title">Оплата та доставка</h2>
+        <Helmet>
+            <title>Оплата та доставка | Moki Market</title>
+            <meta name="description" content="Оплата та доставка | Moki Market" />
+        </Helmet>
+        <h1 className="info-title">Оплата та доставка</h1>
         <div className="info-cards-container">
             <div className="info-card">
                 <h2 className="info-card-title">Способи доставки:</h2>

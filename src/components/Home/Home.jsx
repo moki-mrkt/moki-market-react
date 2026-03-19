@@ -6,6 +6,7 @@ import Feedbacks from '../Feedbacks/Feedbacks';
 import AuthModal from '../Modals/AuthenticationModal/AuthenticationModal';
 
 import { productService } from '../../services/productService';
+import {Helmet} from "react-helmet-async";
 
 const Home = () => {
 
@@ -46,8 +47,41 @@ const Home = () => {
 
     return (
         <main className="hero-section">
+
+            <Helmet>
+                <title>Moki | Горіхи, сухофрукти та корисні ласощі</title>
+                <meta name="description" content="Інтернет-магазин Moki: найкращий вибір горіхів, сухофруктів, кави та солодощів з доставкою по всій Україні." />
+                <link rel="canonical" href="https://moki.com.ua" />
+
+                <meta property="og:type" content="website" />
+                <meta property="og:url" content="https://moki.com.ua" />
+                <meta property="og:title" content="Moki — корисні солодощі та добірні горіхи" />
+                <meta property="og:description" content="Шукаєте корисний перекус? У Moki ви знайдете найсвіжіші горіхи та сухофрукти." />
+                <meta property="og:image" content="https://moki.com.ua/img/og-main.jpg" />
+
+                <meta name="twitter:card" content="summary_large_image" />
+                <meta name="twitter:title" content="Moki | Горіхи та сухофрукти" />
+                <meta name="twitter:description" content="Найкращий вибір горіхів та солодощів з доставкою." />
+                <meta name="twitter:image" content="https://moki.com.ua/img/icon.png" />
+
+                <script type="application/ld+json">
+                    {JSON.stringify({
+                        "@context": "https://schema.org",
+                        "@type": "WebSite",
+                        "name": "Moki Market",
+                        "url": "https://moki.com.ua",
+                        "potentialAction": {
+                            "@type": "SearchAction",
+                            "target": "https://moki.com.ua/catalog?search={search_term_string}",
+                            "query-input": "required name=search_term_string"
+                        }
+                    })}
+                </script>
+            </Helmet>
+
             <div className="container hero__grid">
 
+                <h1 className="visually-hidden">Moki — горіхи, сухофрукти та корисні ласощі</h1>
             <AuthModal
                 isOpen={isAuthModalOpen}
                 onClose={() => setIsAuthModalOpen(false)}

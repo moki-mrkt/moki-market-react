@@ -1,5 +1,12 @@
+import {Helmet} from "react-helmet-async";
+import React from "react";
+
 const ContactsTab = () => (
     <div id="contacts" className="info-tab active">
+        <Helmet>
+            <title>Контакти та адреса магазину | Moki Market</title>
+            <meta name="description" content="Контакти та адреса магазину | Moki Market" />
+        </Helmet>
         <h1 className="info-title">Контактна інформація</h1>
         <div className="contacts-details">
             <div className="contact-group-item">

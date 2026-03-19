@@ -22,6 +22,7 @@ import './Product.css';
 import {authService} from "../../services/authService.js";
 import {favoriteProductService} from "../../services/favoriteProductService.js";
 import toast from "react-hot-toast";
+import {Helmet} from "react-helmet-async";
 
 const Product = () => {
 
@@ -90,16 +91,6 @@ const Product = () => {
         window.scrollTo(0, 0);
     }, [productSlug]);
 
-    if (loading) return <div className="loader">Завантаження...</div>;
-    if (!product) return <div className="not-found">Товар не знайдено</div>;
-
-    const hasDiscount = product.discount && product.discount > 0;
-    const currentPrice = hasDiscount ? (product.price  - (product.price * product.discount / 100)).toFixed(2) : product.price
-
-    const oldPrice = hasDiscount ? product.price : null;
-
-    const isAvailable = product.availability === 'IN_STOCK';
-
     const handleHeartClick = async (e) => {
         e.preventDefault();
 
@@ -123,8 +114,85 @@ const Product = () => {
         }
     };
 
+    const hasDiscount = product?.discount && product.discount > 0;
+    const currentPrice = product
+        ? (hasDiscount ? (product.price - (product.price * product.discount / 100)).toFixed(2) : product.price)
+        : 0;
+
+    const oldPrice = hasDiscount ? product?.price : null;
+    const isAvailable = product?.availability === 'IN_STOCK';
+
+    const stripHtml = (html) => {
+        if (!html) return "";
+        return html.replace(/<\/?[^>]+(>|$)/g, "").substring(0, 160);
+    };
+
+    const cleanDescription = product ? stripHtml(product.shortDescription || product.description) : "";
+    const siteUrl = "https://moki.com.ua";
+    const absoluteImageUrl = product?.images?.[0]
+        ? (product.images[0].imageId.startsWith('http') ? product.images[0].imageId : `${siteUrl}${product.images[0].imageId}`)
+        : `${siteUrl}/img/icon.png`;
+
     return (
         <>
+            <Helmet>
+
+                <title>
+                    {product ? `Купити ${product.name} в Moki` : "Завантаження... | Moki"}
+                </title>
+
+                {product && (
+                    <>
+                        <meta name="description" content={cleanDescription || "Найкраща якість у Moki"} />
+
+                        <link rel="canonical" href={`${siteUrl}/products/${productSlug}`} />
+
+                        <meta property="og:type" content="product" />
+                        <meta property="og:title" content={product.name} />
+                        <meta property="og:description" content={cleanDescription} />
+                        <meta property="og:image" content={absoluteImageUrl} />
+                        <meta property="og:url" content={window.location.href} />
+
+                        <meta name="twitter:card" content="summary_large_image" />
+                        <meta name="twitter:title" content={product.name} />
+                        <meta name="twitter:description" content={cleanDescription} />
+                        <meta name="twitter:image" content={absoluteImageUrl} />
+
+                        <script type="application/ld+json">
+                            {JSON.stringify({
+                                "@context": "https://schema.org/",
+                                "@type": "Product",
+                                "name": product.name,
+                                "image": product.images?.map(img => img.imageId.startsWith('http') ? img : `${siteUrl}${img}`),
+                                "description": cleanDescription,
+                                "brand": {
+                                    "@type": "Brand",
+                                    "name": "Moki"
+                                },
+                                "offers": {
+                                    "@type": "Offer",
+                                    "url": window.location.href,
+                                    "priceCurrency": "UAH",
+                                    "price": currentPrice,
+                                    "itemCondition": "https://schema.org/NewCondition",
+                                    "availability": isAvailable ? "https://schema.org/InStock" : "https://schema.org/OutOfStock"
+                                },
+                                "aggregateRating": product.rating > 0 ? {
+                                    "@type": "AggregateRating",
+                                    "ratingValue": product.rating,
+                                    "reviewCount": product.reviewsCount || 1
+                                } : undefined
+                            })}
+                        </script>
+                    </>
+                )}
+            </Helmet>
+
+            {loading ? (
+                <div className="loader">Завантаження...</div>
+            ) : !product ? (
+                <div className="not-found">Товар не знайдено</div>
+            ) : (
             <main className="hero-section">
                 <div className="container hero__grid">
 
@@ -135,12 +203,14 @@ const Product = () => {
 
                             <div className="product-gallery-wrapper">
                                 <ProductGallery images={product.images || []}
-                                                fallbackImage="../../img/categories/nuts.png" />
+                                                fallbackImage="../../img/categories/nuts.png"
+                                                productName={product.name}
+                                />
                             </div>
 
                             <div className="product-info">
                                 <div className="product-info-top">
-                                    <h2 className="product-name">{product.name}</h2>
+                                    <h1 className="product-name">{product.name}</h1>
 
                                     <div className="product-rating-wrapper">
                                         {product.rating > 0 ? (
@@ -243,6 +313,7 @@ const Product = () => {
                     )}
                 </div>
             </main>
+            )}
         </>
     );
 };

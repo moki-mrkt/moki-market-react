@@ -14,14 +14,11 @@ const Breadcrumbs = ({ customCrumbs }) => {
     const routes = [
         { path: '/', breadcrumb: 'Головна' },
         { path: '/catalog', breadcrumb: 'Каталог' },
-
         { path: '/catalog/:categorySlug', breadcrumb: CategoryBreadcrumb },
         { path: '/search', breadcrumb: 'Пошук'},
         { path: '/promotions', breadcrumb: 'Акції' },
-
         { path: '/product/:productId', breadcrumb: 'Товар' }
     ];
-
 
     const generatedCrumbs = useBreadcrumbs(routes);
 
@@ -31,22 +28,42 @@ const Breadcrumbs = ({ customCrumbs }) => {
 
     return (
         <nav className="breadcrumbs" aria-label="Breadcrumb">
-            <ol className="breadcrumbs__list">
+            <ol
+                className="breadcrumbs__list"
+                itemScope
+                itemType="https://schema.org/BreadcrumbList"
+            >
+
                 {breadcrumbsToRender.map((item, index) => {
                     const isLast = index === breadcrumbsToRender.length - 1;
-
                     const path = item.match ? item.match.pathname : item.path;
-
                     const label = item.breadcrumb;
 
+                    const absolutePath = window.location.origin + (path || "");
+
                     return (
-                        <li key={path || index} className="breadcrumbs__item">
+                        <li
+                            key={path || index}
+                            className="breadcrumbs__item"
+                            itemProp="itemListElement"
+                            itemScope
+                            itemType="https://schema.org/ListItem"
+                        >
                             {isLast ? (
                                 <span className="breadcrumbs__link">
-                                    <span className="breadcrumbs__current">{label}</span>
+                                    <span
+                                        itemProp="name"
+                                        className="breadcrumbs__current"
+                                    >
+                                        {label}
+                                    </span>
+                                    <meta itemProp="item" content={window.location.href} />
                                 </span>
                             ) : (
-                                <Link to={path} className="breadcrumbs__link">
+                                <Link to={path}
+                                      className="breadcrumbs__link"
+                                      itemProp="item"
+                                >
                                     {path === '/' && (
                                         <img
                                             className="home-img"
@@ -55,9 +72,10 @@ const Breadcrumbs = ({ customCrumbs }) => {
                                             style={{ marginRight: '5px' }}
                                         />
                                     )}
-                                    {label}
+                                    <span itemProp="name">{label}</span>
                                 </Link>
                             )}
+                            <meta itemProp="position" content={index + 1} />
                         </li>
                     );
                 })}

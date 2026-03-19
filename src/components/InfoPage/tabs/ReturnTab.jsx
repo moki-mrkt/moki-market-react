@@ -1,6 +1,13 @@
+import {Helmet} from "react-helmet-async";
+import React from "react";
+
 const ReturnTab = () => (
     <div id="return" className="info-tab active">
-        <h2 className="info-title">Обмін та повернення</h2>
+        <Helmet>
+            <title>Обмін та повернення | Moki Market</title>
+            <meta name="description" content="Обмін та повернення | Moki Market" />
+        </Helmet>
+        <h1 className="info-title">Обмін та повернення</h1>
         <div className="info-card">
             <h2 className="info-card-subtitle">Гарантія якості та умови повернення</h2>
             <p className="info-card-text">Ми ретельно перевіряємо кожне замовлення перед відправкою, а також контролюємо якість та свіжість товарів при отриманні від постачальників. Наша мета — щоб ви отримали продукт, який повністю відповідає опису та вашим очікуванням.</p>

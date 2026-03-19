@@ -81,7 +81,7 @@ const ProductCard = ({product, onFavoriteToggle }) => {
             </div>
 
             <Link to={productUrl} className="goods-image">
-                <img src={imageUrl} alt={product.name} />
+                <img src={imageUrl} alt={`Купити ${product.name} в Moki`} />
             </Link>
 
             <div className="goods-info">

@@ -2,6 +2,7 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import Breadcrumbs from '../Breadcrumbs/Breadcrumbs';
 import './Catalog.css';
+import {Helmet} from "react-helmet-async";
 
 const Catalog = () => {
     const categories = [
@@ -10,21 +11,47 @@ const Catalog = () => {
         { id: 3, title: 'Горіхи', img: '/img/categories/nuts.png', link: '/catalog/nuts' },
         { id: 4, title: 'Кава', img: '/img/categories/coffee.png', link: '/catalog/coffee' },
         { id: 5, title: 'Чай', img: '/img/categories/tea.png', link: '/catalog/tea' },
-        { id: 6, title: 'Суперфуд', img: '/img/categories/superfood.png', link: '/catalog/super-food' },
+        { id: 6, title: 'Суперфуд', img: '/img/categories/superfood.png', link: '/catalog/superfoods' },
         { id: 7, title: 'Олія та масла', img: '/img/categories/oils.png', link: '/catalog/oils' },
-        { id: 8, title: 'Консервація', img: '/img/categories/conservation.png', link: '/catalog/conservation' },
+        { id: 8, title: 'Консервація', img: '/img/categories/preserves.png', link: '/catalog/preserves' },
         { id: 9, title: 'Снеки та чіпси', img: '/img/categories/snecks.png', link: '/catalog/snacks' },
         { id: 10, title: 'Спеції', img: '/img/categories/spices.png', link: '/catalog/spices' },
     ];
 
     return (
         <main className="hero-section">
+
+            <Helmet>
+                <title>Каталог товарів Moki Market | Горіхи, сухофрукти, солодощі та кава</title>
+                <meta
+                    name="description"
+                    content="Перегляньте повний каталог Moki Market: горіхи, сухофрукти, кава, суперфуди та корисні снеки. Тільки якісні та свіжі продукти з доставкою по Україні."
+                />
+                <link rel="canonical" href="https://moki.com.ua/catalog" />
+
+                <meta property="og:type" content="website" />
+                <meta property="og:title" content="Каталог корисних продуктів Moki Market" />
+                <meta property="og:description" content="Широкий вибір горіхів, сухофруктів та еко-товарів в одному місці. Обирайте найкраще для свого здоров'я!" />
+                <meta property="og:url" content="https://moki.com.ua/catalog" />
+                <meta property="og:image" content="https://moki.com.ua/img/icon.png" />
+
+                <script type="application/ld+json">
+                    {JSON.stringify({
+                        "@context": "https://schema.org",
+                        "@type": "CollectionPage",
+                        "name": "Каталог товарів Moki Market",
+                        "description": "Повний перелік категорій продуктів харчування: горіхи, насіння, солодощі, кава та інше.",
+                        "url": "https://moki.com.ua/catalog"
+                    })}
+                </script>
+            </Helmet>
+
             <div className="container hero__grid">
 
                 <Breadcrumbs />
 
                 <div className="main-catalog">
-                    <h2 className="catalog-title">Каталог</h2>
+                    <h1 className="catalog-title">Каталог</h1>
 
                     <div className="categories">
                         {categories.map((category) => (

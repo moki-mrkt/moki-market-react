@@ -8,6 +8,7 @@ import { productService } from '../../services/productService';
 import { getEnumFromSlug, getLabelFromSlug } from '../../constants/categories';
 import { SEO_TEXTS } from '../../constants/seoText';
 import './PageProducts.css';
+import {Helmet} from "react-helmet-async";
 
 const PageGoods = ({ initialFilters = {} }) => {
 
@@ -202,14 +203,54 @@ const PageGoods = ({ initialFilters = {} }) => {
 
     const seoContent = categorySlug ? (SEO_TEXTS[categorySlug] || SEO_TEXTS['default']) : SEO_TEXTS['default'];
 
+    const siteUrl = "https://moki.com.ua";
+    const currentUrl = categorySlug
+        ? `${siteUrl}/catalog/${categorySlug}`
+        : siteUrl;
+
+    const shouldNoIndex = searchQuery || appliedFilters.minPrice || appliedFilters.subcategories.length > 0;
+
     return (
         <main className="hero-section">
+
+            <Helmet>
+                <title>{searchQuery ? `Пошук: ${searchQuery}` : `${seoContent.title} купити в Україні | Moki Market`}</title>
+                <meta name="description" content={seoContent.intro?.[0]?.substring(0, 160) || `${seoContent.title} в Moki Market...`} />
+
+                {!searchQuery && <link rel="canonical" href={currentUrl} />}
+
+                {shouldNoIndex && <meta name="robots" content="noindex, follow" />}
+
+                <meta property="og:type" content="website" />
+                <meta property="og:title" content={seoContent.title} />
+                <meta property="og:url" content={window.location.href} />
+                <meta property="og:image" content={`${siteUrl}/img/categories/${categorySlug || 'default'}.png`} />
+
+                {!searchQuery && products.length > 0 && (
+                    <script type="application/ld+json">
+                        {JSON.stringify({
+                            "@context": "https://schema.org",
+                            "@type": "ItemList",
+                            "name": seoContent.title,
+                            "numberOfItems": products.length,
+                            "itemListElement": products.map((product, index) => ({
+                                "@type": "ListItem",
+                                "position": index + 1,
+                                "url": `${siteUrl}/products/${product.slug}`
+                            }))
+                        })}
+                    </script>
+                )}
+            </Helmet>
+
             <div className="container hero__grid">
 
                 <Breadcrumbs />
 
-                {searchQuery && (
-                    <h2 className="catalog-title">Результати пошуку: "{searchQuery}"</h2>
+                {searchQuery ? (
+                    <h1 className="catalog-title">Результати пошуку: "{searchQuery}"</h1>
+                ) : (
+                    <h1 className="catalog-title">{getLabelFromSlug(categorySlug)}</h1>
                 )}
 
                 <div className="catalog-header">
@@ -437,18 +478,16 @@ const PageGoods = ({ initialFilters = {} }) => {
                     <h2 className="seo-title">{seoContent.title}</h2>
 
                     <div className="seo-content">
-
-                        {seoContent.intro.map((paragraph, index) => (
-                            <p key={index}>{paragraph}</p>
+                        {seoContent.intro?.map((paragraph, index) => (
+                            <p key={`intro-${index}`}>{paragraph}</p>
                         ))}
 
-                        {/* Список особливостей (features) */}
-                        {seoContent.features && seoContent.features.length > 0 && (
+                        {seoContent.features?.length > 0 && (
                             <>
-                                <h3>{seoContent.featuresTitle}</h3>
+                                <h3>{seoContent.featuresTitle || "Особливості"}</h3>
                                 <ul>
                                     {seoContent.features.map((item, index) => (
-                                        <li key={index}>
+                                        <li key={`feature-${index}`}>
                                             <strong>{item.label}</strong> — {item.text}
                                         </li>
                                     ))}
@@ -456,29 +495,35 @@ const PageGoods = ({ initialFilters = {} }) => {
                             </>
                         )}
 
-                        {/* Список порад (tips) */}
-                        {seoContent.tips && seoContent.tips.length > 0 && (
+                        {seoContent.tips?.length > 0 && (
                             <>
-                                <h3>{seoContent.tipsTitle}</h3>
+                                <h3>{seoContent.tipsTitle || "Корисні поради"}</h3>
                                 <ol>
                                     {seoContent.tips.map((tip, index) => (
-                                        <li key={index}>{tip}</li>
+                                        <li key={`tip-${index}`}>{tip}</li>
                                     ))}
                                 </ol>
                             </>
                         )}
 
-                        <h3>Чому варто купити {seoContent.title.toLowerCase()} саме у нас:</h3>
-                        <p>
-                            Тільки натуральні продукти без консервантів і барвників.<br />
-                            Великий вибір та гарантія якості.<br />
-                            Зручна доставка по Україні та приємні ціни.
-                        </p>
+                        {seoContent.whyUs?.length > 0 && (
+                            <>
+                                <h3>{seoContent.whyUsTitle || `Чому варто купити ${seoContent.title.toLowerCase()} саме у нас:`}</h3>
+                                <ul>
+                                    {seoContent.whyUs.map((reason, index) => (
+                                        <li key={`reason-${index}`}>{reason}</li>
+                                    ))}
+                                </ul>
+                            </>
+                        )}
 
-                        <p className="seo-footer-text">
-                            Наші {seoContent.title.toLowerCase()} — це баланс смаку, користі та задоволення.
-                            Обирай найкраще для всієї родини!
-                        </p>
+                        {seoContent.footer ? (
+                            <p className="seo-footer-text">{seoContent.footer}</p>
+                        ) : (
+                            <p className="seo-footer-text">
+                                Обирайте найкращі {seoContent.title.toLowerCase()} для всієї родини у нашому магазині!
+                            </p>
+                        )}
                     </div>
                 </section>
 

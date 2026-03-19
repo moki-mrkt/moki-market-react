@@ -3,6 +3,7 @@ import { feedbackService } from '../../../services/feedbackService';
 import FeedbackCard from "../../FeedbackCard/FeedbackCard.jsx";
 import {authService} from "../../../services/authService.js";
 import {useNavigate} from "react-router-dom";
+import {Helmet} from "react-helmet-async";
 
 const ReviewsTab = () => {
 
@@ -72,7 +73,13 @@ const ReviewsTab = () => {
 
     return (
         <div id="reviews" className="info-tab active">
-            <h2 className="info-title">Відгуки про магазин</h2>
+
+            <Helmet>
+                <title>Відгуки про магазин | Moki Market</title>
+                <meta name="description" content="Відгуки про магазин | Moki Marke" />
+            </Helmet>
+
+            <h1 className="info-title">Відгуки про магазин</h1>
 
             <div className="reviews-summary-block">
                 <div className="rating-number">

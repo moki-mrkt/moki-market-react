@@ -237,9 +237,9 @@ const Header = () => {
                                 <li><Link to="/catalog/nuts" onClick={closeMenu}><img className="sidebar-img" src="/img/nuts.svg" alt="nuts" /> <span>Горіхи</span></Link></li>
                                 <li><Link to="/catalog/coffee" onClick={closeMenu}><img className="sidebar-img" src="/img/coffee.svg" alt="coffee" /> <span>Кава</span></Link></li>
                                 <li><Link to="/catalog/tea" onClick={closeMenu}><img className="sidebar-img" src="/img/coffee.svg" alt="tea" /> <span>Чай</span></Link></li>
-                                <li><Link to="/catalog/super-food" onClick={closeMenu}><img className="sidebar-img" src="/img/all_goods.svg" alt="superfood" /><span>Суперфуд</span></Link></li>
+                                <li><Link to="/catalog/superfoods" onClick={closeMenu}><img className="sidebar-img" src="/img/all_goods.svg" alt="superfoods" /><span>Суперфуд</span></Link></li>
                                 <li><Link to="/catalog/oils" onClick={closeMenu}><img className="sidebar-img" src="/img/discounts.svg" alt="oils" /><span>Олія та масла</span></Link></li>
-                                <li><Link to="/catalog/conservation" onClick={closeMenu}><img className="sidebar-img" src="/img/all_goods.svg" alt="conservation" /><span>Консервація</span></Link></li>
+                                <li><Link to="/catalog/preserves" onClick={closeMenu}><img className="sidebar-img" src="/img/all_goods.svg" alt="preserves" /><span>Консервація</span></Link></li>
                                 <li><Link to="/catalog/snacks" onClick={closeMenu}><img className="sidebar-img" src="/img/nuts.svg" alt="snacks" /><span>Снеки та чіпси</span></Link></li>
                                 <li><Link to="/catalog/spices" onClick={closeMenu}><img className="sidebar-img" src="/img/dried_fruits.svg" alt="spices" /><span>Спеції</span></Link></li>
                             </ul>

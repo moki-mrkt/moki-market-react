@@ -12,7 +12,7 @@ export const CATEGORY_CONFIG = {
         enum: 'SWEETS',
         label: 'Cолодощі'
     },
-    'super-food': {
+    'superfoods': {
         enum: 'SUPER_FOOD',
         label: 'Суперфуд'
     },
@@ -20,7 +20,7 @@ export const CATEGORY_CONFIG = {
         enum: 'OIL_AND_BUTTERS',
         label: 'Олія та масла'
     },
-    'conservation': {
+    'preserves': {
         enum: 'CONSERVATION',
         label: 'Консервація'
     },

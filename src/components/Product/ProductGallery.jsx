@@ -8,7 +8,7 @@ import {URLS} from '../../constants/urls';
 
 const image_api =  URLS.s3_bucket;
 
-const ProductGallery = ({ images, fallbackImage }) => {
+const ProductGallery = ({ images, fallbackImage, productName }) => {
     const [thumbsSwiper, setThumbsSwiper] = useState(null);
 
     const displayImages = images && images.length > 0 ? images : [{ url: fallbackImage }];
@@ -31,7 +31,7 @@ const ProductGallery = ({ images, fallbackImage }) => {
                         <img
                             // src={item.image || '/img/icon.png'}
                             src={ img.imageId ? `${image_api}${img.imageId }` : '/img/icon.png'}
-                            alt={`Product view ${index + 1}`}
+                            alt={`Купити ${productName} в Moki`}
                         />
                     </SwiperSlide>
                 ))}

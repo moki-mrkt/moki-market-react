@@ -1,0 +1,8 @@
+User-agent: *
+Allow: /
+Disallow: /admin-ui
+Disallow: /checkout
+Disallow: /profile
+
+# Шлях до карти сайту (заміни на свій домен)
+Sitemap: https://moki.com.ua/sitemap.xml

@@ -1,4 +1,4 @@
-import {privateApi} from './api';
+import {privateApi, publicApi} from './api.js';
 
 const request = async (endpoint, method = 'GET', body = null) => {
     try {
@@ -46,6 +46,14 @@ export const productService = {
 
         return request(`/products?${params.toString()}`);
     },
+
+    getAllProductsForPublic: async (currentPage) => {
+        const response = await publicApi.get('/products/public/sitemap', {
+            params: { page: currentPage, size: 100 }
+        });
+        return response.data;
+    },
+
 
     getById: (id) => request(`/products/${id}`),
 
