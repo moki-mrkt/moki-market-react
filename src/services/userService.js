@@ -2,9 +2,7 @@ import { publicApi, privateApi } from './api';
 
 export const userService = {
     registration: async (userCreateDTO) => {
-
         const response = await publicApi.post('/users/register', userCreateDTO);
-
         return response.status;
     },
 
@@ -13,8 +11,18 @@ export const userService = {
         return response.data;
     },
 
-    updateProfile: async (userData) => {
-        const response = await privateApi.patch('/users/profile', userData);
+    getUserByIdForAdmin: async (id) => {
+        const response = await privateApi.get(`/users/${id}`);
+        return response.data;
+    },
+
+    updateUserByAdmin: async (id, userUpdateAdminData) => {
+        const response = await privateApi.patch(`/users/${id}`, userUpdateAdminData);
+        return response.data;
+    },
+
+    updateProfile: async (userUpdateData) => {
+        const response = await privateApi.patch('/users/profile', userUpdateData);
         return response.data;
     },
 
@@ -23,8 +31,19 @@ export const userService = {
         return response.data;
     },
 
+    switchBlockStatus: async (userId, isBlocked) => {
+        const response = await privateApi.patch(`/users/${userId}/block-status?isBlocked=${isBlocked}`);
+        return response.data;
+    },
+
     deleteAvatar: async () => {
         const response = await privateApi.patch('/users/profile/avatar', { imageId: null });
+        return response.data;
+    },
+
+    getUsers: async (page, size) => {
+        const deleted = false;
+        const response = await privateApi.get('/users/all', { params: { page, size, deleted } });
         return response.data;
     }
 };

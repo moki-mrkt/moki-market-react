@@ -47,15 +47,8 @@ export const productService = {
         return request(`/products?${params.toString()}`);
     },
 
-    getAllProductsForPublic: async (currentPage) => {
-        const response = await publicApi.get('/products/public/sitemap', {
-            params: { page: currentPage, size: 100 }
-        });
-        return response.data;
-    },
-
-
     getById: (id) => request(`/products/${id}`),
+    getByIdForAdmin: (id) => request(`/products/${id}/admin`),
 
     getBySlug: (slug) => request(`/products/slug/${slug}`),
 

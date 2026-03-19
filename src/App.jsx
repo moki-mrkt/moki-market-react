@@ -43,6 +43,8 @@ import {Toaster} from "react-hot-toast";
 import React from "react";
 import ConfirmEmail from "./utils/ConfirmEmail.jsx";
 import {ModalProvider} from "./contexts/ModalContext.jsx";
+import AdminUsers from "./components/admin/User/AdminUsers.jsx";
+import AdminUserInfo from "./components/admin/User/AdminUserInfo.jsx";
 
 function App() {
     const location = useLocation();
@@ -118,6 +120,9 @@ function App() {
                         <Route path="orders/edit/:id" element={<AdminOrderEdit />} />
 
                         <Route path="feedbacks" element={<AdminFeedbacks />} />
+
+                        <Route path="users" element={<AdminUsers />} />
+                        <Route path="users/view/:id" element={<AdminUserInfo />} />
                     </Route>
 
                 </Routes>

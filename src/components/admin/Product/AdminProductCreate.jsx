@@ -65,9 +65,7 @@ const AdminProductCreate = () => {
     const loadProductData = async () => {
         setFetching(true);
         try {
-            const product = await productService.getById(id);
-
-            console.log(product)
+            const product = await productService.getByIdForAdmin(id);
 
             setFormData({
                 name: product.name,
@@ -117,7 +115,6 @@ const AdminProductCreate = () => {
         { key: '', value: '' }
     ]);
 
-    // Зображення
     const [images, setImages] = useState([
         { imageId: '', isMain: true, sortOrder: 0, altText: '' }
     ]);
@@ -147,7 +144,6 @@ const AdminProductCreate = () => {
         const newChars = characteristics.filter((_, i) => i !== index);
         setCharacteristics(newChars);
     };
-
 
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -187,8 +183,6 @@ const AdminProductCreate = () => {
                 images: validImages,
                 characteristics: charMap
             };
-
-            console.log(productPayload)
 
             if (isEditMode) {
                 await productService.updateProduct(id, productPayload);

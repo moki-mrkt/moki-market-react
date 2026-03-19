@@ -7,7 +7,7 @@ import {
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import EditIcon from '@mui/icons-material/Edit';
 import { productService } from '../../../services/productService.js';
-import { CATEGORY_CONFIG } from '../../../constants/categories.js'; // Припускаю, що цей файл існує, як в AdminProductCreate
+import { CATEGORY_CONFIG } from '../../../constants/categories.js';
 
 const AdminProductInfo = () => {
     const { id } = useParams();
@@ -22,7 +22,7 @@ const AdminProductInfo = () => {
 
     const loadProduct = async () => {
         try {
-            const data = await productService.getById(id);
+            const data = await productService.getByIdForAdmin(id);
             console.log(data);
             setProduct(data);
         } catch (error) {
@@ -40,7 +40,6 @@ const AdminProductInfo = () => {
 
     if (!product) return null;
 
-    // Хелпер для статусу (копія логіки з таблиці)
     const getStatusChip = (status) => {
         const statusMap = {
             'IN_STOCK': { label: 'В наявності', color: 'success', bg: '#D1FAE5', text: '#065F46' },
@@ -63,9 +62,7 @@ const AdminProductInfo = () => {
         );
     };
 
-    // Отримання назви категорії
     const getCategoryLabel = (catEnum) => {
-        // Якщо у вас є CATEGORY_CONFIG, шукаємо там. Якщо ні - просто повертаємо enum
         const cat = Object.values(CATEGORY_CONFIG || {}).find(c => c.enum === catEnum);
         return cat ? cat.label : catEnum;
     };
@@ -73,7 +70,6 @@ const AdminProductInfo = () => {
     return (
         <Box sx={{ pb: 5 }}>
 
-            {/* ЗАГОЛОВОК І КНОПКИ */}
             <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', mb: 3 }}>
                 <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
                     <IconButton onClick={() => navigate('/admin-ui/products')} sx={{ border: '1px solid #E5E7EB', borderRadius: 2 }}>
@@ -100,10 +96,8 @@ const AdminProductInfo = () => {
 
             <Grid container spacing={3}>
 
-                {/* ЛІВА КОЛОНКА (Основне інфо + Фото) */}
                 <Grid size={{ xs: 12, md: 8 }}>
 
-                    {/* Основна інформація */}
                     <Paper sx={{ p: 3, mb: 3, borderRadius: 3, border: '1px solid #E5E7EB', boxShadow: 'none' }}>
                         <Typography variant="h6" sx={{ mb: 2, fontWeight: 600 }}>Загальна інформація</Typography>
 
@@ -151,7 +145,6 @@ const AdminProductInfo = () => {
                         </Grid>
                     </Paper>
 
-                    {/* Галерея зображень */}
                     <Paper sx={{ p: 3, borderRadius: 3, border: '1px solid #E5E7EB', boxShadow: 'none' }}>
                         <Typography variant="h6" sx={{ mb: 2, fontWeight: 600 }}>Фотографії</Typography>
 
@@ -191,9 +184,8 @@ const AdminProductInfo = () => {
                     </Paper>
                 </Grid>
 
-                {/* ПРАВА КОЛОНКА (Ціна, Статус, Характеристики) */}
                 <Grid size={{ xs: 12, md: 4 }}>
-                    {/* Ціна та Статус */}
+
                     <Paper sx={{ p: 3, mb: 3, borderRadius: 3, border: '1px solid #E5E7EB', boxShadow: 'none' }}>
                         <Typography variant="h6" sx={{ mb: 2, fontWeight: 600 }}>Ціна та статус</Typography>
 
@@ -228,7 +220,6 @@ const AdminProductInfo = () => {
                         </Stack>
                     </Paper>
 
-                    {/* Характеристики */}
                     <Paper sx={{ p: 3, borderRadius: 3, border: '1px solid #E5E7EB', boxShadow: 'none' }}>
                         <Typography variant="h6" sx={{ mb: 2, fontWeight: 600 }}>Характеристики</Typography>
 
@@ -246,7 +237,6 @@ const AdminProductInfo = () => {
                         )}
                     </Paper>
 
-                    {/* Метадані */}
                     <Box sx={{ mt: 2, px: 1 }}>
                         <Typography color="text.secondary" display="block">
                             Створено: {new Date(product.creationTime).toLocaleString('uk-UA')}

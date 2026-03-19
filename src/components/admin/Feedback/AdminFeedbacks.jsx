@@ -16,7 +16,6 @@ const AdminFeedbacks = () => {
     const [rowCount, setRowCount] = useState(0);
     const [storeRating, setStoreRating] = useState(0);
 
-    // Стейт для модалки відповіді
     const [openReplyDialog, setOpenReplyDialog] = useState(false);
     const [currentFeedback, setCurrentFeedback] = useState(null);
     const [replyText, setReplyText] = useState('');
@@ -30,7 +29,6 @@ const AdminFeedbacks = () => {
         try {
             const data = await feedbackService.getAll(paginationModel.page, paginationModel.pageSize);
 
-            // Згідно вашого JSON: data.feedbacks.content
             setRows(data.feedbacks?.content || []);
             setRowCount(data.feedbacks?.page?.totalElements || 0);
             setStoreRating(data.storeRating || 0);
@@ -45,8 +43,6 @@ const AdminFeedbacks = () => {
     useEffect(() => {
         loadFeedbacks();
     }, [paginationModel]);
-
-    // --- ОБРОБНИКИ ---
 
     const handleDelete = async (id) => {
         if (window.confirm('Видалити цей відгук?')) {
@@ -75,8 +71,6 @@ const AdminFeedbacks = () => {
             alert('Не вдалося надіслати відповідь');
         }
     };
-
-    // --- КОЛОНКИ ---
 
     const columns = [
         {
@@ -187,7 +181,6 @@ const AdminFeedbacks = () => {
     return (
         <Box sx={{ width: '100%' }}>
 
-            {/* Header & Summary */}
             <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 4 }}>
                 <Box>
                     <Typography variant="h5" sx={{ color: '#111827', mb: 1, fontWeight: 800 }}>Відгуки</Typography>
@@ -245,7 +238,6 @@ const AdminFeedbacks = () => {
                 </Box>
             </Paper>
 
-            {/* MODAL: Відповідь на відгук */}
             <Dialog open={openReplyDialog} onClose={() => setOpenReplyDialog(false)} maxWidth="sm" fullWidth>
                 <DialogTitle sx={{ fontWeight: 600 }}>
                     Відповідь для {currentFeedback?.secondNameUser} {currentFeedback?.firstNameUser}

@@ -138,7 +138,7 @@ const AdminOrders = () => {
             }
         },
         {
-            field: 'clientName', // Віртуальне поле
+            field: 'clientName',
             headerName: 'Клієнт',
             flex: 1.2,
             minWidth: 180,
@@ -264,7 +264,6 @@ const AdminOrders = () => {
 
     return (
         <Box sx={{ width: '100%', height: '100vh' }}>
-            {/* Заголовок */}
             <Box sx={{
                 display: 'flex',
                 flexDirection: isMobile ? 'column' : 'row',
@@ -286,7 +285,6 @@ const AdminOrders = () => {
                 borderRadius: 3,
                 boxShadow: 'none'
             }}>
-                {/* Панель пошуку */}
                 <Box sx={{ p: 2, display: 'flex', gap: 2, borderBottom: '1px solid #E5E7EB' }}>
                     <TextField
                         size="small"
@@ -318,7 +316,6 @@ const AdminOrders = () => {
                     <DataGrid
                         rows={rows}
                         columns={columns}
-
                         loading={loading}
                         rowCount={rowCount}
                         paginationMode="server"

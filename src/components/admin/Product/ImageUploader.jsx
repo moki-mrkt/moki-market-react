@@ -209,7 +209,6 @@ const ImageUploader = ({ selectedImages, setSelectedImages }) => {
 
                         <input
                             type="file"
-                            // multiple
                             accept="image/*"
                             hidden
                             ref={fileInputRef}
@@ -236,15 +235,15 @@ const ImageUploader = ({ selectedImages, setSelectedImages }) => {
                             image={imageSrc}
                             crop={crop}
                             zoom={zoom}
-                            aspect={1} // Змінюйте пропорції за потребою (наприклад 1 для квадрата)
+                            aspect={1}
                             onCropChange={setCrop}
                             onCropComplete={onCropComplete}
                             onZoomChange={setZoom}
-                            restrictPosition={false} // Картинка може бути меншою за рамку
+                            restrictPosition={false}
                             minZoom={0.5}
-                            objectFit="contain"     // Показувати всю картинку
+                            objectFit="contain"
                             style={{
-                                containerStyle: { background: '#fff' }, // Білий фон для порожніх місць
+                                containerStyle: { background: '#fff' },
                                 mediaStyle: {  }
                             }}
                         />

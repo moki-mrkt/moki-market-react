@@ -9,7 +9,6 @@ const LoginPage = () => {
     const navigate = useNavigate();
     const location = useLocation();
 
-    // Щоб повернути юзера туди, куди він хотів зайти
     const from = location.state?.from?.pathname || '/admin-ui/products';
 
     const [credentials, setCredentials] = useState({ email: '', password: '' });

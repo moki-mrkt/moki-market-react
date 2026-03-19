@@ -27,8 +27,6 @@ const PAYMENT_STATUS_OPTIONS = [
 const DELIVERY_TYPES = [
     { value: 'NOVA_POSHTA', label: 'Нова Пошта' },
     { value: 'UKR_POSHTA', label: 'Укрпошта' }
-    // ,
-    // { value: 'COURIER', label: "Кур'єр" }
 ];
 
 const PAYMENT_TYPES = [
@@ -41,7 +39,6 @@ const AdminOrderEdit = () => {
     const navigate = useNavigate();
     const [loading, setLoading] = useState(true);
 
-    // Початковий стан форми
     const [formData, setFormData] = useState({
         email: '',
         orderNumber: '',
@@ -69,13 +66,13 @@ const AdminOrderEdit = () => {
     const loadOrder = async () => {
         try {
             const data = await orderService.getById(id);
-            // Заповнюємо форму отриманими даними
+
             setFormData({
                 email: data.email || '',
                 orderNumber: data.orderNumber,
                 phoneNumber: data.phoneNumber || '',
                 firstName: data.firstName || '',
-                secondName: data.secondName || '', // Бекенд використовує secondName
+                secondName: data.secondName || '',
                 deliveryType: data.deliveryType,
                 paymentType: data.paymentType,
                 orderStatus: data.orderStatus,
@@ -102,7 +99,6 @@ const AdminOrderEdit = () => {
         setFormData(prev => ({ ...prev, [name]: value }));
     };
 
-    // Обробник для вкладеного об'єкта addressDTO
     const handleAddressChange = (e) => {
         const { name, value } = e.target;
         setFormData(prev => ({
@@ -116,7 +112,6 @@ const AdminOrderEdit = () => {
 
     const handleSubmit = async () => {
         try {
-            console.log("Sending update:", formData);
             await orderService.update(id, formData);
             alert("Замовлення успішно оновлено!");
             navigate(`/admin-ui/orders/view/${id}`);
@@ -130,7 +125,6 @@ const AdminOrderEdit = () => {
 
     return (
         <Box sx={{ pb: 5 }}>
-            {/* Header */}
             <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', mb: 3 }}>
                 <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
                     <IconButton onClick={() => navigate(`/admin-ui/orders/view/${id}`)} sx={{ border: '1px solid #E5E7EB', borderRadius: 2 }}>
@@ -144,7 +138,6 @@ const AdminOrderEdit = () => {
 
             <Grid container spacing={3}>
 
-                {/* ЛІВА КОЛОНКА: Клієнт та Адреса */}
                 <Grid size={{ xs: 12, md: 7 }}>
 
                     <Paper sx={{ p: 3, borderRadius: 3, border: '1px solid #E5E7EB', boxShadow: 'none' }}>
@@ -242,7 +235,6 @@ const AdminOrderEdit = () => {
                     </Button>
                 </Grid>
 
-                {/* ПРАВА КОЛОНКА: Статуси та Типи */}
                 <Grid size={{ xs: 12, md: 4 }}>
                     <Paper sx={{ p: 3, borderRadius: 3, border: '1px solid #E5E7EB', boxShadow: 'none' }}>
                         <Typography variant="h6" sx={{ mb: 3, fontWeight: 600 }}>Налаштування замовлення</Typography>

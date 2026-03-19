@@ -46,8 +46,8 @@ const AdminProducts = () => {
 
 
     const handleSearchSubmit = () => {
-        setPaginationModel(prev => ({ ...prev, page: 0 })); // Скидаємо на 1-шу сторінку
-        loadProducts(searchTerm); // Викликаємо завантаження з поточним текстом
+        setPaginationModel(prev => ({ ...prev, page: 0 }));
+        loadProducts(searchTerm);
     };
 
     const handleKeyDown = (e) => {
@@ -57,9 +57,9 @@ const AdminProducts = () => {
     };
 
     const handleClearSearch = () => {
-        setSearchTerm(''); // Очищаємо поле візуально
-        setPaginationModel(prev => ({ ...prev, page: 0 })); // Скидаємо на 1-шу сторінку
-        loadProducts(''); // Явно викликаємо завантаження з пустим запитом
+        setSearchTerm('');
+        setPaginationModel(prev => ({ ...prev, page: 0 }));
+        loadProducts('');
     };
 
     const handleEdit = (id) => {
@@ -153,7 +153,7 @@ const AdminProducts = () => {
         {
             field: 'actions',
             headerName: 'Дії',
-            flex: 1, // Теж розтягується
+            flex: 1,
             minWidth: 100,
             sortable: false,
             align: 'center',
@@ -180,7 +180,6 @@ const AdminProducts = () => {
 
     return (
         <Box>
-            {/* Заголовок і кнопка */}
             <Box sx={{
                 display: 'flex',
                 flexDirection: isMobile ? 'column' : 'row',

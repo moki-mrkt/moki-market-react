@@ -7,7 +7,7 @@ import {
 } from '@mui/material';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import EditIcon from '@mui/icons-material/Edit';
-import { orderService } from '../../../services/orderService.js'; // Припускаємо наявність сервісу
+import { orderService } from '../../../services/orderService.js';
 
 const AdminOrderInfo = () => {
     const { id } = useParams();
@@ -20,11 +20,8 @@ const AdminOrderInfo = () => {
         loadOrder();
     }, [id]);
 
-
-    console.log('AdminOrderInfo:')
     const loadOrder = async () => {
         try {
-
             const data = await orderService.getById(id);
             setOrder(data);
         } catch (error) {
@@ -94,7 +91,6 @@ const AdminOrderInfo = () => {
     return (
         <Box sx={{ pb: 5 }}>
 
-            {/* ЗАГОЛОВОК */}
             <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', mb: 3 }}>
                 <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
                     <IconButton onClick={() => navigate('/admin-ui/orders')} sx={{ border: '1px solid #E5E7EB', borderRadius: 2 }}>
@@ -114,10 +110,8 @@ const AdminOrderInfo = () => {
 
             <Grid container spacing={3}>
 
-                {/* ЛІВА КОЛОНКА: Товари, Клієнт, Адреса */}
                 <Grid item xs={12} md={8}>
 
-                    {/* Інформація про клієнта та Доставку (в один ряд на десктопі) */}
                     <Grid container  mb={2}  spacing={3}>
                         <Grid item xs={12} md={6} sx={{ width: '100%'}}>
                             <Paper sx={{ p: 3, mb: 3, borderRadius: 3, border: '1px solid #E5E7EB', boxShadow: 'none' }}>
@@ -125,7 +119,6 @@ const AdminOrderInfo = () => {
 
                                 <Grid container spacing={0}>
 
-                                    {/* ЛІВА ЧАСТИНА: Особисті дані */}
                                     <Grid item xs={12} md={6} sx={{ pr: { md: 3 }, mb: { xs: 3, md: 0 } }}>
                                         <Typography
                                             variant="subtitle2"
@@ -151,8 +144,6 @@ const AdminOrderInfo = () => {
                                         </Stack>
                                     </Grid>
 
-                                    {/* ПРАВА ЧАСТИНА: Адреса */}
-                                    {/* borderLeft з'являється тільки на md екранах і ширше */}
                                     <Grid item xs={12} md={6} sx={{ pl: { md: 3 }, borderLeft: { md: '1px solid #E5E7EB' } }}>
                                         <Typography
                                             variant="subtitle2"
@@ -189,7 +180,6 @@ const AdminOrderInfo = () => {
                         </Grid>
                     </Grid>
 
-                    {/* Список товарів */}
                     <Paper sx={{ p: 3, borderRadius: 3, border: '1px solid #E5E7EB', boxShadow: 'none' }}>
                         <Typography variant="h6" sx={{ mb: 2, fontWeight: 600 }}>Товари в замовленні</Typography>
 
@@ -222,7 +212,6 @@ const AdminOrderInfo = () => {
 
                 </Grid>
 
-                {/* ПРАВА КОЛОНКА: Статуси, Фінанси */}
                 <Grid item xs={12} md={4}>
 
                     <Paper sx={{ p: 3, mb: 3, borderRadius: 3, border: '1px solid #E5E7EB', boxShadow: 'none' }}>
@@ -248,7 +237,6 @@ const AdminOrderInfo = () => {
                         </Stack>
                     </Paper>
 
-                    {/* Статуси та Деталі */}
                     <Paper sx={{ p: 3, borderRadius: 3, border: '1px solid #E5E7EB', boxShadow: 'none' }}>
                         <Typography variant="h6" sx={{ mb: 2, fontWeight: 600 }}>Деталі замовлення</Typography>
 
