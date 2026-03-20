@@ -42,8 +42,12 @@ export const userService = {
     },
 
     getUsers: async (page, size) => {
-        const deleted = false;
-        const response = await privateApi.get('/users/all', { params: { page, size, deleted } });
+        const response = await privateApi.get('/users/all', { params: { page, size } });
+        return response.data;
+    },
+
+    deleteUser: async () => {
+        const response = await privateApi.delete('/users/profile');
         return response.data;
     }
 };

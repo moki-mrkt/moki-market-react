@@ -24,6 +24,8 @@ const Checkout = () => {
     const [isSuccessModalOpen, setIsSuccessModalOpen] = useState(false);
     const [orderNumber, setOrderNumber] = useState(null);
 
+    const [errors, setErrors] = useState({});
+
     const [formData, setFormData] = useState({
         email: '',
         phoneNumber: '+380',
@@ -107,6 +109,17 @@ const Checkout = () => {
     const handleInputChange = (e) => {
         const { id, value } = e.target;
         setFormData(prev => ({ ...prev, [id]: value }));
+
+        if (errors[id]) {
+            setErrors(prev => ({ ...prev, [id]: false }));
+        }
+    };
+
+    const handleFocus = (e) => {
+        const { id } = e.target;
+        if (errors[id]) {
+            setErrors(prev => ({ ...prev, [id]: false }));
+        }
     };
 
     const handlePhoneChange = (e) => {
@@ -124,17 +137,6 @@ const Checkout = () => {
         setFormData(prev => ({ ...prev, phoneNumber: value }));
     };
 
-    // const handlePostOfficeChange = (e) => {
-    //     const value = e.target.value;
-    //
-    //     if (!value.startsWith('№ ')) {
-    //         setFormData(prev => ({ ...prev, postOffice: '№ ' }));
-    //         return;
-    //     }
-    //
-    //     setFormData(prev => ({ ...prev, postOffice: value }));
-    // };
-
     const handleRadioChange = (e) => {
         const { name, value } = e.target;
         const fieldName = name === 'delivery' ? 'deliveryType' : 'paymentType';
@@ -149,7 +151,23 @@ const Checkout = () => {
     const handleSubmit = async (e) => {
         e.preventDefault();
 
+        const newErrors = {};
+        if (!formData.region.trim()) newErrors.region = true;
+        if (!formData.city.trim()) newErrors.city = true;
+        if (!formData.postOffice.trim()) newErrors.postOffice = true;
+        if (!formData.firstName.trim()) newErrors.firstName = true;
+        if (!formData.lastName.trim()) newErrors.lastName = true;
+
+        if (Object.keys(newErrors).length > 0) {
+            setErrors(newErrors);
+            toast.error('Будь ласка, заповніть обов\'язкові поля');
+            return;
+        }
+
+
         if (formData.phoneNumber.length !== 13) {
+            newErrors.phoneNumber = true;
+            setErrors(newErrors);
             toast.error('Будь ласка, введіть повний номер телефону (+380...)');
             return;
         }
@@ -266,11 +284,11 @@ const Checkout = () => {
                                     <input
                                         type="tel"
                                         id="phoneNumber"
-                                        className="checkout-input"
+                                        className={`checkout-input ${errors.phoneNumber ? 'invalid-input' : ''}`}
                                         placeholder=" "
                                         value={formData.phoneNumber}
                                         onChange={handlePhoneChange}
-                                        required
+                                        onFocus={handleFocus}
                                         maxLength={13}
                                     />
                                     <label htmlFor="phoneNumber" className="floating-label">Телефон*</label>
@@ -281,11 +299,11 @@ const Checkout = () => {
                                         <input
                                             type="text"
                                             id="firstName"
-                                            className="checkout-input"
+                                            className={`checkout-input ${errors.firstName ? 'invalid-input' : ''}`}
                                             placeholder=" "
                                             value={formData.firstName}
                                             onChange={handleInputChange}
-                                            required
+                                            onFocus={handleFocus}
                                         />
                                         <label htmlFor="firstName" className="floating-label">Ім'я*</label>
                                     </div>
@@ -293,11 +311,11 @@ const Checkout = () => {
                                         <input
                                             type="text"
                                             id="lastName"
-                                            className="checkout-input"
+                                            className={`checkout-input ${errors.lastName ? 'invalid-input' : ''}`}
                                             placeholder=" "
                                             value={formData.lastName}
                                             onChange={handleInputChange}
-                                            required
+                                            onFocus={handleFocus}
                                         />
                                         <label htmlFor="lastName" className="floating-label">Прізвище*</label>
                                     </div>
@@ -357,11 +375,11 @@ const Checkout = () => {
                                             <input
                                                 type="text"
                                                 id="region"
-                                                className="checkout-select"
+                                                className={`checkout-select ${errors.region ? 'invalid-input' : ''}`}
                                                 placeholder="Область"
                                                 value={formData.region}
                                                 onChange={handleInputChange}
-                                                required
+                                                onFocus={handleFocus}
                                             />
                                             <label htmlFor="postOffice" className="floating-label"></label>
                                         </div>
@@ -369,11 +387,11 @@ const Checkout = () => {
                                             <input
                                                 type="text"
                                                 id="city"
-                                                className="checkout-select"
+                                                className={`checkout-select ${errors.city ? 'invalid-input' : ''}`}
                                                 placeholder="Населений пункт"
                                                 value={formData.city}
                                                 onChange={handleInputChange}
-                                                required
+                                                onFocus={handleFocus}
                                             />
                                             <label htmlFor="postOffice" className="floating-label"></label>
                                         </div>
@@ -408,11 +426,11 @@ const Checkout = () => {
                                         <input
                                             type="text"
                                             id="postOffice"
-                                            className="checkout-select"
+                                            className={`checkout-select ${errors.postOffice ? 'invalid-input' : ''}`}
                                             placeholder="Номер"
                                             value={formData.postOffice}
                                             onChange={handleInputChange}
-                                            required
+                                            onFocus={handleFocus}
                                         />
                                         <label htmlFor="postOffice" className="floating-label"></label>
                                     </div>

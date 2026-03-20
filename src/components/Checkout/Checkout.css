@@ -445,6 +445,22 @@ hr {
     margin-left: 60px;
 }
 
+.checkout-select.invalid-input {
+    border-bottom: 1px solid #DC2626 !important; /* Червоний колір для підкреслення */
+}
+
+/* Якщо ви хочете підсвітити також плейсхолдер */
+.checkout-select.invalid-input::placeholder {
+    color: #DC2626;
+    opacity: 0.5;
+}
+
+.checkout-input.invalid-input {
+    border: 2px solid #DC2626 !important;
+}
+
+
+
 @media (max-width: 768px) {
     .checkout-grid {
         margin-top: 20px;

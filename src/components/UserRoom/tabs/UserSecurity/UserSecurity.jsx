@@ -9,6 +9,8 @@ import '../UserSecurity/UserSecurity.css';
 
 
 import {useOutletContext} from "react-router-dom";
+import {userService} from "../../../../services/userService.js";
+import DeleteUserModal from "../../../Modals/DeleteUserModal/DeleteUserModal.jsx";
 
 const UserSecurity = () => {
 
@@ -16,12 +18,14 @@ const UserSecurity = () => {
   const [isSaving, setIsSaving] = useState(false);
   const [errors, setErrors] = useState({});
 
-    const [emailChangeSentTo, setEmailChangeSentTo] = useState(null);
+  const [emailChangeSentTo, setEmailChangeSentTo] = useState(null);
 
   const [showEmailCurrentPassword, setShowEmailCurrentPassword] = useState(false);
   const [showCurrentPassword, setShowCurrentPassword] = useState(false);
   const [showNewPassword, setShowNewPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+
+  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
 
   const [newEmailFormData, setNewEmailFormData] = useState({
       newEmail: '',
@@ -162,6 +166,20 @@ const UserSecurity = () => {
         }
     };
 
+    const handleDeleteAccount = async () => {
+            setIsSaving(true);
+            try {
+                await userService.deleteUser();
+                toast.success('Ваш акаунт успішно видалено');
+                authService.logoutUser();
+            } catch (error) {
+                toast.error("Не вдалося видалити акаунт. Спробуйте пізніше.");
+            } finally {
+                setIsSaving(false);
+                setIsDeleteModalOpen(false);
+            }
+    };
+
     return (
   <>
       {emailChangeSentTo ? (
@@ -170,8 +188,6 @@ const UserSecurity = () => {
               <h2 className="content-title security-title email-change-title">Перевірте вашу пошту</h2>
 
               <div className="email-success-content">
-                  {/* Можна додати красиву іконку листа, якщо вона у вас є */}
-                  {/* <img src="/img/mail-sent.svg" alt="Mail Sent" className="email-success-icon" /> */}
 
                   <p className="email-success-text">
                       Ми надіслали лист із посиланням для підтвердження на адресу:<br/>
@@ -328,6 +344,34 @@ const UserSecurity = () => {
             {isSaving ? 'Збереження...' : 'Змінити пароль'}
         </button>
     </form>
+
+      <div className="account-tab active delete-account-block">
+          <h2 className="content-title">Небезпечна зона</h2>
+
+          <p className="security-modal-text delete-user-text">
+              Після видалення акаунта ви більше не зможете отримати доступ до своїх замовлень, бонусів та налаштувань профілю <strong>Moki</strong>.
+          </p>
+
+          <button
+              type="button"
+              className="save-btn delete-account-btn"
+              onClick={() => setIsDeleteModalOpen(true)}
+              disabled={isSaving}
+              style={{
+                  backgroundColor: '#DC2626',
+                  border: 'none',
+                  marginTop: '15px'
+              }}
+          >
+              {isSaving ? 'Видалення...' : 'Видалити акаунт'}
+          </button>
+      </div>
+
+      <DeleteUserModal
+          isOpen={isDeleteModalOpen}
+          onClose={() => setIsDeleteModalOpen(false)}
+          onConfirm={handleDeleteAccount}
+      />
   </>
   );
 };
