@@ -4,7 +4,7 @@ import { DataGrid } from '@mui/x-data-grid';
 import ClearIcon from '@mui/icons-material/Clear';
 import {
     Box, Typography, IconButton, Paper, TextField,
-    InputAdornment, useTheme, useMediaQuery, Avatar, Chip, Tooltip
+    InputAdornment, useTheme, useMediaQuery, Avatar, Chip, Tooltip, InputLabel, MenuItem, Select, FormControl
 } from '@mui/material';
 import VisibilityIcon from '@mui/icons-material/Visibility';
 import DeleteIcon from '@mui/icons-material/DeleteOutlined';
@@ -22,20 +22,27 @@ const AdminUsers = () => {
     const [rowCount, setRowCount] = useState(0);
     const [searchTerm, setSearchTerm] = useState('');
 
+    const [deletedFilter, setDeletedFilter] = useState('null'); // 'null', 'true', 'false'
+
     const [paginationModel, setPaginationModel] = useState({
         page: 0, pageSize: 10,
     });
 
-    const loadUsers = async () => {
+    const loadUsers = async (query = searchTerm, filter = deletedFilter) => {
         setLoading(true);
         try {
+            // ВАЖЛИВО: Використовуємо pageSize, бо так називається поле в нашому стані
+            const deletedParam = filter === 'null' ? null : filter === 'true';
+
             const response = await userService.getUsers(
+                query,                     // Передаємо слово для пошуку
+                deletedParam, // Параметр isDeleted (якщо не використовується фільтр)
                 paginationModel.page,
-                paginationModel.size
+                paginationModel.pageSize   // Виправлено: було .size
             );
 
             setRows(response.content || []);
-            setRowCount(response.page.totalElements || 0);
+            setRowCount(response.page?.totalElements || 0);
 
         } catch (error) {
             console.error("Помилка при завантаженні користувачів:", error);
@@ -46,23 +53,24 @@ const AdminUsers = () => {
 
     useEffect(() => {
         loadUsers();
-    }, [paginationModel]);
+    }, [paginationModel, deletedFilter]);
 
     const handleSearchSubmit = () => {
         setPaginationModel(prev => ({ ...prev, page: 0 }));
-        loadUsers();
+        if (paginationModel.page === 0) {
+            loadUsers(searchTerm);
+        }
     };
 
-    const handleKeyDown = (e) => {
-        if (e.key === 'Enter') {
-            handleSearchSubmit();
-        }
+    const handleFilterChange = (event) => {
+        setDeletedFilter(event.target.value);
+        setPaginationModel(prev => ({ ...prev, page: 0 }));
     };
 
     const handleClearSearch = () => {
         setSearchTerm('');
         setPaginationModel(prev => ({ ...prev, page: 0 }));
-        loadUsers();
+        if (paginationModel.page === 0) loadUsers('');
     };
 
     const handleToggleBlock = async (user) => {
@@ -108,10 +116,29 @@ const AdminUsers = () => {
             headerName: 'Повне ім\'я',
             width: 100,
             flex: 1.5,
-            valueGetter: (value, row) => {
-                if (!row) return '';
-                return `${row.secondName || ''} ${row.firstName || ''}`.trim();
-            }
+            renderCell: (params) => (
+                <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                    <Avatar src={params.row.imageUrl} sx={{ width: 28, height: 28 }}>
+                        {params.row.firstName?.charAt(0)}
+                    </Avatar>
+                    <Typography
+                        variant="body2"
+                        sx={{
+                            fontWeight: 500,
+                            // ВІЗУАЛЬНА ПОЗНАЧКА: якщо видалений — текст закреслений та сірий
+                            textDecoration: params.row.deleted ? 'line-through' : 'none',
+                            color: params.row.deleted ? '#9CA3AF' : 'inherit'
+                        }}
+                    >
+                        {`${params.row.secondName || ''} ${params.row.firstName || ''}`.trim()}
+                    </Typography>
+                    {params.row.deleted && (
+                        <Tooltip title="Користувач видалений">
+                            <DeleteIcon sx={{ fontSize: 16, color: '#EF4444' }} />
+                        </Tooltip>
+                    )}
+                </Box>
+            )
         },
         {
             field: 'email',
@@ -173,7 +200,6 @@ const AdminUsers = () => {
                             sx={{
                                 border: '1px solid #E5E7EB',
                                 borderRadius: 1,
-                                // Якщо заблокований — іконка червона, якщо ні — звичайна
                                 color: params.row.blocked ? '#DC2626' : '#9CA3AF',
                                 '&:hover': { bgcolor: params.row.blocked ? '#FEF2F2' : '#F9FAFB' }
                             }}
@@ -215,7 +241,7 @@ const AdminUsers = () => {
                         placeholder="Пошук за ім'ям або email..."
                         value={searchTerm}
                         onChange={(e) => setSearchTerm(e.target.value)}
-                        onKeyDown={handleKeyDown}
+                        onKeyDown={(e) => e.key === 'Enter' && handleSearchSubmit()}
                         InputProps={{
                             startAdornment: (
                                 <InputAdornment position="start">
@@ -234,6 +260,19 @@ const AdminUsers = () => {
                         }}
                         sx={{ width: isMobile ? '100%' : 350, bgcolor: '#F9FAFB' }}
                     />
+                    <FormControl size="small" sx={{ width: 180 }}>
+                        <InputLabel>Статус</InputLabel>
+                        <Select
+                            value={deletedFilter}
+                            label="Статус"
+                            onChange={handleFilterChange}
+                            sx={{ bgcolor: 'white', borderRadius: 2 }}
+                        >
+                            <MenuItem value="null">Всі користувачі</MenuItem>
+                            <MenuItem value="false">Тільки активні</MenuItem>
+                            <MenuItem value="true">Видалені</MenuItem>
+                        </Select>
+                    </FormControl>
                 </Box>
 
                 <Box sx={{ height: 600, width: '100%' }}>

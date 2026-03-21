@@ -41,8 +41,8 @@ export const userService = {
         return response.data;
     },
 
-    getUsers: async (page, size) => {
-        const response = await privateApi.get('/users/all', { params: { page, size } });
+    getUsers: async (query, deleted, page, size) => {
+        const response = await privateApi.get('/users/all', { params: { query, deleted, page, size } });
         return response.data;
     },
 

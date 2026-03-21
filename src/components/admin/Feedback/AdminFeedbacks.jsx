@@ -81,6 +81,31 @@ const AdminFeedbacks = () => {
             headerAlign: 'center'
         },
         {
+            field: 'type',
+            headerName: 'Тип',
+            width: 120,
+            align: 'center',
+            headerAlign: 'center',
+            renderCell: (params) => {
+                const isProduct = params.row.type === 'PRODUCT';
+                const typeLabel = isProduct ? 'Товар' : 'Магазин';
+
+                return (
+                    <Chip
+                        label={typeLabel}
+                        size="small"
+                        sx={{
+                            bgcolor: isProduct ? '#ECFDF5' : '#F3F4F6',
+                            color: isProduct ? '#059669' : '#374151',
+                            fontWeight: 600,
+                            border: '1px solid',
+                            borderColor: isProduct ? '#A7F3D0' : '#E5E7EB'
+                        }}
+                    />
+                );
+            }
+        },
+        {
             field: 'clientName',
             headerName: 'Користувач',
             flex: 1,
