@@ -163,7 +163,7 @@ const AdminProductInfo = () => {
                                         }}
                                     >
                                         <img
-                                            src={img.imageUrl}
+                                            src={`${img.imageUrl}_medium.webp`}
                                             alt={`Product ${index}`}
                                             style={{ width: '100%', height: '100%', objectFit: 'cover' }}
                                         />

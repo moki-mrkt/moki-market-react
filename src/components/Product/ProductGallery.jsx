@@ -29,8 +29,7 @@ const ProductGallery = ({ images, fallbackImage, productName }) => {
                 {displayImages.map((img, index) => (
                     <SwiperSlide key={index}>
                         <img
-                            // src={item.image || '/img/icon.png'}
-                            src={ img.imageId ? `${image_api}${img.imageId }` : '/img/icon.png'}
+                            src={img.imageId ? `${image_api}${img.imageId}_large.webp` : '/img/icon.png'}
                             alt={`Купити ${productName} в Moki`}
                         />
                     </SwiperSlide>
@@ -56,7 +55,7 @@ const ProductGallery = ({ images, fallbackImage, productName }) => {
                 >
                     {displayImages.map((img, index) => (
                         <SwiperSlide key={index}>
-                            <img   src={`${image_api}${img.imageId || img}`} alt={`Thumb ${index + 1}`} />
+                            <img src={`${image_api}${img.imageId || img}_thumb.webp`} alt={`Купити ${productName} в Moki`} />
                         </SwiperSlide>
                     ))}
                 </Swiper>

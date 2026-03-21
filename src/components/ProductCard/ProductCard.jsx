@@ -57,7 +57,7 @@ const ProductCard = ({product, onFavoriteToggle }) => {
         : null;
 
     const imageUrl = mainImage
-        ? `${image_api}${mainImage.imageId}`
+        ? `${image_api}${mainImage.imageId}_thumb.webp`
         : '/img/icon.png';
 
     const hasDiscount = product.discount > 0;

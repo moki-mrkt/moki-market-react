@@ -12,12 +12,14 @@ import { imageService } from '../../../services/imageService.js';
 import Cropper from 'react-easy-crop';
 import getCroppedImg from '../../../utils/cropImages.js';
 
+import { URLS } from '../../../constants/urls';
+
 const ImageUploader = ({ selectedImages, setSelectedImages }) => {
     const fileInputRef = useRef(null);
     const MAX_IMAGES = 4;
 
     const [isCropOpen, setIsCropOpen] = useState(false);
-    const [imageSrc, setImageSrc] = useState(null); // URL картинки для редагування
+    const [imageSrc, setImageSrc] = useState(null);
     const [crop, setCrop] = useState({ x: 0, y: 0 });
     const [zoom, setZoom] = useState(1);
     const [croppedAreaPixels, setCroppedAreaPixels] = useState(null);
@@ -71,16 +73,15 @@ const ImageUploader = ({ selectedImages, setSelectedImages }) => {
             setSelectedImages(prev => [...prev, newPlaceholder]);
 
             try {
-                const response = await imageService.uploadImage('products', croppedFile);
+                const response = await imageService.uploadImageForProduct(croppedFile);
 
                 setSelectedImages(prev => prev.map(item => {
                     if (item.preview === previewUrl) {
                         return {
                             ...item,
                             loading: false,
-                            key: response.key,
-                            uploadedUrl: response.url,
-                            imageId: response.key
+                            imageId: response.imageId,
+                            uploadedUrl: response.url
                         };
                     }
                     return item;
@@ -145,7 +146,7 @@ const ImageUploader = ({ selectedImages, setSelectedImages }) => {
                         }}
                     >
                         <img
-                            src={img.preview}
+                            src={img.imageId ? `${URLS.s3_bucket}${img.imageId}_medium.webp` : img.preview}
                             alt="preview"
                             style={{
                                 width: '100%',

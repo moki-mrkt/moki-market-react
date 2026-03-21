@@ -1,5 +1,6 @@
 import React, {useEffect, useState} from 'react';
 import {useNavigate, useParams} from 'react-router-dom';
+import toast from 'react-hot-toast';
 import {
     Box,
     Button,
@@ -94,7 +95,6 @@ const AdminProductCreate = () => {
                     file: null,
                     imageId: img.imageId,
                     preview: img.imageUrl,
-                    uploadedUrl: img.imageUrl,
                     loading: false,
                     error: false
                 }));
@@ -151,7 +151,7 @@ const AdminProductCreate = () => {
 
         const pendingUploads = selectedImages.some(img => img.loading);
         if (pendingUploads) {
-            alert("Будь ласка, зачекайте завершення завантаження фото!");
+            toast.error("Будь ласка, зачекайте завершення завантаження фото!");
             return;
         }
 
@@ -186,27 +186,28 @@ const AdminProductCreate = () => {
 
             if (isEditMode) {
                 await productService.updateProduct(id, productPayload);
+                toast.success('Товар успішно оновлено!');
             } else {
                 await productService.createProduct(productPayload);
+                toast.success('Товар успішно створено!');
             }
 
             navigate('/admin-ui/products');
 
         } catch (error) {
-
             if (error && error.status === 400) {
-                const data = error;
-
-                if (data.info) {
-
-                    const allErrors = Object.values(data.info)
+                if (error.info) {
+                    const allErrors = Object.values(error.info)
                         .map(msg => mapErrorMessage(msg))
                         .join('\n');
-
                     setError(allErrors);
                 } else {
                     setError("Перевірте введені дані");
                 }
+                toast.error("Помилка у формі. Перевірте введені дані.");
+            } else {
+                const serverMessage = error.response?.data?.message || "Проблема на стороні сервера. Спробуйте пізніше.";
+                toast.error(serverMessage);
             }
         } finally {
             setLoading(false);

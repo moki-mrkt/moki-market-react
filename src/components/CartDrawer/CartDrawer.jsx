@@ -4,6 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import { useCart } from '../../contexts/CartContext.jsx';
 
 import './CartDrawer.css';
+import {URLS} from "../../constants/urls.js";
 
 const CartDrawer = ({ isOpen }) => {
 
@@ -80,7 +81,7 @@ const CartDrawer = ({ isOpen }) => {
                         cartItems.map(item => (
                             <div className="cart-item" key={item.id}>
                                 <div className="cart-img">
-                                    <img src={item.image || '/img/icon.png'} alt={item.name} />
+                                    <img src={item.imageId ? `${URLS.s3_bucket}${item.imageId}_thumb.webp` : '/img/icon.png'} alt={item.name} />
                                 </div>
 
                                 <div className="cart-info">

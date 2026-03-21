@@ -33,6 +33,14 @@ export const imageService = {
         return await request('/storage?folder=' + folder, 'POST', formData, true);
     },
 
+    uploadImageForProduct: async (file) => {
+        const formData = new FormData();
+        formData.append('file', file);
+
+        return await request('/storage/product', 'POST', formData, true);
+    },
+
+
     deleteImage: async (key) => {
         const encodedUrl = encodeURIComponent(key);
         return await request(`/storage?key=${encodedUrl}`, 'DELETE');
