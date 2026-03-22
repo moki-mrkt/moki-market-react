@@ -18,12 +18,9 @@ const FeedbackCard = ({ feedback, showActions = false, onDelete }) => {
 
     const handleGoToProduct = () => {
         const productSlug = feedback.product?.slug || feedback.productSlug;
-        const categorySlug = feedback.product?.category?.slug || 'all';
 
         if (productSlug) {
-            navigate(`/catalog/${categorySlug}/${productSlug}?tab=reviews`);
-        } else {
-            console.warn("Не вдалося знайти посилання на товар");
+            navigate(`/products/${productSlug}?tab=reviews`);
         }
     };
 
@@ -32,7 +29,7 @@ const FeedbackCard = ({ feedback, showActions = false, onDelete }) => {
             <div className="feedback-header">
                 <div className="avatar-circle">
                     <img
-                        className="avatar-img"
+                        className={feedback.userImageUrl ? "avatar-img" : "white-user-img"}
                         src={feedback.userImageUrl ? `${image_api}${feedback.userImageUrl}` : "/img/white_user.svg"}
                         alt={feedback.firstNameUser || 'User'}
                     />

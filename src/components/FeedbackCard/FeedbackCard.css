@@ -36,6 +36,13 @@
     border-radius: 50%;
 }
 
+.white-user-img {
+    width: 70%;
+    height: 70%;
+    object-fit: cover;
+
+}
+
 .feedback-meta-info {
     display: flex;
 }

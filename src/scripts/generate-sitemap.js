@@ -42,12 +42,11 @@ async function generate() {
             content.forEach(product => {
                 smStream.write({
                     url: `/products/${product.slug}`,
-                    changefreq: 'weekly',
+                    changefreq: 'daily',
                     priority: 0.9
                 });
             });
 
-            console.log(`Оброблено сторінку ${currentPage + 1} з ${totalPages}`);
             currentPage++;
         }
     } catch (error) {

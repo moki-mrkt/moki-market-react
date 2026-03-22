@@ -26,32 +26,40 @@ const Header = () => {
         let shouldCleanUrl = false;
 
         const emailStatus = searchParams.get('email-changed');
-        if (emailStatus === 'success') {
-            toast.success('Пошту успішно змінено! Будь ласка, увійдіть заново.');
-            shouldCleanUrl = true;
-        } else if (emailStatus === 'error') {
-            toast.error('Помилка підтвердження або посилання застаріло.');
+        if (emailStatus) {
+            if (emailStatus === 'success') {
+                toast.success('Пошту успішно змінено! Будь ласка, увійдіть заново.');
+                searchParams.set('redirect', 'profile');
+            } else if (emailStatus === 'error') {
+                toast.error('Помилка підтвердження або посилання застаріло.');
+            }
+            searchParams.delete('email-changed');
             shouldCleanUrl = true;
         }
 
+
         const activationStatus = searchParams.get('activation');
-        if (activationStatus === 'success') {
-            toast.success('Акаунт активований!', {
-                duration: 4000,
-                style: { width: '380px' }
-            });
-            openLogin();
-            shouldCleanUrl = true;
-        } else if (activationStatus === 'error') {
-            toast.error('Помилка активації.', {
-                duration: 4000,
-                style: { width: '300px' }
-            });
+        if (activationStatus) {
+            if (activationStatus === 'success') {
+                toast.success('Акаунт активований!', {
+                    duration: 4000,
+                    style: { width: '380px' }
+                });
+                openLogin();
+                searchParams.set('redirect', 'profile');
+            } else if (activationStatus === 'error') {
+                toast.error('Помилка активації.', {
+                    duration: 4000,
+                    style: { width: '300px' }
+                });
+            }
+            searchParams.delete('activation');
             shouldCleanUrl = true;
         }
 
         if (searchParams.get('login') === 'true') {
             openLogin();
+            searchParams.delete('login');
             shouldCleanUrl = true;
         }
 
@@ -61,7 +69,7 @@ const Header = () => {
 
             navigate(newUrl, { replace: true });
         }
-    }, [location.search, navigate]);
+    }, [location.search, navigate, openLogin]);
 
     const handleCabinetClick = () => {
         if (authService.isAuthenticated()) {

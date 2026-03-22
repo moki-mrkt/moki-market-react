@@ -118,14 +118,11 @@ const AdminUsers = () => {
             flex: 1.5,
             renderCell: (params) => (
                 <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                    <Avatar src={params.row.imageUrl} sx={{ width: 28, height: 28 }}>
-                        {params.row.firstName?.charAt(0)}
-                    </Avatar>
+
                     <Typography
                         variant="body2"
                         sx={{
                             fontWeight: 500,
-                            // ВІЗУАЛЬНА ПОЗНАЧКА: якщо видалений — текст закреслений та сірий
                             textDecoration: params.row.deleted ? 'line-through' : 'none',
                             color: params.row.deleted ? '#9CA3AF' : 'inherit'
                         }}

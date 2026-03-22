@@ -7,13 +7,15 @@ import toast from "react-hot-toast";
 import '../UserInfo/UserInfo.css';
 import '../UserSecurity/UserSecurity.css';
 
-
-import {useOutletContext} from "react-router-dom";
+import {useNavigate, useOutletContext} from "react-router-dom";
 import {userService} from "../../../../services/userService.js";
 import DeleteUserModal from "../../../Modals/DeleteUserModal/DeleteUserModal.jsx";
+import {useModal} from "../../../../contexts/ModalContext.jsx";
 
 const UserSecurity = () => {
 
+  const navigate = useNavigate();
+  const { openLogin } = useModal();
   const user = useOutletContext().user;
   const [isSaving, setIsSaving] = useState(false);
   const [errors, setErrors] = useState({});
@@ -69,8 +71,6 @@ const UserSecurity = () => {
             newErrors.newPassword = "Новий пароль не може бути порожнім";
         } else if (!passwordRegex.test(formData.newPassword)) {
             newErrors.newPassword = "Пароль має містити від 8 до 20 символів, велику та малу літеру латинського алфавіту і цифру";
-        } else if (formData.newPassword === formData.currentPassword) {
-            newErrors.newPassword = "Новий пароль не може збігатися з поточним";
         }
 
         if (!formData.confirmNewPassword) {
@@ -123,9 +123,13 @@ const UserSecurity = () => {
 
             toast.success('Пароль успішно оновлено!');
 
-            authService.logoutUser(true);
+            authService.logoutUser(true, true);
         } catch (error) {
-            toast.error('Помилка при збереженні');
+            if (error.response?.status === 401 || error.response?.data?.message === "Wrong password") {
+                toast.error("Невірний поточний пароль");
+            } else {
+                toast.error('Помилка при збереженні');
+            }
         } finally {
             setIsSaving(false);
         }

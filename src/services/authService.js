@@ -14,13 +14,17 @@ export const authService = {
         return response.data;
     },
 
-    logoutUser: (openLoginAfter = false) => {
+    logoutUser: (openLoginAfter = false, redirectToProfile = false ) => {
 
         localStorage.removeItem('accessToken');
         localStorage.removeItem('refreshToken');
 
         if (openLoginAfter) {
-            window.location.href = '/?login=true';
+            if(redirectToProfile) {
+                window.location.href = '/?login=true&redirect=profile';
+            } else {
+                window.location.href = '/?login=true';
+            }
         } else {
             window.location.href = '/';
         }

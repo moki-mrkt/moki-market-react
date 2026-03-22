@@ -20,7 +20,7 @@ const RegistrationModal = ({ isOpen, onClose, onSwitchToLogin, onSuccess }) => {
         email: '',
         firstName: '',
         lastName: '',
-        phone: '',
+        phone: '+380',
         password: '',
         passwordConfirm: ''
     });
@@ -32,6 +32,21 @@ const RegistrationModal = ({ isOpen, onClose, onSwitchToLogin, onSuccess }) => {
         if (errors[name]) {
             setErrors({ ...errors, [name]: '' });
         }
+    };
+
+    const handlePhoneChange = (e) => {
+        const value = e.target.value;
+
+        if (!value.startsWith('+380')) {
+            setFormData(prev => ({ ...prev, phone: '+380' }));
+            return;
+        }
+
+        if (!/^\d*$/.test(value.slice(1))) return;
+
+        if (value.length > 13) return;
+
+        setFormData(prev => ({ ...prev, phone: value }));
     };
 
     const validateForm = () => {
@@ -101,17 +116,16 @@ const RegistrationModal = ({ isOpen, onClose, onSwitchToLogin, onSuccess }) => {
                 confirmPassword: formData.passwordConfirm
             };
 
-            console.log('Registering payload:', payload);
-
-            const status = await userService.registration(payload);
-
-            if(status === 201) {
-
-            }
+            await userService.registration(payload);
 
             onSuccess();
         } catch (err) {
-            setGlobalError('Помилка реєстрації. Перевірте дані або спробуйте пізніше.');
+
+            if (err.response && err.response.status === 400 && err.response.statusText === 'Email already taken') {
+                setGlobalError('Пошта вже занята. Будь ласка, виберіть іншу.');
+            } else {
+                setGlobalError('Помилка реєстрації. Перевірте дані або спробуйте пізніше.');
+            }
         } finally {
             setLoading(false);
         }
@@ -181,7 +195,7 @@ const RegistrationModal = ({ isOpen, onClose, onSwitchToLogin, onSuccess }) => {
                                         className={`reg-checkout-input ${errors.phone ? 'input-error' : ''}`}
                                         placeholder="Телефон (+380...)"
                                         value={formData.phone}
-                                        onChange={handleChange}
+                                        onChange={handlePhoneChange}
                                     />
                                     {errors.phone && <span className="errorStyle">{errors.phone}</span>}
                                 </div>

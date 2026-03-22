@@ -114,11 +114,27 @@ const PageGoods = ({ initialFilters = {} }) => {
             }
         };
 
-        if (categorySlug || searchQuery || appliedFilters.hasDiscount == true) {
+        if (categorySlug || searchQuery || appliedFilters.hasDiscount === true) {
             fetchProducts();
         }
 
     }, [searchQuery, categorySlug, currentPage, sortOrder, appliedFilters]);
+
+    useEffect(() => {
+        setCurrentPage(0);
+        setProducts([]);
+        setAppliedFilters({
+            minPrice: null,
+            maxPrice: null,
+            subcategories: [],
+            hasDiscount: initialFilters.hasDiscount || false
+        });
+        setPriceRange({ min: 0, max: 9999 });
+        setSliderLimits({ min: 0, max: 9999 });
+        setAvailableSubcategories([]);
+        isLoadMore.current = false;
+        window.scrollTo(0, 0);
+    }, [categorySlug, initialFilters.hasDiscount]);
 
     const handleRangeChange = (e) => {
         const { id, value } = e.target;
