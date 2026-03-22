@@ -336,9 +336,17 @@
     padding: 0;
 }
 
-.char-list li {
-    font-size: 20px;
+.char-key {
+    font-size: 22px;
     color: #0E2CA4;
+    margin-bottom: 10px;
+    border-bottom: 1px solid #eee;
+    padding-bottom: 5px;
+    width: 40%;
+}
+
+.char-value {
+    font-size: 22px;
     margin-bottom: 10px;
     border-bottom: 1px solid #eee;
     padding-bottom: 5px;

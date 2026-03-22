@@ -39,7 +39,7 @@ const ProductTabs = ({ description, characteristics, productId }) => {
 
     const [page, setPage] = useState(0);
     const [totalPages, setTotalPages] = useState(0);
-    const pageSize = 1;
+    const pageSize = 4;
 
     const isAuth = authService.isAuthenticated();
 
@@ -213,15 +213,18 @@ const ProductTabs = ({ description, characteristics, productId }) => {
                     <div className="tab-pane active">
                         <div className="tab-text">
                             {characteristics && Object.keys(characteristics).length > 0 ? (
-                                <ul className="char-list">
+                                <table className="char-list">
+                                    <tbody>
                                     {Object.entries(characteristics).map(([key, value]) => (
-                                        <li key={key}>
-                                            <strong>{key}:</strong> {value}
-                                        </li>
+                                        <tr key={key} >
+                                            <th className="char-key">{key}: </th>
+                                            <td className="char-value">{value}</td>
+                                        </tr>
                                     ))}
-                                </ul>
+                                    </tbody>
+                                </table>
                             ) : (
-                                <p>Характеристики відсутні.</p>
+                                <p className="no-data-text">Характеристики відсутні.</p>
                             )}
                         </div>
                     </div>
