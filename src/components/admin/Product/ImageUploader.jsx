@@ -52,76 +52,110 @@ const ImageUploader = ({ selectedImages, setSelectedImages }) => {
         setCroppedAreaPixels(croppedAreaPixels);
     };
 
+    // const handleCropConfirm = async () => {
+    //     const tempId = Date.now();
+    //     const croppedBlob = await getCroppedImg(imageSrc, croppedAreaPixels, '#FFFFFF');
+    //     const croppedFile = new File([croppedBlob], currentFileName, { type: "image/jpeg" });
+    //     const previewUrl = URL.createObjectURL(croppedFile);
+    //
+    //     const newPlaceholder = {
+    //         id: tempId,
+    //         file: croppedFile,
+    //         preview: previewUrl,
+    //         loading: true,
+    //         error: false,
+    //         key: null,
+    //         uploadedUrl: null,
+    //         imageId: null
+    //     };
+    //
+    //     try {
+    //
+    //         try {
+    //             const response = await imageService.uploadImageForProduct(croppedFile);
+    //
+    //             setSelectedImages(prev => prev.map(item => {
+    //                 if (item.preview === previewUrl) {
+    //                     return {
+    //                         ...item,
+    //                         loading: false,
+    //                         imageId: response.imageId,
+    //                         uploadedUrl: response.url
+    //                     };
+    //                 }
+    //                 return item;
+    //             }));
+    //         } catch (error) {
+    //             setSelectedImages(prev => prev.map(item => {
+    //                 if (item.preview === previewUrl) {
+    //                     return { ...item, loading: false, error: true };
+    //                 }
+    //                 return item;
+    //             }));
+    //         }
+    //
+    //     } catch (e) {
+    //         console.error("Crop failed", e);
+    //     } finally {
+    //         setImageSrc(null);
+    //     }
+    // };
+
     const handleCropConfirm = async () => {
+        const tempId = Date.now();
+
         try {
-            setIsCropOpen(false);
 
             const croppedBlob = await getCroppedImg(imageSrc, croppedAreaPixels, '#FFFFFF');
             const croppedFile = new File([croppedBlob], currentFileName, { type: "image/jpeg" });
-
             const previewUrl = URL.createObjectURL(croppedFile);
+
             const newPlaceholder = {
+                id: tempId,
                 file: croppedFile,
                 preview: previewUrl,
                 loading: true,
-                error: false,
-                key: null,
-                uploadedUrl: null,
                 imageId: null
             };
 
+            setIsCropOpen(false);
+            setImageSrc(null);
             setSelectedImages(prev => [...prev, newPlaceholder]);
 
-            try {
-                const response = await imageService.uploadImageForProduct(croppedFile);
-
-                setSelectedImages(prev => prev.map(item => {
-                    if (item.preview === previewUrl) {
-                        return {
-                            ...item,
-                            loading: false,
-                            imageId: response.imageId,
-                            uploadedUrl: response.url
-                        };
-                    }
-                    return item;
-                }));
-            } catch (error) {
-                console.error("Upload failed", error);
-                setSelectedImages(prev => prev.map(item => {
-                    if (item.preview === previewUrl) {
-                        return { ...item, loading: false, error: true };
-                    }
-                    return item;
-                }));
-            }
-
-        } catch (e) {
-            console.error("Crop failed", e);
-        } finally {
-            setImageSrc(null);
+            const response = await imageService.uploadImageForProduct(croppedFile);
+            setSelectedImages(prev => prev.map(item =>
+                item.id === tempId
+                    ? { ...item,
+                        loading: false,
+                        imageId: response.imageId,
+                        uploadedUrl: response.url
+                      }
+                    : item
+            ));
+        } catch (error) {
+            setSelectedImages(prev => prev.map(item =>
+                item.id === tempId ? { ...item, loading: false, error: true } : item
+            ));
         }
     };
 
-    const handleRemoveImage = async (index) => {
-        const imageToRemove = selectedImages[index];
+    const handleRemoveImage = async (idToRemove) => {
+        const imageToRemove = selectedImages.find(img => (img.id || img.imageId) === idToRemove);
+        if (!imageToRemove) return;
 
-        if (imageToRemove.uploadedUrl) {
+        if (imageToRemove.imageId) {
             try {
-                await imageService.deleteImage(imageToRemove.key);
+                await imageService.deleteImage(imageToRemove.imageId);
             } catch (error) {
-                console.error("Помилка видалення:", error);
+                console.error("Помилка видалення з сервера:", error);
             }
         }
 
-        setSelectedImages(prev => {
-            const newImages = [...prev];
-            if (newImages[index].preview) {
-                URL.revokeObjectURL(newImages[index].preview);
-            }
-            newImages.splice(index, 1);
-            return newImages;
-        });
+        if (imageToRemove.preview) {
+            URL.revokeObjectURL(imageToRemove.preview);
+        }
+
+        setSelectedImages(prev => prev.filter(img => (img.id || img.imageId) !== idToRemove));
     };
 
     return (
@@ -132,9 +166,9 @@ const ImageUploader = ({ selectedImages, setSelectedImages }) => {
 
             <Box sx={{ display: 'flex', gap: 2, flexWrap: 'wrap' }}>
 
-                {selectedImages.map((img, index) => (
+                {selectedImages.map((img) => (
                     <Box
-                        key={index}
+                        key={img.id || img.imageId}
                         sx={{
                             width: 120,
                             height: 120,
@@ -146,7 +180,11 @@ const ImageUploader = ({ selectedImages, setSelectedImages }) => {
                         }}
                     >
                         <img
-                            src={img.imageId ? `${URLS.s3_bucket}${img.imageId}_medium.webp` : img.preview}
+                            src={
+                                img.imageId ? `${URLS.s3_bucket}${img.imageId}_medium.webp` :
+                                    img.preview ? img.preview :
+                                        img.url // додаємо підтримку звичайного URL з бази
+                            }
                             alt="preview"
                             style={{
                                 width: '100%',
@@ -168,7 +206,7 @@ const ImageUploader = ({ selectedImages, setSelectedImages }) => {
 
                         <IconButton
                             size="small"
-                            onClick={() => handleRemoveImage(index)}
+                            onClick={() => handleRemoveImage(img.id || img.imageId)}
                             sx={{
                                 position: 'absolute',
                                 top: 4,

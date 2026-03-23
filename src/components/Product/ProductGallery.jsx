@@ -5,6 +5,7 @@ import { FreeMode, Thumbs } from 'swiper/modules';
 import './Product.css';
 
 import {URLS} from '../../constants/urls';
+import LazyImage from "../../utils/LazyImage.jsx";
 
 const image_api =  URLS.s3_bucket;
 
@@ -13,10 +14,6 @@ const ProductGallery = ({ images, fallbackImage, productName }) => {
 
     const displayImages = images && images.length > 0 ? images : [{ url: fallbackImage }];
 
-    // const imageUrl = mainImage
-    //     ? `${image_api}${mainImage.imageId}`
-    //     : '/img/icon.png';
-    //
     return (
         <>
             {/* Головний слайдер */}
@@ -55,7 +52,11 @@ const ProductGallery = ({ images, fallbackImage, productName }) => {
                 >
                     {displayImages.map((img, index) => (
                         <SwiperSlide key={index}>
-                            <img src={`${image_api}${img.imageId || img}_thumb.webp`} alt={`Купити ${productName} в Moki`} />
+                            <LazyImage
+                                src={`${image_api}${img.imageId || img}_thumb.webp`}
+                                alt={`Купити ${productName} в Moki`}
+                                className="thumb-img-wrapper"
+                            />
                         </SwiperSlide>
                     ))}
                 </Swiper>

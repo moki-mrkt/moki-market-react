@@ -38,7 +38,9 @@ const FeedbackCard = ({ feedback, showActions = false, onDelete }) => {
                 <div className="feedback-meta-info">
                     <div className="feedback-info">
                         <span className="feedback-author">
-                            {feedback.firstNameUser || 'Клієнт'}
+                            {(!feedback.firstNameUser || feedback.firstNameUser === 'Deleted User')
+                                ? 'Клієнт'
+                                : feedback.firstNameUser}
                         </span>
                     </div>
                     <div className="feedback-stars-and-date">

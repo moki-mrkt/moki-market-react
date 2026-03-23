@@ -9,6 +9,7 @@ import {authService} from "../../services/authService.js";
 import {useModal} from "../../contexts/ModalContext.jsx";
 import {favoriteProductService} from "../../services/favoriteProductService.js";
 import toast from "react-hot-toast";
+import LazyImage from '../../utils/LazyImage';
 
 import { getSlugFromEnum } from '../../constants/categories.js';
 
@@ -52,12 +53,9 @@ const ProductCard = ({product, onFavoriteToggle }) => {
         }
     };
 
-    const mainImage = product.images && product.images.length > 0
-        ? product.images.find(img => img.isMain) || product.images[0]
-        : null;
-
+    const mainImage = product.images?.find(img => img.isMain) || product.images?.[0];
     const imageUrl = mainImage
-        ? `${image_api}${mainImage.imageId}_thumb.webp`
+        ? `${URLS.s3_bucket}${mainImage.imageId}_thumb.webp`
         : '/img/icon.png';
 
     const hasDiscount = product.discount > 0;
@@ -67,8 +65,11 @@ const ProductCard = ({product, onFavoriteToggle }) => {
 
     if (!product) return null;
 
+    const isOutOfStock = product.availability === 'OUT_OF_STOCK' || product.availability === 'ARCHIVED';
+
     return (
-        <div className="goods">
+        <div className={`goods ${isOutOfStock ? 'product-out-of-stock' : ''}`}>
+
             <div className="goods-header">
 
                 {product.discount > 0 && <span className="discount-badge">-{product.discount}%</span>}
@@ -80,39 +81,47 @@ const ProductCard = ({product, onFavoriteToggle }) => {
                 </button>
             </div>
 
-            <Link to={productUrl} className="goods-image">
-                <img src={imageUrl} alt={`Купити ${product.name} в Moki`} />
-            </Link>
+            <div className="product-card__content">
 
-            <div className="goods-info">
-                <div className="goods-title-weight">
-                    <Link to={productUrl} className="goods-title">
-                        {product.name}
-                    </Link>
+                {isOutOfStock && <div className="out-of-stock-label">Немає в наявності</div>}
 
-                    <div className="goods-weight">
-                        {product.valueOfInitOfMeasure} {product.initOfMeasure}
+                <Link to={productUrl} className="goods-image">
+                    <LazyImage
+                        src={imageUrl}
+                        alt={`Купити ${product.name} в Moki`}
+                        className="product-card__img-container"
+                    />
+                </Link>
+
+                <div className="goods-info">
+                    <div className="goods-title-weight">
+                        <Link to={productUrl} className="goods-title">
+                            {product.name}
+                        </Link>
+
+                        <div className="goods-weight">
+                            {product.valueOfInitOfMeasure} {product.initOfMeasure}
+                        </div>
                     </div>
-                </div>
 
-                <div className="goods-vip">
-                    <div className="goods-rating">
+                    <div className="goods-vip">
+                        <div className="goods-rating">
 
-                        {product.rating > 0 ? (
-                                <div className="goods-stars-and-rating">
-                                    <div className="goods-stars">
-                                        {[...Array(5)].map((_, index) => (
-                                            <img
-                                                key={index}
-                                                src={index < product.rating ? "/img/star.svg" : "/img/star-outline.svg"}
-                                                alt="star"
-                                            />
+                            {product.rating > 0 ? (
+                                    <div className="goods-stars-and-rating">
+                                        <div className="goods-stars">
+                                            {[...Array(5)].map((_, index) => (
+                                                <img
+                                                    key={index}
+                                                    src={index < product.rating ? "/img/star.svg" : "/img/star-outline.svg"}
+                                                    alt="star"
+                                                />
 
-                                        ))}
+                                            ))}
+                                        </div>
+                                        <span className="card-rating-value">{product.rating}</span>
                                     </div>
-                                    <span className="card-rating-value">{product.rating}</span>
-                                </div>
-                            ) :
+                                ) :
                                 <div className="goods-stars">
                                     {[...Array(5)].map((_, index) => (
                                         <img
@@ -123,27 +132,29 @@ const ProductCard = ({product, onFavoriteToggle }) => {
                                         />
                                     ))}
                                 </div>
-                        }
-                    </div>
+                            }
+                        </div>
 
-                    <div className="goods-price">
+                        <div className="goods-price">
 
                        <span className="card-current-price-value">
                               {currentPrice} грн
                          </span>
-                        <span>   </span>
+                            <span>   </span>
 
-                        {hasDiscount && (
-                            <span className="card-old-price-value">
+                            {hasDiscount && (
+                                <span className="card-old-price-value">
                                  {product.price} грн
                              </span>
-                        )}
+                            )}
 
+                        </div>
+
+                        <button className="buy-button" onClick={handleBuyClick}>Купити</button>
                     </div>
-
-                    <button className="buy-button" onClick={handleBuyClick}>Купити</button>
                 </div>
             </div>
+
         </div>
     );
 };

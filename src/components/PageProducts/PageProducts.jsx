@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useParams, useSearchParams } from 'react-router-dom';
+import {Helmet} from "react-helmet-async";
 
 import Breadcrumbs from '../../components/Breadcrumbs/Breadcrumbs';
 import ProductCard from '../../components/ProductCard/ProductCard';
@@ -8,7 +9,6 @@ import { productService } from '../../services/productService';
 import { getEnumFromSlug, getLabelFromSlug } from '../../constants/categories';
 import { SEO_TEXTS } from '../../constants/seoText';
 import './PageProducts.css';
-import {Helmet} from "react-helmet-async";
 
 const PageGoods = ({ initialFilters = {} }) => {
 
@@ -432,7 +432,7 @@ const PageGoods = ({ initialFilters = {} }) => {
                         ) : products.length > 0 ? (
                             <div className="goods-list">
                                 {products.map((product) => (
-                                    <ProductCard key={product.id} product={product} />
+                                        <ProductCard key={product.id} product={product} />
                                 ))}
                             </div>
                         ) : (

@@ -54,6 +54,8 @@ const CartDrawer = ({ isOpen }) => {
         return 'товарів';
     };
 
+    console.log(cartItems)
+
     return (
         <div className="cart-overlay" onClick={handleClose}>
             <div
@@ -81,7 +83,7 @@ const CartDrawer = ({ isOpen }) => {
                         cartItems.map(item => (
                             <div className="cart-item" key={item.id}>
                                 <div className="cart-img">
-                                    <img src={item.imageId ? `${URLS.s3_bucket}${item.imageId}_thumb.webp` : '/img/icon.png'} alt={item.name} />
+                                    <img src={ item.image ? `${item.image}_thumb.webp` : '/img/icon.png'} alt={item.name} />
                                 </div>
 
                                 <div className="cart-info">

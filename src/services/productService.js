@@ -47,7 +47,6 @@ export const productService = {
         return request(`/products?${params.toString()}`);
     },
 
-    getById: (id) => request(`/products/${id}`),
     getByIdForAdmin: (id) => request(`/products/${id}/admin`),
 
     getBySlug: (slug) => request(`/products/slug/${slug}`),

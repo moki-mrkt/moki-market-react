@@ -56,7 +56,13 @@ const Feedbacks = () => {
                     <div className="feedback-card" key={item.id}>
                         <div className="feedback-header">
                             {/* Ім'я користувача або Анонім */}
-                            <span className="feedback-name">{item.firstNameUser || 'Користувач'}</span>
+
+                            <span className="feedback-name">
+                                 {(!item.firstNameUser || item.firstNameUser === 'Deleted User')
+                                     ? 'Клієнт'
+                                     : item.firstNameUser}
+                                {/*{item.firstNameUser || 'Користувач'}*/}
+                            </span>
                             <div className="feedback-stars">
                                 {[...Array(5)].map((_, index) => (
                                     <img

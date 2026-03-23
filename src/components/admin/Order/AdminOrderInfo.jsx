@@ -174,6 +174,32 @@ const AdminOrderInfo = () => {
                                             </Box>
                                         </Stack>
                                     </Grid>
+                                    <Grid item xs={12} md={6} sx={{ pl: { md: 3 }, borderLeft: { md: '1px solid #E5E7EB' } }}>
+                                        <Typography
+                                            variant="subtitle2"
+                                            color="text.secondary"
+                                            sx={{ mb: 2, textTransform: 'uppercase', fontSize: '12px', fontWeight: 700, letterSpacing: '0.5px' }}
+                                        >
+                                            Адреса доставки
+                                        </Typography>
+
+                                        <Stack spacing={2}>
+                                            {order.addressDTO?.region && (
+                                                <Box>
+                                                    <Typography variant="caption" color="text.secondary">Вулиця</Typography>
+                                                    <Typography variant="body1">{order.addressDTO.street}</Typography>
+                                                </Box>
+                                            )}
+                                            <Box>
+                                                <Typography variant="caption" color="text.secondary">Номер будинку</Typography>
+                                                <Typography variant="body1" fontWeight={500}>{order.addressDTO?.houseNumber || '—'}</Typography>
+                                            </Box>
+                                            <Box>
+                                                <Typography variant="caption" color="text.secondary">Квартира</Typography>
+                                                <Typography variant="body1" fontWeight={500}>{order.addressDTO?.apartment || '—'}</Typography>
+                                            </Box>
+                                        </Stack>
+                                    </Grid>
 
                                 </Grid>
                             </Paper>

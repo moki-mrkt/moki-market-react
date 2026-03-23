@@ -95,6 +95,7 @@ const AdminProductCreate = () => {
                     file: null,
                     imageId: img.imageId,
                     preview: img.imageUrl,
+                    uploadedUrl: img.imageUrl,
                     loading: false,
                     error: false
                 }));
@@ -113,10 +114,6 @@ const AdminProductCreate = () => {
 
     const [characteristics, setCharacteristics] = useState([
         { key: '', value: '' }
-    ]);
-
-    const [images, setImages] = useState([
-        { imageId: '', isMain: true, sortOrder: 0, altText: '' }
     ]);
 
 
@@ -160,7 +157,7 @@ const AdminProductCreate = () => {
         try {
 
             const validImages = selectedImages
-                .filter(img => img.uploadedUrl && !img.error)
+                .filter(img => img.imageId && !img.error)
                 .map((img, index) => ({
                     imageId: img.imageId,
                     isMain: index === 0,
@@ -185,6 +182,7 @@ const AdminProductCreate = () => {
             };
 
             if (isEditMode) {
+                console.log(productPayload.images)
                 await productService.updateProduct(id, productPayload);
                 toast.success('Товар успішно оновлено!');
             } else {

@@ -48,6 +48,13 @@
     color: #1032A3;
     line-height: 1.4;
     margin: 0;
+
+    display: -webkit-box;
+    -webkit-line-clamp: 1;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-height: 1.4em;
 }
 
 .feedbacks-actions {
