@@ -2,7 +2,6 @@
 .info-page-section {
     padding-bottom: 80px;
 
-    /* Фоновий візерунок (якщо є) */
     /*background-image: url('../img/background/apple_bg.svg');*/
     background-repeat: no-repeat;
     background-position: right bottom;
@@ -12,19 +11,18 @@
 .info-grid {
     display: grid;
     grid-template-columns: 380px 1fr;
-
     align-items: start;
     margin-top: 40px;
     margin-bottom: 100px;
 }
 
 .info-tab {
-    display: none; /* Ховаємо все */
+    display: none;
     animation: fadeIn 0.3s ease-in-out;
 }
 
 .info-tab.active {
-    display: block; /* Показуємо тільки активний */
+    display: block;
 }
 
 @keyframes fadeIn {
@@ -155,7 +153,6 @@
     .info-grid {
         grid-template-columns: 1fr;
     }
-
     .advantages-grid {
         grid-template-columns: repeat(2, 1fr);
     }
@@ -164,9 +161,7 @@
 .reviews-summary-block {
     display: flex;
     align-items: start;
-
     height: 60px;
-
     margin-bottom: 45px;
 }
 
@@ -184,12 +179,11 @@
     line-height: 1;
 }
 
-.rating-number .feed-stars {
+.rating-number.feed-stars {
     margin-bottom: 5px;
-    /*gap: 1px;*/
 }
 
-.rating-number .feed-stars img {
+.rating-number.feed-stars img {
     height: 25px;
     width: 25px;
 }
@@ -216,7 +210,7 @@
     margin-right: 10px;
 }
 
-.rating-number .review-count {
+.rating-number.review-count {
     font-size: 14px;
     color: #7B8CC6;
     font-weight: 400;
@@ -243,11 +237,11 @@
     gap: 15px;
 }
 
-.stars-and-date .feed-stars {
+.stars-and-date.feed-stars {
     letter-spacing: 0;
 }
 
-.stars-and-date .feed-stars img {
+.stars-and-date.feed-stars img {
     height: 100%;
     width: 15px;
 }
@@ -266,13 +260,10 @@
 
 .else-feedback {
     background: transparent;
-
     width: 300px;
     height: 40px;
-
     border: 2px solid #F0D051;
     border-radius: 10px;
-
     color: #061F7C;
     font-size: 20px;
     font-weight: 400;
@@ -351,7 +342,7 @@
     gap: 5px;
 }
 
-.ukr_poshta-group .delivery-img {
+.ukr_poshta-group.delivery-img {
     object-position: left center;
 }
 
@@ -389,10 +380,6 @@
     gap: 15px;
     margin-bottom: 10px;
 }
-
-/*.term-height {*/
-/*    height: 600px;*/
-/*}*/
 
 .contacts-details {
     display: flex;

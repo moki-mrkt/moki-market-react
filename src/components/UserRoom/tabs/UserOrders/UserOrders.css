@@ -10,7 +10,6 @@
     width: 100%;
     border-collapse: collapse;
     min-width: 600px;
-
 }
 
 .view-link {
@@ -44,7 +43,6 @@
 .status-block {
     margin-top: 10px;
     padding: 5px 10px;
-
     background: #0E2CA4;
     color: white;
     border-radius: 20px;
@@ -70,13 +68,6 @@
     color: #0E2CA4;
     margin-bottom: 20px;
     margin-top: -10px;
-}
-
-
-#orders. account-tab {
-    background-color: transparent;
-    border: none;
-    padding: 0;
 }
 
 #orders-list-view {

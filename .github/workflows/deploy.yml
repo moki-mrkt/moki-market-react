@@ -29,4 +29,4 @@ jobs:
           script: |
             cd ~/moki-app
             docker compose -f docker-compose.prod.yml up -d --build frontend
-            docker image prune -f -d --build frontend
+            docker image prune -f

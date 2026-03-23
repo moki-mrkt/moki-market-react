@@ -6,17 +6,8 @@ import { authService } from '../../services/authService';
 import { feedbackService } from '../../services/feedbackService';
 import  '../Feedbacks/Feedbacks.css';
 import  './ProductTabs.css';
-import {URLS} from "../../constants/urls.js";
 import DeleteFeedbackModal from "../Modals/DeleteFeedbackModal/DeleteFeedbackModal.jsx";
 import FeedbackCard from "../FeedbackCard/FeedbackCard.jsx";
-
-const image_api =  URLS.s3_bucket;
-
-const formatDate = (dateString) => {
-    if (!dateString) return '';
-    const date = new Date(dateString);
-    return date.toLocaleDateString('uk-UA', { day: '2-digit', month: '2-digit', year: 'numeric' });
-};
 
 const ProductTabs = ({ description, characteristics, productId }) => {
     const [activeTab, setActiveTab] = useState('description');

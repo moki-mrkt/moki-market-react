@@ -1,5 +1,5 @@
 import React, {useState, useEffect, useRef} from 'react';
-import { NavLink, Outlet, Link } from 'react-router-dom';
+import { NavLink, Outlet } from 'react-router-dom';
 import toast from 'react-hot-toast';
 
 import AvatarCropperModal from './AvatarCropperModal';
