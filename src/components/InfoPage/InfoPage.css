@@ -230,34 +230,12 @@
     margin-bottom: 20px;
 }
 
-/*.avatar-circle {*/
-/*    width: 40px;*/
-/*    height: 40px;*/
-/*    background-color: #0E2CA4;*/
-/*    border-radius: 50%;*/
-/*    display: flex;*/
-/*    justify-content: center;*/
-/*    align-items: center;*/
-/*}*/
-
 .user-meta {
     display: flex;
-
     justify-content: center;
     align-items: center;
     gap: 15px;
 }
-
-/*.name {*/
-/*    color: #0E2CA4;*/
-/*    font-weight: 500;*/
-/*    font-size: 25px;*/
-/*}*/
-
-/*.date {*/
-/*    color: #AEBED2;*/
-/*    font-size: 15px;*/
-/*}*/
 
 .stars-and-date {
     display: flex;
@@ -273,33 +251,6 @@
     height: 100%;
     width: 15px;
 }
-
-/*.review-text {*/
-/*    margin-top: 0;*/
-/*    margin-bottom: 0;*/
-/*    margin-left: 55px;*/
-/*    color: #0E2CA4;*/
-/*    font-size: 20px;*/
-/*}*/
-
-/*.admin-reply {*/
-/*    margin-left: 115px;*/
-/*    margin-top: 0;*/
-/*}*/
-
-/*.admin-header img {*/
-/*    width: 40px;*/
-/*    height: 40px;*/
-/*    border-radius: 50%;*/
-/*    object-fit: contain;*/
-/*}*/
-
-/*.admin-header {*/
-/*    display: flex;*/
-/*    align-items: center;*/
-/*    gap: 8px;*/
-/*    margin-bottom: 0;*/
-/*}*/
 
 .admin-reply p {
     margin-bottom: 0;
@@ -439,9 +390,9 @@
     margin-bottom: 10px;
 }
 
-.term-height {
-    height: 600px;
-}
+/*.term-height {*/
+/*    height: 600px;*/
+/*}*/
 
 .contacts-details {
     display: flex;
@@ -477,8 +428,6 @@
     text-decoration: underline;
 }
 
-/* --- Стилі для Карти --- */
-
 .map-title {
     font-size: 36px;
     color: #0E2CA4;
@@ -489,30 +438,44 @@
 
 .map-frame {
     width: 100%;
-    height: 400px; /* Висота карти */
+    height: 400px;
 
     background-color: white;
-    border: 2px solid #0E2CA4; /* Синя рамка */
-    border-radius: 20px;       /* Скруглення */
+    border: 2px solid #0E2CA4;
+    border-radius: 20px;
 
-    overflow: hidden; /* Щоб карта не вилазила за скруглення */
+    overflow: hidden;
 }
 
-/* Якщо iframe ще немає, або він не завантажився, задаємо білий фон */
 .map-frame iframe {
     display: block;
     background-color: white;
 }
 
-/* ========================================= */
-/* МОБІЛЬНА АДАПТАЦІЯ (max-width: 768px)     */
-/* ========================================= */
+.term-text {
+    color: #0E2CA4;
+    font-size: 18px;
+}
+
+.term-header {
+    font-size: 24px;
+    margin: 10px 0;
+}
+
+.term-p {
+    margin: 5px 0;
+}
+
+.term-list {
+    list-style-type: disc;
+    padding-left: 20px;
+
+}
 
 @media (max-width: 768px) {
 
-    /* 1. Загальні налаштування сітки */
     .info-grid {
-        grid-template-columns: 1fr; /* Робимо одну колонку */
+        grid-template-columns: 1fr;
         margin-top: 20px;
         gap: 30px;
         margin-bottom: 50px;
@@ -520,15 +483,13 @@
 
     .info-page-section {
         padding-bottom: 40px;
-        background-size: 150px; /* Зменшуємо фонову картинку */
+        background-size: 150px;
     }
 
     .info-sidebar {
         display: none;
     }
 
-
-    /* 3. Тексти та Заголовки */
     .info-title {
         font-size: 24px;
         margin-bottom: 20px;
@@ -537,7 +498,7 @@
     .text-block p,
     .info-card-text,
     .info-list li {
-        font-size: 16px; /* Читабельний текст */
+        font-size: 16px;
         line-height: 1.5;
     }
 
@@ -551,12 +512,6 @@
         font-size: 18px;
         margin-top: 0;
     }
-
-    /*.feed-stars {*/
-    /*    display: flex;*/
-    /*    justify-content: flex-start;*/
-    /*    gap: 1px;*/
-    /*}*/
 
     .rating-number .feed-stars img {
         height: 18px;
