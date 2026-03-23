@@ -28,5 +28,5 @@ jobs:
           key: ${{ secrets.SSH_KEY }}
           script: |
             cd ~/moki-app
-            docker compose -f docker-compose.prod.yaml up -d --build frontend
+            docker compose -f docker-compose.prod.yml up -d --build frontend
             docker image prune -f -d --build frontend
