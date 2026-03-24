@@ -16,7 +16,6 @@ const AvatarCropperModal = ({ imageSrc, onClose, onSave }) => {
     const handleSave = async () => {
         setIsProcessing(true);
         try {
-            // Використовуємо вашу функцію (вона за замовчуванням підставить білий фон '#FFFFFF')
             const croppedImageBlob = await getCroppedImg(imageSrc, croppedAreaPixels);
             onSave(croppedImageBlob);
         } catch (e) {

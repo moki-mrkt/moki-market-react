@@ -262,7 +262,7 @@ const UserReviews = () => {
                                 {isEditing && (
                                     <button
                                         type="button"
-                                        className="save-btn"
+                                        className="save-btn cancel-feedback-btn"
                                         onClick={handleCancelEdit}
                                         disabled={isSubmitting}
                                     >
