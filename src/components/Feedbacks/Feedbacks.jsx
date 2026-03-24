@@ -52,7 +52,7 @@ const Feedbacks = () => {
             <div className="feedbacks-grid">
                 {feedbacks.map((item) => (
                     <div className="main-page-feedback-card" key={item.id}>
-                        <div className="feedback-header">
+                        <div className="main-page-feedback-header">
 
                             <span className="feedback-name">
                                  {(!item.firstNameUser || item.firstNameUser === 'Deleted User')

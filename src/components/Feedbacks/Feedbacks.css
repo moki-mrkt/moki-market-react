@@ -21,6 +21,11 @@
     gap: 8px;
 }
 
+.main-page-feedback-header {
+    align-items: center;
+    margin-right: 15px;
+}
+
 .feedback-name {
     font-size: 20px;
     font-weight: 600;
@@ -109,6 +114,11 @@
         flex-direction: column;
         gap: 8px;
     }
+
+    .main-page-feedback-header {
+        margin-right: 10px;
+    }
+
 
     .feedback-name {
         font-size: 16px;
