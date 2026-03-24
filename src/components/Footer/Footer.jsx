@@ -15,7 +15,7 @@ const Footer = () => {
 
                     <div className="footer__col brand-col">
                         <Link to="/" className="footer-logo" onClick={scrollToTop}>
-                            <img src="/icon.svg" alt="MOKI" />
+                            <img src="/img/icon.png" alt="MOKI" />
                         </Link>
                         <div className="footer-socials">
                             <a href="#" aria-label="Facebook">
