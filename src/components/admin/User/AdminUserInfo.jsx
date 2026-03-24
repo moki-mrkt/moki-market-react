@@ -18,6 +18,7 @@ import NotificationsIcon from '@mui/icons-material/Notifications';
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import CancelIcon from '@mui/icons-material/Cancel';
 import { userService } from "../../../services/userService.js";
+import {URLS} from "../../../constants/urls.js";
 
 const AdminUserInfo = () => {
     const { id } = useParams();
@@ -165,7 +166,7 @@ const AdminUserInfo = () => {
                     <Paper sx={{ p: 3, borderRadius: 3, border: '1px solid #E5E7EB', boxShadow: 'none' }}>
                         <Box sx={{ textAlign: 'center', mb: 3 }}>
                             <Avatar
-                                src={user.imageUrl}
+                                src={`${URLS.s3_bucket}${user.imageUrl}`}
                                 sx={{ width: 100, height: 100, mx: 'auto', mb: 2, border: '3px solid #F3F4F6' }}
                             >
                                 {user.firstName?.charAt(0)}

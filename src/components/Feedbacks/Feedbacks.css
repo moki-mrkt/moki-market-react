@@ -99,6 +99,17 @@
         flex-wrap: wrap;
     }
 
+    .main-page-feedback-card {
+        width: 160px;
+        border: 1px solid #1032A3;
+        border-radius: 20px;
+        background-color: white;
+        padding: 20px;
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+    }
+
     .feedback-name {
         font-size: 16px;
         margin-right: 10px;
