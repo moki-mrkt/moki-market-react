@@ -11,6 +11,7 @@
 }
 
 .main-page-feedback-card {
+    width: 160px;
     border: 1px solid #1032A3;
     border-radius: 20px;
     background-color: white;
