@@ -342,6 +342,7 @@
     margin-bottom: 10px;
     border-bottom: 1px solid #eee;
     padding-bottom: 5px;
+    padding-right: 50px;
     width: 40%;
 }
 
@@ -605,6 +606,19 @@
     .char-list li {
         font-size: 16px;
         color: #0E2CA4;
+        margin-bottom: 10px;
+        border-bottom: 1px solid #eee;
+        padding-bottom: 5px;
+    }
+
+    .char-key {
+        font-size: 16px;
+        padding-right: 20px;
+
+    }
+
+    .char-value {
+        font-size: 16px;
         margin-bottom: 10px;
         border-bottom: 1px solid #eee;
         padding-bottom: 5px;
