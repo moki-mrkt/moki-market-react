@@ -16,9 +16,7 @@ const Feedbacks = () => {
             const data = await feedbackService.getStoreFeedbacks(0, 4);
 
             if (data && data.feedbacks) {
-                // Зверніть увагу: масив лежить у data.feedbacks.content
                 setFeedbacks(data.feedbacks.content);
-                // Загальний рейтинг магазину
                 setStoreRating(data.storeRating);
             }
             setIsLoading(false);
@@ -53,15 +51,13 @@ const Feedbacks = () => {
 
             <div className="feedbacks-grid">
                 {feedbacks.map((item) => (
-                    <div className="feedback-card" key={item.id}>
+                    <div className="main-page-feedback-card" key={item.id}>
                         <div className="feedback-header">
-                            {/* Ім'я користувача або Анонім */}
 
                             <span className="feedback-name">
                                  {(!item.firstNameUser || item.firstNameUser === 'Deleted User')
                                      ? 'Клієнт'
                                      : item.firstNameUser}
-                                {/*{item.firstNameUser || 'Користувач'}*/}
                             </span>
                             <div className="feedback-stars">
                                 {[...Array(5)].map((_, index) => (
