@@ -12,6 +12,10 @@ export const CATEGORY_CONFIG = {
         enum: 'SWEETS',
         label: 'Cолодощі'
     },
+    'candies': {
+        enum: 'CANDIES',
+        label: 'Цукерки'
+    },
     'superfoods': {
         enum: 'SUPER_FOOD',
         label: 'Суперфуд'
