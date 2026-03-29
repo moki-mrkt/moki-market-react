@@ -242,6 +242,7 @@ const Header = () => {
                                 <li><Link to="/promotions" onClick={closeMenu}><img className="sidebar-img" src="/img/discounts.svg" alt="" /> <span>Акційні товари</span></Link></li>
                                 <li><Link to="/catalog/dried-fruits" onClick={closeMenu}><img className="sidebar-img" src="/img/dried_fruits.svg" alt="" /> <span>Сухофрукти</span></Link></li>
                                 <li><Link to="/catalog/sweets" onClick={closeMenu}><img className="sidebar-img" src="/img/sweets.svg" alt="sweets" /> <span>Солодощі</span></Link></li>
+                                <li><Link to="/catalog/candies" onClick={closeMenu}><img className="sidebar-img" src="/img/sweets.svg" alt="candies" /> <span>Цукерки</span></Link></li>
                                 <li><Link to="/catalog/nuts" onClick={closeMenu}><img className="sidebar-img" src="/img/nuts.svg" alt="nuts" /> <span>Горіхи</span></Link></li>
                                 <li><Link to="/catalog/coffee" onClick={closeMenu}><img className="sidebar-img" src="/img/coffee.svg" alt="coffee" /> <span>Кава</span></Link></li>
                                 <li><Link to="/catalog/tea" onClick={closeMenu}><img className="sidebar-img" src="/img/coffee.svg" alt="tea" /> <span>Чай</span></Link></li>
