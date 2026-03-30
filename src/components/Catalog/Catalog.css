@@ -20,7 +20,6 @@
     display: flex;
     flex-wrap: wrap;
     gap: 20px;
-
     margin-top: 20px;
     margin-bottom: 94px;
 }
@@ -82,7 +81,6 @@
         width: 100%;
         height: auto;
         aspect-ratio: 1/1;
-        object-fit: contain;
         max-height: 160px;
     }
 

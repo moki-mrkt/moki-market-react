@@ -240,7 +240,7 @@ const PageGoods = ({ initialFilters = {} }) => {
                 <meta property="og:type" content="website" />
                 <meta property="og:title" content={seoContent.title} />
                 <meta property="og:url" content={window.location.href} />
-                <meta property="og:image" content={`${siteUrl}/img/categories/${categorySlug || 'default'}.png`} />
+                <meta property="og:image" content={`${siteUrl}/img/categories/${categorySlug || 'default'}.webp`} />
 
                 {!searchQuery && products.length > 0 && (
                     <script type="application/ld+json">
@@ -291,7 +291,7 @@ const PageGoods = ({ initialFilters = {} }) => {
                         </button>
                         <div className="mobile-sort-container">
                             <div className="sort-icon-wrapper">
-                                <img src="../../img/sorting.svg" alt="Sort" />
+                                <img src="/img/sorting.svg" alt="Sort" />
                             </div>
                             <select
                                 className="mobile-sort-select"

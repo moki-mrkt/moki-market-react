@@ -1,18 +1,26 @@
-import React, { useRef, useState } from 'react';
-import {Box, Typography, IconButton, Grid, Paper, CircularProgress, FormHelperText,
-    Dialog, DialogTitle, DialogContent, DialogActions, Button, Slider
+import React, {useRef, useState} from 'react';
+import {
+    Box,
+    Button,
+    CircularProgress,
+    Dialog,
+    DialogActions,
+    DialogContent,
+    DialogTitle,
+    FormHelperText,
+    IconButton,
+    Slider,
+    Typography
 } from '@mui/material';
 import AddPhotoAlternateIcon from '@mui/icons-material/AddPhotoAlternate'; // Іконка "+"
-import CloudUploadIcon from '@mui/icons-material/CloudUpload';
 import DeleteIcon from '@mui/icons-material/Delete';
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
-import ErrorIcon from '@mui/icons-material/Error';
 
-import { imageService } from '../../../services/imageService.js';
+import {imageService} from '../../../services/imageService.js';
 import Cropper from 'react-easy-crop';
 import getCroppedImg from '../../../utils/cropImages.js';
 
-import { URLS } from '../../../constants/urls';
+import {URLS} from '../../../constants/urls';
 
 const ImageUploader = ({ selectedImages, setSelectedImages }) => {
     const fileInputRef = useRef(null);
@@ -52,62 +60,13 @@ const ImageUploader = ({ selectedImages, setSelectedImages }) => {
         setCroppedAreaPixels(croppedAreaPixels);
     };
 
-    // const handleCropConfirm = async () => {
-    //     const tempId = Date.now();
-    //     const croppedBlob = await getCroppedImg(imageSrc, croppedAreaPixels, '#FFFFFF');
-    //     const croppedFile = new File([croppedBlob], currentFileName, { type: "image/jpeg" });
-    //     const previewUrl = URL.createObjectURL(croppedFile);
-    //
-    //     const newPlaceholder = {
-    //         id: tempId,
-    //         file: croppedFile,
-    //         preview: previewUrl,
-    //         loading: true,
-    //         error: false,
-    //         key: null,
-    //         uploadedUrl: null,
-    //         imageId: null
-    //     };
-    //
-    //     try {
-    //
-    //         try {
-    //             const response = await imageService.uploadImageForProduct(croppedFile);
-    //
-    //             setSelectedImages(prev => prev.map(item => {
-    //                 if (item.preview === previewUrl) {
-    //                     return {
-    //                         ...item,
-    //                         loading: false,
-    //                         imageId: response.imageId,
-    //                         uploadedUrl: response.url
-    //                     };
-    //                 }
-    //                 return item;
-    //             }));
-    //         } catch (error) {
-    //             setSelectedImages(prev => prev.map(item => {
-    //                 if (item.preview === previewUrl) {
-    //                     return { ...item, loading: false, error: true };
-    //                 }
-    //                 return item;
-    //             }));
-    //         }
-    //
-    //     } catch (e) {
-    //         console.error("Crop failed", e);
-    //     } finally {
-    //         setImageSrc(null);
-    //     }
-    // };
-
     const handleCropConfirm = async () => {
         const tempId = Date.now();
 
         try {
 
             const croppedBlob = await getCroppedImg(imageSrc, croppedAreaPixels, '#FFFFFF');
-            const croppedFile = new File([croppedBlob], currentFileName, { type: "image/jpeg" });
+            const croppedFile = new File([croppedBlob], currentFileName, { type: "image/webp" });
             const previewUrl = URL.createObjectURL(croppedFile);
 
             const newPlaceholder = {
