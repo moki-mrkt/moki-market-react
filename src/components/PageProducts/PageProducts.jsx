@@ -327,7 +327,6 @@ const PageGoods = ({ initialFilters = {} }) => {
                             <div className="price-inputs">
                                 <input
                                     type="number"
-
                                     min="0"
                                     value={priceRange.min}
                                     onChange={(e) => {
@@ -413,7 +412,7 @@ const PageGoods = ({ initialFilters = {} }) => {
                                                     checked={selectedSubcategories.includes(item)}
                                                     onChange={() => handleSubcategoryChange(item)}
                                                 />
-                                                <span className="checkmark"></span>
+                                                <span className="checkmark-filter"></span>
                                                 <span>{item}</span>
                                             </label>
                                         </li>

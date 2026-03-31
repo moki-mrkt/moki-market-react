@@ -201,7 +201,6 @@ const RegistrationModal = ({ isOpen, onClose, onSwitchToLogin, onSuccess }) => {
                                 </div>
                             </div>
 
-                        {/* Пароль */}
                         <div className="reg-row-inputs reg-password-wrapper">
                             <div className="inputWrapperStyle">
                                 <div style={{position: 'relative', width: '100%'}}>
@@ -227,7 +226,6 @@ const RegistrationModal = ({ isOpen, onClose, onSwitchToLogin, onSuccess }) => {
                             </div>
                         </div>
 
-                        {/* Підтвердження пароля */}
                         <div className="reg-row-inputs reg-password-wrapper">
                             <div className="inputWrapperStyle">
                                 <div style={{position: 'relative', width: '100%'}}>
@@ -271,7 +269,7 @@ const RegistrationModal = ({ isOpen, onClose, onSwitchToLogin, onSuccess }) => {
                                     onChange={(e) => setIsAgreed(e.target.checked)}
                                     required
                                 />
-                                <span className="checkmark"></span>
+                                <span className="checkmark-reg"></span>
                                 <span className="agreement-text">
                                    Підтверджуючи реєстрацію, я приймаю умови
                                     <a href="/info/terms" target="_blank">користувацікої угоди</a>

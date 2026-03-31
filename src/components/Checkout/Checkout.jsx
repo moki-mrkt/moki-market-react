@@ -224,8 +224,8 @@ const Checkout = () => {
     };
 
     const getImageUrl = (item) => {
-        if (item.image) return item.image;
-        if (item.images && item.images.length > 0) return item.images[0].imageUrl;
+        if (item.image) return item.image + '_medium.webp';
+        if (item.images && item.images.length > 0) return item.images[0].imageUrl + '_medium.webp';
         return '/icon.png';
     };
 
@@ -437,7 +437,6 @@ const Checkout = () => {
                                 </div>
                             </section>
 
-                            {/* СПОСІБ ОПЛАТИ */}
                             <section className="form-section">
                                 <h2 className="section-title">Спосіб оплати</h2>
 
