@@ -226,7 +226,7 @@ const Checkout = () => {
     const getImageUrl = (item) => {
         if (item.image) return item.image + '_medium.webp';
         if (item.images && item.images.length > 0) return item.images[0].imageUrl + '_medium.webp';
-        return '/icon.png';
+        return '/img/icon.png';
     };
 
     const breadcrumbs = [
