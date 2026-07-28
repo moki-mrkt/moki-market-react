@@ -1,5 +1,5 @@
 import { SitemapStream, streamToPromise } from 'sitemap';
-import { createWriteStream } from 'fs';
+import { createWriteStream, existsSync, mkdirSync } from 'fs';
 import axios from 'axios';
 import { URLS } from '../constants/urls.js';
 import { CATEGORY_CONFIG } from '../constants/categories.js';
@@ -8,6 +8,12 @@ const BASE_URL = 'https://moki.com.ua';
 
 async function generate() {
     const smStream = new SitemapStream({ hostname: BASE_URL });
+
+    const publicDirPath = './public';
+    if (!existsSync(publicDirPath)) {
+        mkdirSync(publicDirPath, { recursive: true });
+    }
+
     const writeStream = createWriteStream('./public/sitemap.xml');
 
     smStream.pipe(writeStream);

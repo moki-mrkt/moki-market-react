@@ -26,10 +26,9 @@ export const CartProvider = ({ children }) => {
     });
 
     const mapProductToItem = (product, qty) => {
-
         console.log(product);
         const price = product.priceWithDiscount || product.price;
-        const image = product.image || (product.images && product.images.length > 0 ? product.images[0].imageUrl : '/placeholder.png');
+        const image = product.images && product.images.length > 0 ? product.images[0].imageUrl : '/img/icon.png';
         return {
             id: product.id,
             name: product.name || product.productName,
@@ -74,7 +73,6 @@ export const CartProvider = ({ children }) => {
 
     const addToCart = async (product, quantity = 1, setCartOpen = true) => {
         const newItem = mapProductToItem(product, quantity);
-
         setCartItems(prev => {
             const existing = prev.find(item => item.id === newItem.id);
             if (existing) {
@@ -94,9 +92,9 @@ export const CartProvider = ({ children }) => {
                 setServerTotal(null);
                 const updatedCartDto = await cartService.addToCart(product.id, quantity);
 
-                // Записуємо нормалізовані дані
                 setCartItems(updatedCartDto.items.map(mapDtoToItem));
                 setServerTotal(updatedCartDto.totalCartPrice);
+
             } catch (error) {
                 console.error("Помилка збереження товару в БД", error);
             }

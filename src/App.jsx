@@ -45,6 +45,7 @@ import ConfirmEmail from "./utils/ConfirmEmail.jsx";
 import {ModalProvider} from "./contexts/ModalContext.jsx";
 import AdminUsers from "./components/admin/User/AdminUsers.jsx";
 import AdminUserInfo from "./components/admin/User/AdminUserInfo.jsx";
+import AdminTools from "./components/admin/User/AdminTools.jsx";
 
 function App() {
     const location = useLocation();
@@ -123,6 +124,8 @@ function App() {
 
                         <Route path="users" element={<AdminUsers />} />
                         <Route path="users/view/:id" element={<AdminUserInfo />} />
+
+                        <Route path="tools" element={<AdminTools />} />
                     </Route>
 
                 </Routes>

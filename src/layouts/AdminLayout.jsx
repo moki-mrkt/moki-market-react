@@ -18,6 +18,7 @@ import InventoryIcon from '@mui/icons-material/Inventory';
 import {authService} from "../services/authService.js";
 import {CalendarIcon} from "@mui/x-date-pickers";
 import InsertCommentTwoToneIcon from '@mui/icons-material/InsertCommentTwoTone';
+import AddPhotoAlternateIcon from "@mui/icons-material/AddPhotoAlternate";
 
 const lightTheme = createTheme({
     palette: {
@@ -163,6 +164,12 @@ const AdminLayout = () => {
                             <ListItemButton component={Link} to="/admin-ui/feedbacks" sx={linkStyle}>
                                 <ListItemIcon><InsertCommentTwoToneIcon /></ListItemIcon>
                                 <ListItemText primary="Відгуки" />
+                            </ListItemButton>
+                        </ListItem>
+                        <ListItem disablePadding>
+                            <ListItemButton component={Link} to="/admin-ui/tools" sx={linkStyle}>
+                                <ListItemIcon><AddPhotoAlternateIcon /></ListItemIcon>
+                                <ListItemText primary="Інструменти" />
                             </ListItemButton>
                         </ListItem>
                     </List>

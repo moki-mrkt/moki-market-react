@@ -1,10 +1,9 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 import { useCart } from '../../contexts/CartContext.jsx';
 
 import './CartDrawer.css';
-import {URLS} from "../../constants/urls.js";
 
 const CartDrawer = ({ isOpen }) => {
 
@@ -53,8 +52,6 @@ const CartDrawer = ({ isOpen }) => {
         if ([2, 3, 4].includes(mod10) && ![12, 13, 14].includes(mod100)) return 'товари';
         return 'товарів';
     };
-
-    console.log(cartItems)
 
     return (
         <div className="cart-overlay" onClick={handleClose}>

@@ -44,5 +44,17 @@ export const imageService = {
     deleteImage: async (key) => {
         const encodedUrl = encodeURIComponent(key);
         return await request(`/storage?key=${encodedUrl}`, 'DELETE');
+    },
+
+    addWatermark: async (file) => {
+        const formData = new FormData();
+        formData.append('file', file);
+
+        return await privateApi.post('/photo/watermark', formData, {
+            headers: {
+                'Content-Type': 'multipart/form-data'
+            }
+        });
     }
+
 };
