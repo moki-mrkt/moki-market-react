@@ -39,7 +39,7 @@ async function generate() {
 
     try {
         while (currentPage < totalPages) {
-            const response = await axios.get(`${URLS.backend_api}/products/public/sitemap`, {
+            const response = await axios.get(`${BASE_URL}${URLS.backend_api}/products/public/sitemap`, {
                 params: { page: currentPage, size: 100 }
             });
 
