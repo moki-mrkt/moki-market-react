@@ -1,4 +1,4 @@
-import { SitemapStream, streamToPromise } from 'sitemap';
+import { SitemapStream } from 'sitemap';
 import { createWriteStream, existsSync, mkdirSync } from 'fs';
 import axios from 'axios';
 import { URLS } from '../constants/urls.js';
@@ -7,6 +7,7 @@ import { CATEGORY_CONFIG } from '../constants/categories.js';
 const BASE_URL = 'https://moki.com.ua';
 
 async function generate() {
+
     const smStream = new SitemapStream({ hostname: BASE_URL });
 
     const publicDirPath = './public';
@@ -58,10 +59,15 @@ async function generate() {
     } catch (error) {
         console.error('Помилка завантаження товарів:', error.message);
     }
-
     smStream.end();
-    await streamToPromise(smStream);
+
+    await new Promise((resolve, reject) => {
+        writeStream.on('finish', () => {
+            console.log('Sitemap успішно згенеровано!');
+            resolve();
+        });
+        writeStream.on('error', reject);
+    });
 }
 
 generate();
-
