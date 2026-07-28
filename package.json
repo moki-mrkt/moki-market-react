@@ -6,8 +6,8 @@
   "scripts": {
     "dev": "vite",
     "build": "npm run sitemap && vite build",
+    "sitemap": "node src/scripts/generate-sitemap.js",
     "lint": "eslint .",
-    "postbuild": "node src/scripts/generate-sitemap.js",
     "preview": "vite preview"
   },
   "dependencies": {
