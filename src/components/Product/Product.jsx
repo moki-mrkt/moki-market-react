@@ -163,7 +163,7 @@ const Product = () => {
                                 "@context": "https://schema.org/",
                                 "@type": "Product",
                                 "name": product.name,
-                                "image": product.images?.map(img => img.imageId.startsWith('http') ? img.imageId : `${siteUrl}${img.imageId}`),
+                                "image": product.images?.map(img => img.imageId.startsWith('http') ? img.imageId : `${siteUrl}/${img.imageId}`),
                                 "description": cleanDescription,
                                 "sku": product.id,
                                 "brand": {
