@@ -163,8 +163,9 @@ const Product = () => {
                                 "@context": "https://schema.org/",
                                 "@type": "Product",
                                 "name": product.name,
-                                "image": product.images?.map(img => img.imageId.startsWith('http') ? img : `${siteUrl}${img}`),
+                                "image": product.images?.map(img => img.imageId.startsWith('http') ? img.imageId : `${siteUrl}${img.imageId}`),
                                 "description": cleanDescription,
+                                "sku": product.id,
                                 "brand": {
                                     "@type": "Brand",
                                     "name": "Moki"
@@ -175,7 +176,11 @@ const Product = () => {
                                     "priceCurrency": "UAH",
                                     "price": currentPrice,
                                     "itemCondition": "https://schema.org/NewCondition",
-                                    "availability": isAvailable ? "https://schema.org/InStock" : "https://schema.org/OutOfStock"
+                                    "availability": isAvailable ? "https://schema.org/InStock" : "https://schema.org/OutOfStock",
+                                    "seller": {
+                                        "@type": "Organization",
+                                        "name": "Moki Market"
+                                    }
                                 },
                                 "aggregateRating": product.rating > 0 ? {
                                     "@type": "AggregateRating",
