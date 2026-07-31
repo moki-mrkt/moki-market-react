@@ -26,7 +26,6 @@ export const CartProvider = ({ children }) => {
     });
 
     const mapProductToItem = (product, qty) => {
-        console.log(product);
         const price = product.priceWithDiscount || product.price;
         const image = product.images && product.images.length > 0 ? product.images[0].imageUrl : '/img/icon.png';
         return {
