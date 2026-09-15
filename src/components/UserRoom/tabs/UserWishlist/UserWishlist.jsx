@@ -1,10 +1,8 @@
-
 import React, {useEffect, useState} from 'react';
 import toast from 'react-hot-toast';
 import ProductCard from '../../../ProductCard/ProductCard.jsx';
-
 import { favoriteProductService } from '../../../../services/favoriteProductService.js';
-
+import { useTranslation } from 'react-i18next'; // Імпорт
 import './UserWishlist.css';
 
 const UserWishlist = () => {
@@ -13,6 +11,7 @@ const UserWishlist = () => {
 
     const [page, setPage] = useState(0);
     const [totalPages, setTotalPages] = useState(0);
+    const { t } = useTranslation();
 
     const pageSize = 10;
 
@@ -26,7 +25,7 @@ const UserWishlist = () => {
                 setTotalPages(data.page?.totalPages || 0);
             } catch (error) {
                 console.error("Помилка завантаження улюблених товарів:", error);
-                toast.error("Не вдалося завантажити список бажань");
+                toast.error(t('user-wishlist.load-error'));
             } finally {
                 setLoading(false);
             }
@@ -35,7 +34,7 @@ const UserWishlist = () => {
         fetchFavorites();
 
         window.scrollTo({ top: 0, behavior: 'smooth' });
-    }, [page]);
+    }, [page, t]);
 
     const handleFavoriteToggle = (productId, isNowFavorite) => {
         if (!isNowFavorite) {
@@ -45,11 +44,11 @@ const UserWishlist = () => {
 
     return (
         <div className="wishlist-wrapper" style={{ display: 'flex', flexDirection: 'column', minHeight: '100%' }}>
-            <h2 className="wrapper-title">Улюблені товари</h2>
+            <h2 className="wrapper-title">{t('user-wishlist.title')}</h2>
 
             {loading && wishlistItems.length === 0 ? (
                 <div style={{ textAlign: 'center', padding: '50px 0', color: '#0E2CA4' }}>
-                    <h3>Завантаження...</h3>
+                    <h3>{t('user-wishlist.loading')}</h3>
                 </div>
             ) : wishlistItems.length > 0 ? (
                 <>
@@ -79,11 +78,11 @@ const UserWishlist = () => {
                                     visibility: page > 0 ? 'visible' : 'hidden'
                                 }}
                             >
-                                Попередня
+                                {t('tabs.previous')}
                             </button>
 
                             <span className="pag-text" style={{ padding: '5px', color: '#0E2CA4', minWidth: '130px', textAlign: 'center' }}>
-                                Сторінка {page + 1} з {totalPages}
+                                {t('tabs.page')} {page + 1} {t('tabs.from')} {totalPages}
                             </span>
 
                             <button
@@ -93,14 +92,14 @@ const UserWishlist = () => {
                                     visibility: page < totalPages - 1 ? 'visible' : 'hidden'
                                 }}
                             >
-                                Наступна
+                                {t('tabs.next')}
                             </button>
                         </div>
                     )}
                 </>
             ) : (
                 <div style={{ textAlign: 'center', padding: '50px 0', color: '#0E2CA4' }}>
-                    <p>Список бажань порожній</p>
+                    <p>{t('user-wishlist.empty')}</p>
                 </div>
             )}
         </div>

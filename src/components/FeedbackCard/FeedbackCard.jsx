@@ -39,7 +39,7 @@ const FeedbackCard = ({ feedback, showActions = false, onDelete }) => {
                     <div className="feedback-info">
                         <span className="feedback-author">
                             {(!feedback.firstNameUser || feedback.firstNameUser === 'Deleted User')
-                                ? 'Клієнт'
+                                ? t('feedbacks.client')
                                 : feedback.firstNameUser}
                         </span>
                     </div>
@@ -83,7 +83,7 @@ const FeedbackCard = ({ feedback, showActions = false, onDelete }) => {
                         onMouseOver={(e) => { e.currentTarget.style.backgroundColor = '#EEF2FF' }}
                         onMouseOut={(e) => { e.currentTarget.style.backgroundColor = 'transparent' }}
                     >
-                        Перейти до товару
+                        {t('feedbacks.client')}
                     </button>
 
                     <button
@@ -92,7 +92,7 @@ const FeedbackCard = ({ feedback, showActions = false, onDelete }) => {
                         onMouseOver={(e) => { e.currentTarget.style.opacity = '0.7' }}
                         onMouseOut={(e) => { e.currentTarget.style.opacity = '1' }}
                     >
-                        Видалити
+                        {t('feedbacks.client')}
                     </button>
                 </div>
             )}

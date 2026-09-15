@@ -58,5 +58,14 @@ export const productService = {
     updateProduct: (id, productData) => {
         return request(`/products/${id}`, 'PUT', productData);
     },
-    deleteProduct: (id) => request(`/products/${id}`, 'DELETE')
+
+    deleteProduct: (id) => request(`/products/${id}`, 'DELETE'),
+
+    generateDescription: (payload) => {
+        return request(`/generator/description`, 'POST', payload);
+    },
+
+    translateToRu: (payload) => {
+        return request(`/translator/to-ru`, 'POST', payload);
+    }
 };

@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useParams, useSearchParams } from 'react-router-dom';
 import {Helmet} from "react-helmet-async";
+import { useTranslation } from 'react-i18next'; // Додано імпорт
 
 import Breadcrumbs from '../../components/Breadcrumbs/Breadcrumbs';
 import ProductCard from '../../components/ProductCard/ProductCard';
@@ -15,6 +16,8 @@ const PageGoods = ({ initialFilters = {} }) => {
     const { categorySlug } = useParams();
     const [searchParams] = useSearchParams();
     const searchQuery = searchParams.get('query');
+
+    const { t } = useTranslation(); // Ініціалізація хука
 
     const isLoadMore = useRef(false);
 
@@ -230,7 +233,7 @@ const PageGoods = ({ initialFilters = {} }) => {
         <main className="hero-section">
 
             <Helmet>
-                <title>{searchQuery ? `Пошук: ${searchQuery}` : `${seoContent.title} купити в Україні | Moki Market`}</title>
+                <title>{searchQuery ? t('page-products.search-title', { query: searchQuery }) : t('page-products.seo-buy', { title: seoContent.title })}</title>
                 <meta name="description" content={seoContent.intro?.[0]?.substring(0, 160) || `${seoContent.title} в Moki Market...`} />
 
                 {!searchQuery && <link rel="canonical" href={currentUrl} />}
@@ -264,23 +267,23 @@ const PageGoods = ({ initialFilters = {} }) => {
                 <Breadcrumbs />
 
                 {searchQuery ? (
-                    <h1 className="catalog-title">Результати пошуку: "{searchQuery}"</h1>
+                    <h1 className="catalog-title">{t('page-products.search-results')}: "{searchQuery}"</h1>
                 ) : (
                     <h1 className="catalog-title">{getLabelFromSlug(categorySlug)}</h1>
                 )}
 
                 <div className="catalog-header">
                     <div className="sorting-wrapper desktop-sort">
-                        <span>Сортування </span>
+                        <span>{t('page-products.sorting')} </span>
                         <label>
                             <select
                                 className="sort-select"
                                 value={sortOrder}
                                 onChange={handleSortChange}
                             >
-                                <option value="creationTime,desc">за останнім</option>
-                                <option value="priceWithDiscount,asc">від дешевих</option>
-                                <option value="priceWithDiscount,desc">від дорогих</option>
+                                <option value="creationTime,desc">{t('page-products.sort-newest')}</option>
+                                <option value="priceWithDiscount,asc">{t('page-products.sort-cheap')}</option>
+                                <option value="priceWithDiscount,desc">{t('page-products.sort-expensive')}</option>
                             </select>
                         </label>
                     </div>
@@ -298,9 +301,9 @@ const PageGoods = ({ initialFilters = {} }) => {
                                 value={sortOrder}
                                 onChange={handleSortChange}
                             >
-                                <option value="creationTime,desc">За замовчуванням</option>
-                                <option value="priceWithDiscount,asc">Від дешевих</option>
-                                <option value="priceWithDiscount,desc">Від дорогих</option>
+                                <option value="creationTime,desc">{t('page-products.sort-default')}</option>
+                                <option value="priceWithDiscount,asc">{t('page-products.sort-cheap-cap')}</option>
+                                <option value="priceWithDiscount,desc">{t('page-products.sort-expensive-cap')}</option>
                             </select>
                         </div>
                     </div>
@@ -317,7 +320,7 @@ const PageGoods = ({ initialFilters = {} }) => {
 
                         <div className="filter-group">
                             <div className="mobile-filter-header">
-                                <h4>Ціна</h4>
+                                <h4>{t('page-products.price')}</h4>
                                 <button
                                     className="close-filter-btn"
                                     onClick={() => setIsFilterOpen(false)}
@@ -363,7 +366,7 @@ const PageGoods = ({ initialFilters = {} }) => {
                                     onBlur={handleInputBlur}
                                     className="price-field"
                                 />
-                                <button className="btn-ok" onClick={applyFilters}>OK</button>
+                                <button className="btn-ok" onClick={applyFilters}>{t('page-products.ok')}</button>
                             </div>
 
                             <div className="range-slider-container">
@@ -397,7 +400,7 @@ const PageGoods = ({ initialFilters = {} }) => {
                         {availableSubcategories.length > 0 && (
                             <div className="filter-group">
                                 <div className="filter-header">
-                                    <h4>Категорія</h4>
+                                    <h4>{t('page-products.category')}</h4>
                                     <button
                                         className="reset-filter"
                                         onClick={handleResetFilters}
@@ -421,21 +424,21 @@ const PageGoods = ({ initialFilters = {} }) => {
                             </div>
                         )}
 
-                        <button className="btn-apply" onClick={applyFilters}>Застосувати</button>
+                        <button className="btn-apply" onClick={applyFilters}>{t('page-products.apply')}</button>
                     </aside>
 
                     <div className="goods-grid">
 
                         {loading && currentPage === 0 ? (
-                            <div style={{textAlign: 'center', width: '100%', padding: '50px'}}>Завантаження...</div>
+                            <div style={{textAlign: 'center', width: '100%', padding: '50px'}}>{t('ui.dowland')}</div>
                         ) : products.length > 0 ? (
                             <div className="goods-list">
                                 {products.map((product) => (
-                                        <ProductCard key={product.id} product={product} />
+                                    <ProductCard key={product.id} product={product} />
                                 ))}
                             </div>
                         ) : (
-                            <div style={{textAlign: 'center', width: '100%', padding: '50px'}}>Товарів не знайдено.</div>
+                            <div style={{textAlign: 'center', width: '100%', padding: '50px'}}>{t('page-products.not-found')}</div>
                         )}
 
                         {totalPages > 1 && (
@@ -446,12 +449,12 @@ const PageGoods = ({ initialFilters = {} }) => {
                                         <button
                                             className="btn-load-more pag-but"
                                             onClick={() => {
-                                                       isLoadMore.current = true;
-                                                       setCurrentPage(prev => prev + 1);
-                                                   }}
+                                                isLoadMore.current = true;
+                                                setCurrentPage(prev => prev + 1);
+                                            }}
                                             disabled={loading}
                                         >
-                                            {loading ? 'Завантаження...' : 'Більше товарів'}
+                                            {loading ? t('ui.dowland') : t('page-products.load-more')}
                                         </button>
                                     </div>
                                 )}
@@ -480,7 +483,7 @@ const PageGoods = ({ initialFilters = {} }) => {
                                                 window.scrollTo({ top: 0, behavior: 'smooth' });
                                             }}
                                         >
-                                            Вперед
+                                            {t('page-products.next')}
                                         </button>
                                     )}
                                 </div>
@@ -499,7 +502,7 @@ const PageGoods = ({ initialFilters = {} }) => {
 
                         {seoContent.features?.length > 0 && (
                             <>
-                                <h3>{seoContent.featuresTitle || "Особливості"}</h3>
+                                <h3>{seoContent.featuresTitle || t('page-products.features')}</h3>
                                 <ul>
                                     {seoContent.features.map((item, index) => (
                                         <li key={`feature-${index}`}>
@@ -512,7 +515,7 @@ const PageGoods = ({ initialFilters = {} }) => {
 
                         {seoContent.tips?.length > 0 && (
                             <>
-                                <h3>{seoContent.tipsTitle || "Корисні поради"}</h3>
+                                <h3>{seoContent.tipsTitle || t('page-products.tips')}</h3>
                                 <ol>
                                     {seoContent.tips.map((tip, index) => (
                                         <li key={`tip-${index}`}>{tip}</li>
@@ -523,7 +526,7 @@ const PageGoods = ({ initialFilters = {} }) => {
 
                         {seoContent.whyUs?.length > 0 && (
                             <>
-                                <h3>{seoContent.whyUsTitle || `Чому варто купити ${seoContent.title.toLowerCase()} саме у нас:`}</h3>
+                                <h3>{seoContent.whyUsTitle || t('page-products.why-us', { title: seoContent.title.toLowerCase() })}</h3>
                                 <ul>
                                     {seoContent.whyUs.map((reason, index) => (
                                         <li key={`reason-${index}`}>{reason}</li>
@@ -536,7 +539,7 @@ const PageGoods = ({ initialFilters = {} }) => {
                             <p className="seo-footer-text">{seoContent.footer}</p>
                         ) : (
                             <p className="seo-footer-text">
-                                Обирайте найкращі {seoContent.title.toLowerCase()} для всієї родини у нашому магазині!
+                                {t('page-products.seo-footer', { title: seoContent.title.toLowerCase() })}
                             </p>
                         )}
                     </div>

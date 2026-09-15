@@ -4,10 +4,12 @@ import FeedbackCard from "../../FeedbackCard/FeedbackCard.jsx";
 import {authService} from "../../../services/authService.js";
 import {useNavigate} from "react-router-dom";
 import {Helmet} from "react-helmet-async";
+import { useTranslation } from 'react-i18next';
 
 const ReviewsTab = () => {
 
     const navigate = useNavigate();
+    const { t } = useTranslation();
 
     const [reviews, setReviews] = useState([]);
     const [storeRating, setStoreRating] = useState(0);
@@ -75,11 +77,11 @@ const ReviewsTab = () => {
         <div id="reviews" className="info-tab active">
 
             <Helmet>
-                <title>Відгуки про магазин | Moki Market</title>
-                <meta name="description" content="Відгуки про магазин | Moki Marke" />
+                <title>{t('info.reviews.meta-title')}</title>
+                <meta name="description" content={t('info.reviews.meta-title')} />
             </Helmet>
 
-            <h1 className="info-title">Відгуки про магазин</h1>
+            <h1 className="info-title">{t('info.reviews.title')}</h1>
 
             <div className="reviews-summary-block">
                 <div className="rating-number">
@@ -88,25 +90,25 @@ const ReviewsTab = () => {
 
                     <div className="stars-and-feedback">
                         {renderStars(Math.round(storeRating))}
-                        <span className="review-count">{totalReviews} відгуків</span>
+                        <span className="review-count">{totalReviews} {t('info.reviews.count')}</span>
                     </div>
                 </div>
 
                 <button className="add-review-btn" onClick={handleAddFeedbackClick}>
                     <img src="/img/like.svg" alt="img-like" />
-                    Додайте відгук
+                    {t('info.reviews.add-btn')}
                 </button>
             </div>
 
             <div className="product-reviews-list">
                 {loading ? (
-                    <p style={{ color: '#0E2CA4' }}>Завантаження відгуків...</p>
+                    <p style={{ color: '#0E2CA4' }}>{t('info.reviews.loading')}</p>
                 ) : reviews.length > 0 ? (
                     reviews.map((feedback) => (
                         <FeedbackCard key={feedback.id} feedback={feedback} />
                     ))
                 ) : (
-                    <p style={{ color: '#94A3B8', fontSize: '16px', margin: '0' }}>Відгуків ще немає.</p>
+                    <p style={{ color: '#94A3B8', fontSize: '16px', margin: '0' }}>{t('info.reviews.empty')}</p>
                 )}
             </div>
 
@@ -117,7 +119,7 @@ const ReviewsTab = () => {
                         onClick={handleLoadMore}
                         disabled={loading}
                     >
-                        {loading ? 'Завантаження...' : `Показати ще ${pageSize} коментарів`}
+                        {loading ? t('info.reviews.loading-btn') : t('info.reviews.load-more', { count: pageSize })}
                     </button>
                 </div>
             )}

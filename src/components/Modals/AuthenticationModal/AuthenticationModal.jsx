@@ -1,20 +1,18 @@
 import React, {useEffect, useState} from 'react';
-import toast, { Toaster } from 'react-hot-toast';
-
+import toast from 'react-hot-toast';
 import { useCart } from '../../../contexts/CartContext.jsx';
 import { authService } from '../../../services/authService';
-
+import { cartService } from "../../../services/cartService.js";
+import { useTranslation } from 'react-i18next'; // Імпорт
 import './AuthenticationModal.css';
-import {cartService} from "../../../services/cartService.js";
-import {useLocation, useNavigate} from "react-router-dom";
 
 const AuthenticationModal = ({ isOpen, onClose, onSuccess, onSwitchToRegister, onSwitchToForgotPassword}) => {
 
     const { syncCartWithServer } = useCart();
     const [loading, setLoading] = useState(false);
     const [showPassword, setShowPassword] = useState(false);
-
     const [credentials, setCredentials] = useState({ email: '', password: '' });
+    const { t } = useTranslation();
 
     const handleChange = (e) => {
         setCredentials({ ...credentials, [e.target.name]: e.target.value });
@@ -32,17 +30,15 @@ const AuthenticationModal = ({ isOpen, onClose, onSuccess, onSwitchToRegister, o
         e.preventDefault();
         setLoading(true);
 
-        let loginResponse;
-
         try {
-            loginResponse = await authService.login(credentials.email, credentials.password);
+            await authService.login(credentials.email, credentials.password);
         } catch (err) {
             if (err.response && err.response.status === 401) {
-                toast.error('Невірна пошта або пароль', {
+                toast.error(t('modals.auth.err-wrong'), {
                     duration: 4000, position: 'top-right', style: { paddingLeft: '25px' }
                 });
             } else {
-                toast.error('Помилка авторизації', {
+                toast.error(t('modals.auth.err-auth'), {
                     duration: 4000, position: 'top-right', style: { width: '300px' }
                 });
             }
@@ -52,7 +48,6 @@ const AuthenticationModal = ({ isOpen, onClose, onSuccess, onSwitchToRegister, o
 
         try {
             const guestCart = JSON.parse(localStorage.getItem('guest_cart')) || [];
-
             if (guestCart.length > 0) {
                 for (const item of guestCart) {
                     const productIdToUse = item.id || item.productId;
@@ -60,12 +55,10 @@ const AuthenticationModal = ({ isOpen, onClose, onSuccess, onSwitchToRegister, o
                 }
                 localStorage.removeItem('guest_cart');
             }
-
             await syncCartWithServer();
         } catch (err) {
             console.error("Помилка при перенесенні кошика на бекенд:", err);
         }
-
 
         setLoading(false);
         onSuccess();
@@ -74,26 +67,23 @@ const AuthenticationModal = ({ isOpen, onClose, onSuccess, onSwitchToRegister, o
     return (
         <div className="auth-modal-overlay" onClick={onClose}>
             <div className="auth-modal-content" onClick={(e) => e.stopPropagation()}>
-
                 <div className="auth-close-bnt">
                     <button className="close-btn-img" onClick={onClose}>
                         <img  src="/img/cross.svg" alt="close"/>
                     </button>
                 </div>
 
-                <h2 className="auth-modal-title">Увійти</h2>
+                <h2 className="auth-modal-title">{t('modals.auth.title')}</h2>
 
                 <form className="auth-form" onSubmit={handleSubmit}>
-
                     <section className="auth-form-section">
-
                         <div className="auth-input-group">
                             <input
                                 name="email"
                                 type="email"
                                 id="email"
                                 className="auth-checkout-input"
-                                placeholder="Пошта"
+                                placeholder={t('modals.auth.email')}
                                 value={credentials.email}
                                 onChange={handleChange}
                             />
@@ -104,7 +94,7 @@ const AuthenticationModal = ({ isOpen, onClose, onSuccess, onSwitchToRegister, o
                                 type={showPassword ? "text" : "password"}
                                 id="password"
                                 className="auth-checkout-input"
-                                placeholder="Пароль"
+                                placeholder={t('modals.auth.password')}
                                 value={credentials.password}
                                 onChange={handleChange}
                             />
@@ -117,22 +107,19 @@ const AuthenticationModal = ({ isOpen, onClose, onSuccess, onSwitchToRegister, o
                             </button>
                         </div>
                         <button className="auth-btn" >
-                            Увійти
+                            {t('modals.auth.login-btn')}
                         </button>
-
                     </section>
                 </form>
 
                 <div>
                     <button className="registration-btn" onClick={onSwitchToRegister}>
-                        Створити аккаунт
+                        {t('modals.auth.register-btn')}
                     </button>
                 </div>
-
-
                 <div>
                     <button className="forgot-password" onClick={onSwitchToForgotPassword}>
-                        Забули пароль?
+                        {t('modals.auth.forgot-btn')}
                     </button>
                 </div>
             </div>

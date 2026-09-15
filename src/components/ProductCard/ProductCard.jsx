@@ -11,7 +11,7 @@ import {favoriteProductService} from "../../services/favoriteProductService.js";
 import toast from "react-hot-toast";
 import LazyImage from '../../utils/LazyImage';
 
-import { getSlugFromEnum } from '../../constants/categories.js';
+import {useTranslation} from "react-i18next";
 
 const image_api =  URLS.s3_bucket;
 
@@ -22,6 +22,8 @@ const ProductCard = ({product, onFavoriteToggle }) => {
     const { openLogin } = useModal();
     const { addToCart } = useCart();
     const [isFav, setIsFav] = useState(product.isFavorite || false);
+
+    const { t } = useTranslation();
 
     const handleBuyClick = (e) => {
         e.preventDefault();
@@ -49,7 +51,7 @@ const ProductCard = ({product, onFavoriteToggle }) => {
             }
         } catch (error) {
             setIsFav(previousState);
-            toast.error("Не вдалося оновити улюблені");
+            toast.error(t('product-card.error-reload'));
         }
     };
 
@@ -74,7 +76,7 @@ const ProductCard = ({product, onFavoriteToggle }) => {
 
                 {product.discount > 0 && <span className="discount-badge">-{product.discount}%</span>}
 
-                <button className="wishlist-btn" onClick={handleHeartClick} aria-label="Додати в обране">
+                <button className="wishlist-btn" onClick={handleHeartClick} aria-label={t('product-card.error-reload')}>
                     <img src={isFav ? "/img/heart-filled.svg" : "/img/heart-outline.svg"}
                          alt="favorite"
                     />
@@ -83,12 +85,12 @@ const ProductCard = ({product, onFavoriteToggle }) => {
 
             <div className="product-card__content">
 
-                {isOutOfStock && <div className="out-of-stock-label">Немає в наявності</div>}
+                {isOutOfStock && <div className="out-of-stock-label">{t('product-card.outstock')}</div>}
 
                 <Link to={productUrl} className="goods-image">
                     <LazyImage
                         src={imageUrl}
-                        alt={`Купити ${product.name} в Moki`}
+                        alt={`${t('product-card.error-reload')} ${product.name} в Moki`}
                         className="product-card__img-container"
                     />
                 </Link>
@@ -150,7 +152,7 @@ const ProductCard = ({product, onFavoriteToggle }) => {
 
                         </div>
 
-                        <button className="buy-button" onClick={handleBuyClick}>Купити</button>
+                        <button className="buy-button" onClick={handleBuyClick}>{t('product-card.buy')}</button>
                     </div>
                 </div>
             </div>

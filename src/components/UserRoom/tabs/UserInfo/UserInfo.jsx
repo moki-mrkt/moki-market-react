@@ -3,6 +3,7 @@ import {Link, useOutletContext} from 'react-router-dom';
 import { userService } from '../../../../services/userService.js';
 import { authService } from '../../../../services/authService.js';
 import toast from 'react-hot-toast';
+import { useTranslation } from 'react-i18next'; // Імпорт
 
 import './UserInfo.css';
 import {useCart} from "../../../../contexts/CartContext.jsx";
@@ -13,6 +14,7 @@ const UserInfo = () => {
     const { user, setUser } = useOutletContext();
     const [isSaving, setIsSaving] = useState(false);
     const [errors, setErrors] = useState({});
+    const { t } = useTranslation();
 
     const [formData, setFormData] = useState({
         firstName: user?.firstName || '',
@@ -35,27 +37,27 @@ const UserInfo = () => {
         const newErrors = {};
 
         if (!formData.firstName.trim()) {
-            newErrors.firstName = "Ім'я не може бути порожнім";
+            newErrors.firstName = t('user-info.errors.name-empty');
         } else if (formData.firstName.length < 2 || formData.firstName.length > 64) {
-            newErrors.firstName = "Ім'я має містити від 2 до 64 символів";
+            newErrors.firstName = t('user-info.errors.name-length');
         } else if (!nameRegex.test(formData.firstName)) {
-            newErrors.firstName = "Ім'я повинно починатися з великої літери та містити лише допустимі букви";
+            newErrors.firstName = t('user-info.errors.name-regex');
         }
 
         if (!formData.secondName.trim()) {
-            newErrors.secondName = "Прізвище не може бути порожнім";
+            newErrors.secondName = t('user-info.errors.surname-empty');
         } else if (formData.secondName.length < 2 || formData.secondName.length > 64) {
-            newErrors.secondName = "Прізвище має містити від 2 до 64 символів";
+            newErrors.secondName = t('user-info.errors.surname-length');
         } else if (!nameRegex.test(formData.secondName)) {
-            newErrors.secondName = "Прізвище повинно починатися з великої літери та містити лише допустимі букви";
+            newErrors.secondName = t('user-info.errors.surname-regex');
         }
 
         if (!formData.phoneNumber.trim()) {
-            newErrors.phoneNumber = "Номер телефону не може бути порожнім";
+            newErrors.phoneNumber = t('user-info.errors.phone-empty');
         } else if (formData.phoneNumber.length > 13) {
-            newErrors.phoneNumber = "Номер телефону не може бути довшим за 13 символів";
+            newErrors.phoneNumber = t('user-info.errors.phone-length');
         } else if (!phoneRegex.test(formData.phoneNumber)) {
-            newErrors.phoneNumber = "Номер телефону має починатися з '+' та містити лише цифри";
+            newErrors.phoneNumber = t('user-info.errors.phone-regex');
         }
 
         setErrors(newErrors);
@@ -76,7 +78,7 @@ const UserInfo = () => {
         e.preventDefault();
 
         if (!validateForm()) {
-            toast.error("Будь ласка, виправте помилки у формі");
+            toast.error(t('user-info.errors.fix-form'));
             return;
         }
 
@@ -103,10 +105,10 @@ const UserInfo = () => {
             const updatedUser = await userService.updateProfile(payload);
 
             setUser(updatedUser);
-            toast.success('Дані успішно оновлено!');
+            toast.success(t('user-info.success'));
 
         } catch (error) {
-            toast.error(error.response?.data?.message || 'Помилка при збереженні');
+            toast.error(error.response?.data?.message || t('user-info.errors.save-error'));
         } finally {
             setIsSaving(false);
         }
@@ -122,17 +124,17 @@ const UserInfo = () => {
         <div className="user-info-tab">
             <form className="account-form account-tab active" onSubmit={handleSubmit}>
                 <div className="content-header">
-                    <h2 className="content-title">Особисті дані</h2>
+                    <h2 className="content-title">{t('user-info.title')}</h2>
                     <button type="button" onClick={handleLogout} className="header-logout-link">
                         <img src="/img/logout.svg" className="logout-img" alt="Logout" />
-                        <span className="account-link-title">Вийти з кабінету</span>
+                        <span className="account-link-title">{t('user-info.logout')}</span>
                     </button>
                 </div>
 
-                <h3 className="content-subtitle">Контактна інформація</h3>
+                <h3 className="content-subtitle">{t('user-info.contact-info')}</h3>
 
                 <div className="email-block">
-                    <p className="email-text">Пошта: {user.email}</p>
+                    <p className="email-text">{t('user-info.email')} {user.email}</p>
                     <Link to="/profile/security" className="email-edit-btn">
                         <img src="/img/edit-icon.svg" alt="Edit" />
                     </Link>
@@ -143,7 +145,7 @@ const UserInfo = () => {
                         type="text"
                         name="secondName"
                         className={`account-input ${errors.secondName ? 'input-error' : ''}`}
-                        placeholder="Прізвище"
+                        placeholder={t('user-info.placeholders.surname')}
                         value={formData.secondName}
                         onChange={handleChange}
                     />
@@ -155,7 +157,7 @@ const UserInfo = () => {
                         type="text"
                         name="firstName"
                         className={`account-input ${errors.firstName ? 'input-error' : ''}`}
-                        placeholder="Ім'я"
+                        placeholder={t('user-info.placeholders.name')}
                         value={formData.firstName}
                         onChange={handleChange}
                     />
@@ -167,14 +169,14 @@ const UserInfo = () => {
                         type="tel"
                         name="phoneNumber"
                         className={`account-input ${errors.phoneNumber ? 'input-error' : ''}`}
-                        placeholder="Телефон (+380...)"
+                        placeholder={t('user-info.placeholders.phone')}
                         value={formData.phoneNumber}
                         onChange={handleChange}
                     />
                     {errors.phoneNumber && <span className="error-message" style={{color: 'red', fontSize: '14px', marginTop: '5px', display: 'block'}}>{errors.phoneNumber}</span>}
                 </div>
 
-                <h3 className="content-subtitle">Дата народження</h3>
+                <h3 className="content-subtitle">{t('user-info.dob-title')}</h3>
 
                 <div className="input-group">
                     <input
@@ -184,10 +186,10 @@ const UserInfo = () => {
                         value={formData.dateOfBirth}
                         onChange={handleChange}
                     />
-                    <p className="data-birth-text">*Дата народження потрібна, щоб в нас була можливість надсилати вам подарунки та найкращі акційні пропозиції ;)</p>
+                    <p className="data-birth-text">{t('user-info.dob-hint')}</p>
                 </div>
 
-                <h3 className="content-subtitle">Адреса доставки</h3>
+                <h3 className="content-subtitle">{t('user-info.delivery-address')}</h3>
 
                 <div className="input-group address-group">
                     <select
@@ -196,15 +198,15 @@ const UserInfo = () => {
                         value={formData.deliveryType}
                         onChange={handleChange}
                     >
-                        <option value="">Оберіть тип доставки</option>
-                        <option value="NOVA_POSHTA">Нова Пошта</option>
-                        <option value="UKR_POSHTA">Укрпошта</option>
+                        <option value="">{t('user-info.placeholders.delivery-type')}</option>
+                        <option value="NOVA_POSHTA">{t('user-info.placeholders.np')}</option>
+                        <option value="UKR_POSHTA">{t('user-info.placeholders.up')}</option>
                     </select>
                     <input
                         type="text"
                         name="postOffice"
                         className="account-input"
-                        placeholder="Відділення пошти"
+                        placeholder={t('user-info.placeholders.branch')}
                         value={formData.postOffice}
                         onChange={handleChange}
                     />
@@ -215,7 +217,7 @@ const UserInfo = () => {
                         type="text"
                         name="region"
                         className="account-input"
-                        placeholder="Область"
+                        placeholder={t('user-info.placeholders.region')}
                         value={formData.region}
                         onChange={handleChange}
                     />
@@ -223,7 +225,7 @@ const UserInfo = () => {
                         type="text"
                         name="city"
                         className="account-input"
-                        placeholder="Населений пункт"
+                        placeholder={t('user-info.placeholders.city')}
                         value={formData.city}
                         onChange={handleChange}
                     />
@@ -234,7 +236,7 @@ const UserInfo = () => {
                         type="text"
                         name="street"
                         className="account-input"
-                        placeholder="Вулиця"
+                        placeholder={t('user-info.placeholders.street')}
                         value={formData.street}
                         onChange={handleChange}
                     />
@@ -242,14 +244,14 @@ const UserInfo = () => {
                         type="text"
                         name="house"
                         className="account-input"
-                        placeholder="Номер вулиці"
+                        placeholder={t('user-info.placeholders.house')}
                         value={formData.house}
                         onChange={handleChange}
                     />
                 </div>
 
                 <button type="submit" className="save-btn" disabled={isSaving}>
-                    {isSaving ? 'Збереження...' : 'Зберегти зміни'}
+                    {isSaving ? t('user-info.saving') : t('user-info.save-changes')}
                 </button>
 
             </form>

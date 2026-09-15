@@ -2,13 +2,16 @@ import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import './Feedbacks.css';
 
-import { feedbackService } from '../../services/feedbackService'; // Імпорт сервісу
+import { feedbackService } from '../../services/feedbackService';
+import {useTranslation} from "react-i18next"; // Імпорт сервісу
 
 const Feedbacks = () => {
 
     const [feedbacks, setFeedbacks] = useState([]);
     const [storeRating, setStoreRating] = useState(0);
     const [isLoading, setIsLoading] = useState(true);
+
+    const { t } = useTranslation();
 
     useEffect(() => {
         const fetchFeedbacks = async () => {
@@ -46,7 +49,7 @@ const Feedbacks = () => {
     return (
         <section className="feedbacks-section">
             <h2 className="main-title">
-                Відгуки про магазин
+                {t('feedbacks.maintitle')}
             </h2>
 
             <div className="feedbacks-grid">
@@ -56,7 +59,7 @@ const Feedbacks = () => {
 
                             <span className="feedback-name">
                                  {(!item.firstNameUser || item.firstNameUser === 'Deleted User')
-                                     ? 'Клієнт'
+                                     ?  t('feedbacks.client')
                                      : item.firstNameUser}
                             </span>
                             <div className="feedback-stars">
@@ -78,7 +81,7 @@ const Feedbacks = () => {
             </div>
 
             <div className="feedbacks-actions">
-                <Link to="/info/reviews" className="btn-all-feedbacks">Усі відгуки</Link>
+                <Link to="/info/reviews" className="btn-all-feedbacks">{t('feedbacks.all')}</Link>
             </div>
         </section>
     );

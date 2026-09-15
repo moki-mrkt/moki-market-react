@@ -7,6 +7,7 @@ import AuthModal from '../Modals/AuthenticationModal/AuthenticationModal';
 
 import { productService } from '../../services/productService';
 import {Helmet} from "react-helmet-async";
+import {useTranslation} from "react-i18next";
 
 const Home = () => {
 
@@ -18,50 +19,52 @@ const Home = () => {
 
     const [isLoading, setIsLoading] = useState(true);
 
-    useEffect(() => {
-    const fetchData = async () => {
-        setIsLoading(true);
-        try {
-            const [newData, discountData, bestData] = await Promise.all([
-                productService.getNew(),
-                productService.getDiscount(),
-                productService.getBestsellers()
-            ]);
+    const { t } = useTranslation();
 
-            setNewProducts(newData);
-            setDiscountProducts(discountData);
-            setBestsellers(bestData);
-        } catch (error) {
-            console.error("Помилка завантаження даних:", error);
-        } finally {
-            setIsLoading(false);
-        }
-    };
+    useEffect(() => {
+        const fetchData = async () => {
+            setIsLoading(true);
+            try {
+                const [newData, discountData, bestData] = await Promise.all([
+                    productService.getNew(),
+                    productService.getDiscount(),
+                    productService.getBestsellers()
+                ]);
+
+                setNewProducts(newData);
+                setDiscountProducts(discountData);
+                setBestsellers(bestData);
+            } catch (error) {
+                console.error(t('helmet.error'), error);
+            } finally {
+                setIsLoading(false);
+            }
+        };
 
         fetchData();
-    }, []);
+    }, [t]);
 
     if (isLoading) {
-        return <div style={{textAlign: 'center', padding: '50px'}}>Завантаження...</div>;
+        return <div style={{textAlign: 'center', padding: '50px'}}>{t('ui.dowland')}</div>;
     }
 
     return (
         <main className="hero-section">
 
             <Helmet>
-                <title>Moki | Горіхи, сухофрукти та корисні ласощі</title>
-                <meta name="description" content="Інтернет-магазин Moki: найкращий вибір горіхів, сухофруктів, кави та солодощів з доставкою по всій Україні." />
+                <title>{t('seo.title')}</title>
+                <meta name="description" content={t('seo.description')} />
                 <link rel="canonical" href="https://moki.com.ua" />
 
                 <meta property="og:type" content="website" />
                 <meta property="og:url" content="https://moki.com.ua" />
-                <meta property="og:title" content="Moki — корисні солодощі та добірні горіхи" />
-                <meta property="og:description" content="Шукаєте корисний перекус? У Moki ви знайдете найсвіжіші горіхи та сухофрукти." />
+                <meta property="og:title" content={t('seo.og-title')} />
+                <meta property="og:description" content={t('seo.og-description')} />
                 <meta property="og:image" content="https://moki.com.ua/img/og-main.jpg" />
 
                 <meta name="twitter:card" content="summary_large_image" />
-                <meta name="twitter:title" content="Moki | Горіхи та сухофрукти" />
-                <meta name="twitter:description" content="Найкращий вибір горіхів та солодощів з доставкою." />
+                <meta name="twitter:title" content={t('seo.twitter-title')} />
+                <meta name="twitter:description" content={t('seo.twitter-description')} />
                 <meta name="twitter:image" content="https://moki.com.ua/img/icon.png" />
 
                 <script type="application/ld+json">
@@ -81,11 +84,11 @@ const Home = () => {
 
             <div className="container hero__grid">
 
-                <h1 className="visually-hidden">Moki — горіхи, сухофрукти та корисні ласощі</h1>
-            <AuthModal
-                isOpen={isAuthModalOpen}
-                onClose={() => setIsAuthModalOpen(false)}
-            />
+                <h1 className="visually-hidden">{t('ui.title')}</h1>
+                <AuthModal
+                    isOpen={isAuthModalOpen}
+                    onClose={() => setIsAuthModalOpen(false)}
+                />
 
                 <div className="main-section">
                     <Sidebar />
@@ -94,19 +97,19 @@ const Home = () => {
 
                 {newProducts.length > 0 && (
                     <div className="new-goods">
-                        <ProductSlider title="Новинки" products={newProducts} />
+                        <ProductSlider title={t('ui.new')} products={newProducts} />
                     </div>
                 )}
 
                 {discountProducts.length > 0 && (
                     <div className="discount-goods">
-                        <ProductSlider title="Акційні пропозиції" products={discountProducts} />
+                        <ProductSlider title={t('ui.sales')} products={discountProducts} />
                     </div>
                 )}
 
                 {bestsellers.length > 0 && (
                     <div className="bestseller">
-                        <ProductSlider title="Хіт продажів" products={bestsellers} />
+                        <ProductSlider title={t('ui.bestseller')} products={bestsellers} />
                     </div>
                 )}
 

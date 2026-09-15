@@ -3,6 +3,7 @@ import { Link, useLocation } from 'react-router-dom';
 import useBreadcrumbs from 'use-react-router-breadcrumbs';
 import { getLabelFromSlug } from '../../constants/categories';
 import './Breadcrumbs.css';
+import {useTranslation} from "react-i18next";
 
 const CategoryBreadcrumb = ({ match }) => {
     return <span>{getLabelFromSlug(match.params.categorySlug)}</span>;
@@ -11,12 +12,14 @@ const CategoryBreadcrumb = ({ match }) => {
 const Breadcrumbs = ({ customCrumbs }) => {
     const location = useLocation();
 
+    const { t } = useTranslation();
+
     const routes = [
-        { path: '/', breadcrumb: 'Головна' },
-        { path: '/catalog', breadcrumb: 'Каталог' },
+        { path: '/', breadcrumb: t('header.main') },
+        { path: '/catalog', breadcrumb: t('header.catalog') },
         { path: '/catalog/:categorySlug', breadcrumb: CategoryBreadcrumb },
-        { path: '/search', breadcrumb: 'Пошук'},
-        { path: '/promotions', breadcrumb: 'Акції' },
+        { path: '/search', breadcrumb: t('header.searchPlaceholder')},
+        { path: '/promotions', breadcrumb: t('header.promotions') },
         { path: '/product/:productId', breadcrumb: 'Товар' }
     ];
 

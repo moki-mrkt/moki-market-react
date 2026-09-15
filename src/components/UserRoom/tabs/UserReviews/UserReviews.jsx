@@ -1,10 +1,9 @@
 import React, {useEffect, useState} from 'react';
 import toast from 'react-hot-toast';
+import { useTranslation } from 'react-i18next'; // Імпорт
 
 import { feedbackService } from '../../../../services/feedbackService';
-
 import DeleteFeedbackModal from '../../../../components/Modals/DeleteFeedbackModal/DeleteFeedbackModal';
-
 import './UserReviews.css';
 import FeedbackCard from "../../../FeedbackCard/FeedbackCard.jsx";
 
@@ -28,6 +27,7 @@ const UserReviews = () => {
     const productPageSize = 3;
 
     const [productFeedbackToDeleteId, setProductFeedbackToDeleteId] = useState(null);
+    const { t } = useTranslation();
 
     useEffect(() => {
         const fetchMyFeedback = async () => {
@@ -71,12 +71,12 @@ const UserReviews = () => {
         e.preventDefault();
 
         if (rating === 0) {
-            toast.error("Будь ласка, оберіть оцінку від 1 до 5");
+            toast.error(t('user-reviews.errors.rate'));
             return;
         }
 
         if (!comment.trim()) {
-            toast.error("Будь ласка, напишіть текст відгуку");
+            toast.error(t('user-reviews.errors.text'));
             return;
         }
 
@@ -87,17 +87,17 @@ const UserReviews = () => {
                 const updatedFeedback = await feedbackService.update(existingFeedback.id, { rating, comment });
                 setExistingFeedback(updatedFeedback);
                 setIsEditing(false);
-                toast.success("Ваш відгук успішно оновлено!");
+                toast.success(t('user-reviews.success.updated'));
             } else {
                 const newFeedback = await feedbackService.createFeedback({ rating, comment });
                 setExistingFeedback(newFeedback);
-                toast.success("Ваш відгук про магазин успішно додано!");
+                toast.success(t('user-reviews.success.added'));
             }
         } catch (error) {
             if (error.response && (error.response.status === 400 || error.response.status === 409)) {
-                toast.error("Ви вже залишали відгук про наш магазин.");
+                toast.error(t('user-reviews.errors.already-left'));
             } else {
-                toast.error("Помилка при додаванні відгуку. Спробуйте пізніше.");
+                toast.error(t('user-reviews.errors.add-error'));
             }
         } finally {
             setIsSubmitting(false);
@@ -126,9 +126,9 @@ const UserReviews = () => {
             setIsDeleteModalOpen(false);
             setProductFeedbackToDeleteId(null);
 
-            toast.success("Відгук успішно видалено");
+            toast.success(t('user-reviews.success.deleted'));
         } catch (error) {
-            toast.error("Не вдалося видалити відгук. Спробуйте пізніше.");
+            toast.error(t('user-reviews.errors.del-error'));
             setIsDeleteModalOpen(false);
             setProductFeedbackToDeleteId(null);
         }
@@ -157,16 +157,16 @@ const UserReviews = () => {
 
             {isLoading ? (
                 <div style={{ textAlign: 'center', padding: '50px 0', color: '#0E2CA4' }}>
-                    <h3>Завантаження...</h3>
+                    <h3>{t('user-reviews.loading')}</h3>
                 </div>
             ) : (
                 <div className="review-form-container">
                     {existingFeedback && !isEditing ? (
                         <div className="review-form">
-                            <h2 className="content-title">Ваш відгук про магазин</h2>
+                            <h2 className="content-title">{t('user-reviews.your-review')}</h2>
 
                             <div className="rating-row" >
-                                <span className="rating-label">Оцінка:</span>
+                                <span className="rating-label">{t('user-reviews.rating')}</span>
                                 <div className="stars-interactive">
                                     {[...Array(5)].map((_, index) => (
                                         <img
@@ -179,7 +179,6 @@ const UserReviews = () => {
                                 </div>
                             </div>
                             <div className="review-textarea">
-
                                 <p className="exists-reviews-text">
                                     {existingFeedback.comment}
                                 </p>
@@ -189,7 +188,7 @@ const UserReviews = () => {
                                     onClick={handleEditClick}
                                     className="save-btn"
                                 >
-                                    Редагувати
+                                    {t('user-reviews.edit')}
                                 </button>
 
                                 <button
@@ -201,24 +200,24 @@ const UserReviews = () => {
                                         border: '1px solid #EF4444'
                                     }}
                                 >
-                                    Видалити
+                                    {t('user-reviews.delete')}
                                 </button>
                             </div>
                         </div>
                     ) : (
                         <form className="review-form" onSubmit={handleSubmit}>
                             <h2 className="content-title">
-                                {isEditing ? "Редагування відгуку" : "Відгук про магазин"}
+                                {isEditing ? t('user-reviews.edit-title') : t('user-reviews.leave-title')}
                             </h2>
 
                             {!isEditing && (
                                 <p className="reviews-text">
-                                    У вас ще немає відгука про наш магазин. Приділіть будь ласка декілька хвилин та опишіть ваші враження про нас!
+                                    {t('user-reviews.no-review-hint')}
                                 </p>
                             )}
 
                             <div className="rating-row">
-                                <span className="rating-label">Оцінка: </span>
+                                <span className="rating-label">{t('user-reviews.rating')} </span>
                                 <div className="stars-interactive">
                                     {[...Array(5)].map((_, index) => {
                                         const starValue = index + 1;
@@ -242,7 +241,7 @@ const UserReviews = () => {
                                 <textarea
                                     id="review-textarea"
                                     className="review-textarea"
-                                    placeholder="Повідомлення"
+                                    placeholder={t('user-reviews.msg-placeholder')}
                                     value={comment}
                                     onChange={(e) => setComment(e.target.value)}
                                     disabled={isSubmitting}
@@ -256,7 +255,7 @@ const UserReviews = () => {
                                     disabled={isSubmitting}
                                     style={{ opacity: isSubmitting ? 0.7 : 1 }}
                                 >
-                                    {isSubmitting ? 'Збереження...' : (isEditing ? 'Оновити' : 'Надіслати')}
+                                    {isSubmitting ? t('user-reviews.saving') : (isEditing ? t('user-reviews.update') : t('user-reviews.send'))}
                                 </button>
 
                                 {isEditing && (
@@ -266,7 +265,7 @@ const UserReviews = () => {
                                         onClick={handleCancelEdit}
                                         disabled={isSubmitting}
                                     >
-                                        Скасувати
+                                        {t('user-reviews.cancel')}
                                     </button>
                                 )}
                             </div>
@@ -276,17 +275,16 @@ const UserReviews = () => {
             )}
 
             <div className="user-product-feedbacks" >
-                <h2 className="content-title">Ваші відгуки про продукти</h2>
+                <h2 className="content-title">{t('user-reviews.product-reviews-title')}</h2>
 
                 <div className="product-reviews-list" style={{ marginTop: '20px', transition: '0.3s', opacity: isProductLoading ? 0.5 : 1 }}>
                     {isProductLoading && productFeedbacks.length === 0 ? (
-                        <p className="reviews-text">Завантаження...</p>
+                        <p className="reviews-text">{t('user-reviews.loading')}</p>
                     ) : productFeedbacks.length > 0 ? (
                         productFeedbacks.map((feedback) => (
-                            <div >
+                            <div key={feedback.id}>
                                 <h3 className="feedback-product-name">{feedback.productName}:</h3>
                                 <FeedbackCard
-                                    key={feedback.id}
                                     feedback={feedback}
                                     showActions={true}
                                     onDelete={(id) => {
@@ -297,7 +295,7 @@ const UserReviews = () => {
                             </div>
                         ))
                     ) : (
-                        <p className="reviews-text">У вас ще немає відгуків про товари. Перейдіть до каталогу та залиште свій перший відгук!</p>
+                        <p className="reviews-text">{t('user-reviews.no-product-reviews')}</p>
                     )}
                 </div>
 
@@ -312,11 +310,11 @@ const UserReviews = () => {
                                 cursor: productPage > 0 ? 'pointer' : 'default'
                             }}
                         >
-                            Попередня
+                            {t('tabs.previous')}
                         </button>
 
                         <span className="pag-text">
-                            Сторінка {productPage + 1} з {productTotalPages}
+                            {t('tabs.page')} {productPage + 1} {t('tabs.from')} {productTotalPages}
                         </span>
 
                         <button
@@ -328,7 +326,7 @@ const UserReviews = () => {
                                 cursor:  productPage < productTotalPages - 1 ? 'pointer' : 'default'
                             }}
                         >
-                            Наступна
+                            {t('tabs.next')}
                         </button>
                     </div>
                 )}

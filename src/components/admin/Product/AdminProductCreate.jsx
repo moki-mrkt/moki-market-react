@@ -45,14 +45,17 @@ const AdminProductCreate = () => {
 
     const [formData, setFormData] = useState({
         name: '',
+        nameRu: '',
         productCategory: 'DRIED_FRUITS',
         description: '',
+        descriptionRu: '',
         price: '',
         purchasePrice: '',
         discount: 0,
         availability: 'IN_STOCK',
         manufacturerOfTheProduct: '',
         subcategory: '',
+        subcategoryRu: '',
         initOfMeasure: 'шт',
         valueOfInitOfMeasure: '',
     });
@@ -70,13 +73,16 @@ const AdminProductCreate = () => {
 
             setFormData({
                 name: product.name,
+                nameRu: product.nameRu,
                 productCategory: product.productCategory,
                 price: product.price,
                 purchasePrice: product.purchasePrice || '',
                 discount: product.discount,
                 description: product.description || '',
+                descriptionRu: product.descriptionRu || '',
                 availability: product.availability,
                 subcategory: product.subcategory,
+                subcategoryRu: product.subcategoryRu,
                 manufacturerOfTheProduct: product.manufacturerOfTheProduct,
                 initOfMeasure: product.initOfMeasure,
                 valueOfInitOfMeasure: product.valueOfInitOfMeasure
@@ -88,6 +94,14 @@ const AdminProductCreate = () => {
                     value: val
                 }));
                 setCharacteristics(charsArray.length > 0 ? charsArray : [{ name: '', value: '' }]);
+            }
+
+            if (product.characteristicsRu) {
+                const charsArray = Object.entries(product.characteristicsRu).map(([key, val]) => ({
+                    key: key,
+                    value: val
+                }));
+                setCharacteristicsRu(charsArray.length > 0 ? charsArray : [{ name: '', value: '' }]);
             }
 
             if (product.images) {
@@ -116,6 +130,103 @@ const AdminProductCreate = () => {
         { key: '', value: '' }
     ]);
 
+    const [characteristicsRu, setCharacteristicsRu] = useState([
+        { key: '', value: '' }
+    ]);
+
+    const [isGenerating, setIsGenerating] = useState(false);
+    const [isTranslating , setIsTranslating] = useState(false);
+
+    const handleGenerateDescription = async () => {
+        if (!formData.name) {
+            toast.error("Будь ласка, введіть назву товару для генерації опису");
+            return;
+        }
+
+        setIsGenerating(true);
+        try {
+            const charsString = characteristics
+                .filter(c => c.key && c.value)
+                .map(c => `${c.key}: ${c.value}`)
+                .join(', ');
+
+            const generatedText = await productService.generateDescription({
+                nameProduct: formData.name,
+                attributes: charsString
+            });
+
+            setFormData(prev => ({
+                ...prev,
+                description: generatedText
+            }));
+
+            toast.success("Опис успішно згенеровано!");
+        } catch (error) {
+            console.error("Помилка генерації опису:", error);
+            toast.error("Не вдалося згенерувати опис. Перевірте підключення.");
+        } finally {
+            setIsGenerating(false);
+        }
+    };
+
+    const translateToRu = async () => {
+        if (!formData.name) {
+            toast.error("Будь ласка, введіть назву товару для перекладу");
+            return;
+        }
+
+        if (!formData.description) {
+            toast.error("Будь ласка, введіть опис товару для перекладу");
+            return;
+        }
+
+        if (!formData.subcategory) {
+            toast.error("Будь ласка, введіть підкатегорію товару для перекладу");
+            return;
+        }
+
+        setIsTranslating(true);
+
+        try {
+
+            const charMap = {};
+            characteristics.forEach(c => {
+                const k = c.key?.trim();
+                const v = c.value?.trim();
+                if(k && v) charMap[k] = v;
+            });
+
+            const translatedContent = await productService.translateToRu({
+                name: formData.name,
+                subcategory: formData.subcategory,
+                description: formData.description,
+                characteristics: charMap
+            });
+
+            setFormData(prev => ({
+                ...prev,
+                nameRu: translatedContent.name,
+                subcategoryRu: translatedContent.subcategory,
+                descriptionRu: translatedContent.description
+            }));
+
+            if (translatedContent.characteristics) {
+                const translatedCharsArray = Object.entries(translatedContent.characteristics).map(([k, v]) => ({
+                    key: k, value: v
+                }));
+
+                setCharacteristicsRu(translatedCharsArray.length > 0 ? translatedCharsArray : [{ key: '', value: '' }]);
+            }
+
+            toast.success("Переклад успіший!");
+        } catch (error) {
+            console.error("Помилка перекладу:", error);
+            toast.error("Не вдалося згенерувати опис. Перевірте підключення.");
+        } finally {
+            setIsTranslating(false);
+        }
+    }
+
 
     const handleChange = (e) => {
         const { name, value } = e.target;
@@ -127,19 +238,27 @@ const AdminProductCreate = () => {
         if (error) setError(null);
     };
 
-    const handleCharChange = (index, field, value) => {
-        const newChars = [...characteristics];
+    const handleCharChange = (isRu, index, field, value) => {
+        const currentChars = isRu ? characteristicsRu : characteristics;
+        const setChars = isRu ? setCharacteristicsRu : setCharacteristics;
+
+        const newChars = [...currentChars];
         newChars[index][field] = value;
-        setCharacteristics(newChars);
+        setChars(newChars);
     };
 
-    const addCharacteristic = () => {
-        setCharacteristics([...characteristics, { key: '', value: '' }]);
+    const addCharacteristic = (isRu) => {
+        const currentChars = isRu ? characteristicsRu : characteristics;
+        const setChars = isRu ? setCharacteristicsRu : setCharacteristics;
+
+        setChars([...currentChars, { key: '', value: '' }]);
     };
 
-    const removeCharacteristic = (index) => {
-        const newChars = characteristics.filter((_, i) => i !== index);
-        setCharacteristics(newChars);
+    const removeCharacteristic = (isRu, index) => {
+        const currentChars = isRu ? characteristicsRu : characteristics;
+        const setChars = isRu ? setCharacteristicsRu : setCharacteristics;
+
+        setChars(currentChars.filter((_, i) => i !== index));
     };
 
     const handleSubmit = async (e) => {
@@ -172,13 +291,21 @@ const AdminProductCreate = () => {
                 if(k && v) charMap[k] = v;
             });
 
+            const charMapRu = {};
+            characteristicsRu.forEach(c => {
+                const k = c.key?.trim();
+                const v = c.value?.trim();
+                if(k && v) charMapRu[k] = v;
+            });
+
             const productPayload = {
                 ...formData,
                 price: parseFloat(formData.price),
                 purchasePrice: parseFloat(formData.purchasePrice) || 0,
                 discount: parseFloat(formData.discount) || 0,
                 images: validImages,
-                characteristics: charMap
+                characteristics: charMap,
+                characteristicsRu: charMapRu,
             };
 
             if (isEditMode) {
@@ -248,11 +375,56 @@ const AdminProductCreate = () => {
                     <Paper sx={{ p: 3, mb: 3, borderRadius: 3, boxShadow: 'none', border: '1px solid #E5E7EB', gap: '10px'}}>
 
                         <Typography variant="h6" sx={{ mb: 2 }}>Загальна інформація</Typography>
-                        <Grid sx={{ mb: 3, width: '60%' }} sm={6}>
+
+                        <Box sx={{ display: 'flex', justifyContent: 'space-between',  mb: 3, gap: 2 }}>
+
+                            {/* Ліва частина з текстовим полем (займає 60% ширини) */}
+                            <Box sx={{ width: '60%' }}>
+                                <TextField
+                                    fullWidth
+                                    label="Назва товару"
+                                    name="name"
+                                    value={formData.name}
+                                    onChange={handleChange}
+                                    required
+                                />
+                            </Box>
+
+                            {/* Права частина з кнопкою (притискається вправо завдяки space-between) */}
+                            <Button
+                                variant="outlined"
+                                onClick={translateToRu}
+                                disabled={isTranslating}
+                                sx={{
+                                    borderColor: '#2563EB',
+                                    color: '#2563EB',
+                                    textTransform: 'none',
+                                    fontWeight: 600,
+                                    borderRadius: 2,
+                                     height: 40, // Робить кнопку такої ж висоти, як TextField
+                                    whiteSpace: 'nowrap', // Забороняє тексту кнопки переноситись на новий рядок
+                                    '&:hover': {
+                                        borderColor: '#1D4ED8',
+                                        bgcolor: '#EFF6FF'
+                                    }
+                                }}
+                            >
+                                {isTranslating ? (
+                                    <><CircularProgress size={16} sx={{ mr: 1 }} />Виконується переклад</>
+                                ) : (
+                                    'Перекласти російською'
+                                )}
+                            </Button>
+
+                        </Box>
+
+                        <Grid sx={{ mb: 8, width: '60%' }} sm={6}>
                             <TextField
                                 fullWidth
-                                label="Назва товару" name="name"
-                                value={formData.name} onChange={handleChange} required
+                                label="Назва товару російською"
+                                name="nameRu"
+                                value={formData.nameRu}
+                                onChange={handleChange} required
                             />
                         </Grid>
 
@@ -278,6 +450,12 @@ const AdminProductCreate = () => {
                                 <TextField
                                     fullWidth label="Підкатегорія" name="subcategory"
                                     value={formData.subcategory} onChange={handleChange}
+                                />
+                            </Grid>
+                            <Grid item xs={12} sm={6}>
+                                <TextField
+                                    fullWidth label="Підкатегорія російською" name="subcategoryRu"
+                                    value={formData.subcategoryRu} onChange={handleChange}
                                 />
                             </Grid>
                             <Grid item xs={12}>
@@ -315,9 +493,40 @@ const AdminProductCreate = () => {
                                 </Grid>
                         </Grid>
                         <Grid item xs={12}>
+
+                            <Box sx={{ display: 'flex', justifyContent: 'flex-end', mb: 1 }}>
+                                <Button
+                                    variant="outlined"
+                                    onClick={handleGenerateDescription}
+                                    disabled={isGenerating || !formData.name}
+                                    sx={{
+                                        borderColor: '#2563EB',
+                                        color: '#2563EB',
+                                        textTransform: 'none',
+                                        fontWeight: 600,
+                                        borderRadius: 2,
+                                        '&:hover': {
+                                            borderColor: '#1D4ED8',
+                                            bgcolor: '#EFF6FF'
+                                        }
+                                    }}
+                                >
+                                    {isGenerating ? (
+                                        <><CircularProgress size={16} sx={{ mr: 1 }} /> Генерація...</>
+                                    ) : (
+                                        '✨ Згенерувати опис'
+                                    )}
+                                </Button>
+                            </Box>
+
                             <TextField
-                                fullWidth label="Опис" name="description" multiline rows={6}
+                                fullWidth label="Опис" name="description" multiline rows={8}  sx = {{mb: 3}}
                                 value={formData.description} onChange={handleChange}
+                            />
+
+                            <TextField
+                                fullWidth label="Опис російською" name="descriptionRu" multiline rows={8}
+                                value={formData.descriptionRu} onChange={handleChange}
                             />
                         </Grid>
                     </Paper>
@@ -407,27 +616,58 @@ const AdminProductCreate = () => {
                         </Box>
                     </Paper>
 
+                    {/* УКРАЇНСЬКИЙ БЛОК */}
                     <Paper sx={{ p: 3, mb: 3, borderRadius: 3, boxShadow: 'none', border: '1px solid #E5E7EB' }}>
                         <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 2 }}>
                             <Typography variant="h6">Характеристики</Typography>
-                            <Button startIcon={<AddIcon />} onClick={addCharacteristic}>Додати</Button>
+                            {/* Передаємо false */}
+                            <Button startIcon={<AddIcon />} onClick={() => addCharacteristic(false)}>Додати</Button>
                         </Box>
 
                         {characteristics.map((char, index) => (
-                            <Box key={index} sx={{ display: 'flex', gap: 2, mb: 2, alignItems: 'center' }}>
+                            <Box key={`ua-${index}`} sx={{ display: 'flex', gap: 2, mb: 2, alignItems: 'center' }}>
                                 <TextField
                                     label="Назва (ключ)" size="small" fullWidth
                                     value={char.key}
-                                    onChange={(e) => handleCharChange(index, 'key', e.target.value)}
+                                    onChange={(e) => handleCharChange(false, index, 'key', e.target.value)}
                                     placeholder="напр. Країна"
                                 />
                                 <TextField
                                     label="Значення" size="small" fullWidth
                                     value={char.value}
-                                    onChange={(e) => handleCharChange(index, 'value', e.target.value)}
+                                    onChange={(e) => handleCharChange(false, index, 'value', e.target.value)}
                                     placeholder="напр. Україна"
                                 />
-                                <IconButton onClick={() => removeCharacteristic(index)} color="error">
+                                <IconButton onClick={() => removeCharacteristic(false, index)} color="error">
+                                    <DeleteIcon />
+                                </IconButton>
+                            </Box>
+                        ))}
+                    </Paper>
+
+                    {/* РОСІЙСЬКИЙ БЛОК */}
+                    <Paper sx={{ p: 3, mb: 3, borderRadius: 3, boxShadow: 'none', border: '1px solid #E5E7EB' }}>
+                        <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 2 }}>
+                            <Typography variant="h6">Характеристики російською</Typography>
+                            {/* Передаємо true */}
+                            <Button startIcon={<AddIcon />} onClick={() => addCharacteristic(true)}>Додати</Button>
+                        </Box>
+
+                        {characteristicsRu.map((char, index) => (
+                            <Box key={`ru-${index}`} sx={{ display: 'flex', gap: 2, mb: 2, alignItems: 'center' }}>
+                                <TextField
+                                    label="Назва (ключ) RU" size="small" fullWidth
+                                    value={char.key}
+                                    onChange={(e) => handleCharChange(true, index, 'key', e.target.value)}
+                                    placeholder="напр. Страна"
+                                />
+                                <TextField
+                                    label="Значення RU" size="small" fullWidth
+                                    value={char.value}
+                                    onChange={(e) => handleCharChange(true, index, 'value', e.target.value)}
+                                    placeholder="напр. Украина"
+                                />
+                                <IconButton onClick={() => removeCharacteristic(true, index)} color="error">
                                     <DeleteIcon />
                                 </IconButton>
                             </Box>

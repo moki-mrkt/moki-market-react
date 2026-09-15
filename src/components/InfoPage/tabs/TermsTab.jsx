@@ -1,61 +1,63 @@
 import {Helmet} from "react-helmet-async";
 import React from "react";
+import { useTranslation } from 'react-i18next';
 
-const TermsTab = () => (
-    <div id="terms" className="info-tab active">
-        <Helmet>
-            <title>Користувацька угода | Moki Market</title>
-            <meta
-                name="description"
-                content="Правила та умови використання інтернет-магазину Moki Market. Ознайомтеся з нашою користувацькою угодою перед покупкою."
-            />
-             <meta name="robots" content="noindex, follow" />
-        </Helmet>
-        <h1 className="info-title">Користувацька угода</h1>
-        <div className="info-card term-text">
-            <p className="term-p">Цей Договір є офіційною та публічною пропозицією <strong>Інтернет-магазина "moki.com.ua"</strong> (надалі — Продавець) укласти договір купівлі-продажу Товару, представленого в інтернет-магазині <strong>Moki</strong>. Договір є публічним (ст. 633, 641 Цивільного кодексу України), його умови однакові для всіх Покупців.</p>
+const TermsTab = () => {
+    const { t } = useTranslation();
 
-            <section>
-                <h2 className="term-header">1. ТЕРМІНИ ТА ВИЗНАЧЕННЯ</h2>
-                <ul className="term-list" >
-                    <li><strong>Товар</strong> — горіхи, солодощі та інші харчові продукти, асортимент яких представлений в Інтернет-магазині.</li>
-                    <li><strong>Покупець</strong> — будь-яка дієздатна фізична або юридична особа, що акцептувала умови цього Договору.</li>
-                    <li><strong>Замовлення</strong> — належним чином оформлена заявка Покупця на придбання та доставку Товарів.</li>
-                    <li><strong>Акцепт</strong> — повне та беззастережне прийняття Покупцем умов Договору шляхом оформлення або оплати замовлення.</li>
-                </ul>
-            </section>
+    return (
+        <div id="terms" className="info-tab active">
+            <Helmet>
+                <title>{t('info.terms.meta-title')}</title>
+                <meta name="description" content={t('info.terms.meta-desc')} />
+                <meta name="robots" content="noindex, follow" />
+            </Helmet>
+            <h1 className="info-title">{t('info.terms.title')}</h1>
+            <div className="info-card term-text">
+                <p className="term-p">{t('info.terms.intro-1')} <strong>{t('info.terms.intro-2')}</strong> {t('info.terms.intro-3')} <strong>{t('info.terms.intro-4')}</strong>{t('info.terms.intro-5')}</p>
 
-            <section>
-                <h2 className="term-header">2. ПРЕДМЕТ ДОГОВОРУ</h2>
-                <p className="term-p">2.1. Продавець зобов’язується передати у власність Покупцю Товар, а Покупець зобов’язується оплатити та прийняти Товар на умовах цього Договору.</p>
-                <p className="term-p">2.2. Датою укладення Договору є момент підтвердження Замовлення Покупцем на сайті або факт оплати Товару.</p>
-            </section>
+                <section>
+                    <h2 className="term-header">{t('info.terms.h1')}</h2>
+                    <ul className="term-list" >
+                        <li><strong>{t('info.terms.l1-1-1')}</strong> {t('info.terms.l1-1-2')}</li>
+                        <li><strong>{t('info.terms.l1-2-1')}</strong> {t('info.terms.l1-2-2')}</li>
+                        <li><strong>{t('info.terms.l1-3-1')}</strong> {t('info.terms.l1-3-2')}</li>
+                        <li><strong>{t('info.terms.l1-4-1')}</strong> {t('info.terms.l1-4-2')}</li>
+                    </ul>
+                </section>
 
-            <section>
-                <h2 className="term-header">3. ПОРЯДОК ОФОРМЛЕННЯ ЗАМОВЛЕННЯ</h2>
-                <p className="term-p">3.1. Покупець самостійно оформлює Замовлення через "Кошик" на сайті або за номером телефону, вказаним у контактах.</p>
-                <p className="term-p">3.2. Продавець має право уточнити деталі замовлення. У разі відсутності Товару, Продавець може запропонувати заміну або скасувати Замовлення.</p>
-            </section>
+                <section>
+                    <h2 className="term-header">{t('info.terms.h2')}</h2>
+                    <p className="term-p">{t('info.terms.p2-1')}</p>
+                    <p className="term-p">{t('info.terms.p2-2')}</p>
+                </section>
 
-            <section>
-                <h2 className="term-header">4. ЦІНА ТА ОПЛАТА</h2>
-                <p className="term-p">4.1. Ціни вказані в гривнях за одиницю ваги або упаковку.</p>
-                <p className="term-p">4.2. Доступні методи оплати: онлайн-оплата карткою, оплата за реквізитами або післяплата при отриманні.</p>
-                <p className="term-p">4.3. Вартість доставки сплачується Покупцем за тарифами логістичного оператора.</p>
-            </section>
+                <section>
+                    <h2 className="term-header">{t('info.terms.h3')}</h2>
+                    <p className="term-p">{t('info.terms.p3-1')}</p>
+                    <p className="term-p">{t('info.terms.p3-2')}</p>
+                </section>
 
-            <section>
-                <h2 className="term-header">5. ДОСТАВКА ТА ПОВЕРНЕННЯ</h2>
-                <p className="term-p">5.1. <strong>Важливо:</strong> Згідно з Постановою КМУ №172 від 19.03.1994, продовольчі товари належної якості обміну та поверненню не підлягають.</p>
-                <p className="term-p">5.2. При отриманні Покупець зобов'язаний перевірити товар. У разі пошкодження необхідно скласти Акт із представником служби доставки.</p>
-            </section>
+                <section>
+                    <h2 className="term-header">{t('info.terms.h4')}</h2>
+                    <p className="term-p">{t('info.terms.p4-1')}</p>
+                    <p className="term-p">{t('info.terms.p4-2')}</p>
+                    <p className="term-p">{t('info.terms.p4-3')}</p>
+                </section>
 
-            <section>
-                <h2 className="term-header">6. КОНФІДЕНЦІЙНІСТЬ</h2>
-                <p className="term-p">6.1. Оформлюючи замовлення, Покупець дає згоду на обробку персональних даних для виконання Замовлення.</p>
-            </section>
+                <section>
+                    <h2 className="term-header">{t('info.terms.h5')}</h2>
+                    <p className="term-p">{t('info.terms.p5-1-1')} <strong>{t('info.terms.p5-1-2')}</strong> {t('info.terms.p5-1-3')}</p>
+                    <p className="term-p">{t('info.terms.p5-2')}</p>
+                </section>
+
+                <section>
+                    <h2 className="term-header">{t('info.terms.h6')}</h2>
+                    <p className="term-p">{t('info.terms.p6-1')}</p>
+                </section>
+            </div>
         </div>
-    </div>
-);
+    );
+};
 
 export default TermsTab;

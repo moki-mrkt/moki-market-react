@@ -4,6 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import { useCart } from '../../contexts/CartContext.jsx';
 
 import './CartDrawer.css';
+import {useTranslation} from "react-i18next";
 
 const CartDrawer = ({ isOpen }) => {
 
@@ -17,6 +18,8 @@ const CartDrawer = ({ isOpen }) => {
     } = useCart();
 
     const navigate = useNavigate();
+
+    const { t } = useTranslation();
 
     useEffect(() => {
         if (isOpen) {
@@ -49,8 +52,8 @@ const CartDrawer = ({ isOpen }) => {
         const mod10 = count % 10;
         const mod100 = count % 100;
         if (mod10 === 1 && mod100 !== 11) return 'товар';
-        if ([2, 3, 4].includes(mod10) && ![12, 13, 14].includes(mod100)) return 'товари';
-        return 'товарів';
+        if ([2, 3, 4].includes(mod10) && ![12, 13, 14].includes(mod100)) return t('cart.several-prod');
+        return t('cart.else-prod');
     };
 
     return (
@@ -66,15 +69,15 @@ const CartDrawer = ({ isOpen }) => {
                 </div>
 
                 <div className="cart-title">
-                    <h3>Кошик</h3>
+                    <h3>{t('cart.title')}</h3>
                 </div>
 
 
                 <div className="cart-drawer-body">
                     {cartItems.length === 0 ? (
                         <div className="empty-cart-message">
-                            <h3 className="empty-cart-text">Ваш кошик поки що порожній</h3>
-                            <button className="btn-continue" onClick={handleClose}>Продовжити покупки</button>
+                            <h3 className="empty-cart-text">{t('cart.empty')}</h3>
+                            <button className="btn-continue" onClick={handleClose}>{t('cart.continue')}</button>
                         </div>
                     ) : (
                         cartItems.map(item => (
@@ -149,30 +152,30 @@ const CartDrawer = ({ isOpen }) => {
                     <div className="cart-drawer-footer">
                         <div className="order-totals">
                             <div className="total-row final-total">
-                                <span>Разом</span>
+                                <span>{t('cart.together')}</span>
                             </div>
 
                             <div className="total-row small-row">
-                                <span>{cartItems.length} {getItemsWord(cartItems.length)} на суму:</span>
+                                <span>{cartItems.length} {getItemsWord(cartItems.length)} {t('cart.totalrow')}</span>
                                 <span>{originalTotal.toFixed(2)} ₴</span>
                             </div>
 
                             {discountAmount > 0 && (
                                 <div className="total-row discount small-row">
-                                    <span>У тому числі знижка:</span>
+                                    <span>{t('cart.discount')}</span>
                                     <span>-{discountAmount.toFixed(2)} ₴</span>
                                 </div>
                             )}
 
                             <div className="total-row final-total">
-                                <span>До сплати:</span>
+                                <span>{t('cart.final-total')}</span>
                                 <span>{finalTotal.toFixed(2)} ₴</span>
                             </div>
                         </div>
 
                         <div className="cart-footer-btn">
                             <button className="btn-checkout" onClick={handleCheckout}>
-                                Оформити замовлення
+                                {t('cart.order')}
                             </button>
                         </div>
                     </div>

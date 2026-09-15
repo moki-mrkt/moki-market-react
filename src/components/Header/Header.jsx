@@ -1,7 +1,7 @@
 import React, {useEffect, useState} from 'react';
 import {Link, useLocation, useNavigate} from 'react-router-dom';
-
 import toast from 'react-hot-toast';
+import { useTranslation } from 'react-i18next';
 
 import {useCart} from "../../contexts/CartContext.jsx";
 import { useModal } from '../../contexts/ModalContext.jsx';
@@ -20,6 +20,13 @@ const Header = () => {
     const [isMenuOpen, setIsMenuOpen] = useState(false);
     const [searchTerm, setSearchTerm] = useState('');
 
+    const { t, i18n } = useTranslation();
+
+    const toggleLanguage = () => {
+        const newLang = i18n.language.startsWith('uk') ? 'ru' : 'uk';
+        i18n.changeLanguage(newLang);
+    };
+
     useEffect(() => {
 
         const searchParams = new URLSearchParams(location.search);
@@ -28,10 +35,10 @@ const Header = () => {
         const emailStatus = searchParams.get('email-changed');
         if (emailStatus) {
             if (emailStatus === 'success') {
-                toast.success('Пошту успішно змінено! Будь ласка, увійдіть заново.');
+                toast.success(t('toasts.changeEmail'));
                 searchParams.set('redirect', 'profile');
             } else if (emailStatus === 'error') {
-                toast.error('Помилка підтвердження або посилання застаріло.');
+                toast.error(t('toasts.errorConfirm'));
             }
             searchParams.delete('email-changed');
             shouldCleanUrl = true;
@@ -41,14 +48,14 @@ const Header = () => {
         const activationStatus = searchParams.get('activation');
         if (activationStatus) {
             if (activationStatus === 'success') {
-                toast.success('Акаунт активований!', {
+                toast.success(t('toasts.acountActivate'), {
                     duration: 4000,
                     style: { width: '380px' }
                 });
                 openLogin();
                 searchParams.set('redirect', 'profile');
             } else if (activationStatus === 'error') {
-                toast.error('Помилка активації.', {
+                toast.error(t('toasts.errorActivate'), {
                     duration: 4000,
                     style: { width: '300px' }
                 });
@@ -157,17 +164,17 @@ const Header = () => {
                                 <span></span>
                                 <span></span>
                             </button>
-                            <span className="menu-text">Меню</span>
+                            <span className="menu-text">{t('menu.menu')}</span>
                         </div>
 
 
                         <nav className="main-menu">
                             <ul>
-                                <li><Link to="/">Головна</Link></li>
-                                <li><Link to="/catalog">Каталог</Link></li>
-                                <li><Link to="/info/about">Про нас</Link></li>
-                                <li><Link to="/info/reviews">Відгуки</Link></li>
-                                <li><Link to="/promotions">Акції</Link></li>
+                                <li><Link to="/">{t('header.main')}</Link></li>
+                                <li><Link to="/catalog">{t('header.catalog')}</Link></li>
+                                <li><Link to="/info/about">{t('header.about')}</Link></li>
+                                <li><Link to="/info/reviews">{t('header.reviews')}</Link></li>
+                                <li><Link to="/promotions">{t('header.promotions')}</Link></li>
                             </ul>
                         </nav>
 
@@ -177,7 +184,7 @@ const Header = () => {
                             </button>
                             <input className="search-input"
                                    type="text"
-                                   placeholder="Пошук"
+                                   placeholder={t('menu.search')}
                                    value={searchTerm} onChange={(e) => setSearchTerm(e.target.value)}
                                    onKeyDown={handleKeyDown}
                             />
@@ -186,9 +193,20 @@ const Header = () => {
                                     &times;
                                 </button>
                             )}
+
+                        </div>
+
+                        <div >
+                            <button
+                                onClick={toggleLanguage}
+                                style={{ background: 'none', border: 'none', cursor: 'pointer', fontWeight: 'bold', color: '#0E2CA4' }}
+                            >
+                                {i18n.language.startsWith('uk') ? 'RU' : 'UA'}
+                            </button>
                         </div>
 
                         <div className="user-actions">
+
                             <div className="user-actions-icon">
                                 <button onClick={handleCabinetClick} className="icon-cart-btn">
                                     <img src="/img/user.svg" alt="User room" />
@@ -233,34 +251,34 @@ const Header = () => {
                     </div>
 
                     <nav className="mobile-nav-list">
-                        <Link to="/" onClick={closeMenu}>Головна</Link>
-                        <Link to="/catalog" onClick={closeMenu}>Каталог</Link>
+                        <Link to="/" onClick={closeMenu}>{t('mobile-nav.main')}</Link>
+                        <Link to="/catalog" onClick={closeMenu}>{t('mobile-nav.catalog')}</Link>
 
                         <aside className="mobile-sidebar">
                             <ul className="mobile-sidebar-menu">
-                                <li><Link to="/catalog" onClick={closeMenu}><img className="sidebar-img" src="/img/all_goods.svg" alt="" /> <span>Всі товари</span></Link></li>
-                                <li><Link to="/promotions" onClick={closeMenu}><img className="sidebar-img" src="/img/discounts.svg" alt="" /> <span>Акційні товари</span></Link></li>
-                                <li><Link to="/catalog/dried-fruits" onClick={closeMenu}><img className="sidebar-img" src="/img/dried_fruits.svg" alt="" /> <span>Сухофрукти</span></Link></li>
-                                <li><Link to="/catalog/sweets" onClick={closeMenu}><img className="sidebar-img" src="/img/sweets.svg" alt="sweets" /> <span>Солодощі</span></Link></li>
-                                <li><Link to="/catalog/candies" onClick={closeMenu}><img className="sidebar-img" src="/img/sweets.svg" alt="candies" /> <span>Цукерки</span></Link></li>
-                                <li><Link to="/catalog/nuts" onClick={closeMenu}><img className="sidebar-img" src="/img/nuts.svg" alt="nuts" /> <span>Горіхи</span></Link></li>
-                                <li><Link to="/catalog/coffee" onClick={closeMenu}><img className="sidebar-img" src="/img/coffee.svg" alt="coffee" /> <span>Кава</span></Link></li>
-                                <li><Link to="/catalog/tea" onClick={closeMenu}><img className="sidebar-img" src="/img/coffee.svg" alt="tea" /> <span>Чай</span></Link></li>
-                                <li><Link to="/catalog/superfoods" onClick={closeMenu}><img className="sidebar-img" src="/img/all_goods.svg" alt="superfoods" /><span>Суперфуд</span></Link></li>
-                                <li><Link to="/catalog/oils" onClick={closeMenu}><img className="sidebar-img" src="/img/discounts.svg" alt="oils" /><span>Олія та масла</span></Link></li>
-                                <li><Link to="/catalog/preserves" onClick={closeMenu}><img className="sidebar-img" src="/img/all_goods.svg" alt="preserves" /><span>Консервація</span></Link></li>
-                                <li><Link to="/catalog/snacks" onClick={closeMenu}><img className="sidebar-img" src="/img/nuts.svg" alt="snacks" /><span>Снеки та чіпси</span></Link></li>
-                                <li><Link to="/catalog/spices" onClick={closeMenu}><img className="sidebar-img" src="/img/dried_fruits.svg" alt="spices" /><span>Спеції</span></Link></li>
+                                <li><Link to="/catalog" onClick={closeMenu}><img className="sidebar-img" src="/img/all_goods.svg" alt="" /><span>{t('category.all')}</span></Link></li>
+                                <li><Link to="/promotions" onClick={closeMenu}><img className="sidebar-img" src="/img/discounts.svg" alt="" /> <span>{t('category.sales')}</span></Link></li>
+                                <li><Link to="/catalog/dried-fruits" onClick={closeMenu}><img className="sidebar-img" src="/img/dried_fruits.svg" alt="" /><span>{t('category.dry-fruit')}</span></Link></li>
+                                <li><Link to="/catalog/sweets" onClick={closeMenu}><img className="sidebar-img" src="/img/sweets.svg" alt="sweets" /> <span>{t('category.sweets')}</span></Link></li>
+                                <li><Link to="/catalog/candies" onClick={closeMenu}><img className="sidebar-img" src="/img/sweets.svg" alt="candies" /> <span>{t('category.candies')}</span></Link></li>
+                                <li><Link to="/catalog/nuts" onClick={closeMenu}><img className="sidebar-img" src="/img/nuts.svg" alt="nuts" /> <span>{t('category.nuts')}</span></Link></li>
+                                <li><Link to="/catalog/coffee" onClick={closeMenu}><img className="sidebar-img" src="/img/coffee.svg" alt="coffee" /><span>{t('category.coffee')}</span></Link></li>
+                                <li><Link to="/catalog/tea" onClick={closeMenu}><img className="sidebar-img" src="/img/coffee.svg" alt="tea" /> <span>{t('category.tea')}</span></Link></li>
+                                <li><Link to="/catalog/superfoods" onClick={closeMenu}><img className="sidebar-img" src="/img/all_goods.svg" alt="superfoods" /><span>{t('category.superfood')}</span></Link></li>
+                                <li><Link to="/catalog/oils" onClick={closeMenu}><img className="sidebar-img" src="/img/discounts.svg" alt="oils" /><span>{t('category.oils')}</span></Link></li>
+                                <li><Link to="/catalog/preserves" onClick={closeMenu}><img className="sidebar-img" src="/img/all_goods.svg" alt="preserves" /><span>{t('category.preserves')}</span></Link></li>
+                                <li><Link to="/catalog/snacks" onClick={closeMenu}><img className="sidebar-img" src="/img/nuts.svg" alt="snacks" /><span>{t('category.snecks')}</span></Link></li>
+                                <li><Link to="/catalog/spices" onClick={closeMenu}><img className="sidebar-img" src="/img/dried_fruits.svg" alt="spices" /><span>{t('category.spices')}</span></Link></li>
                             </ul>
                         </aside>
 
-                        <Link to="/promotions" onClick={closeMenu}>Акції</Link>
-                        <Link to="/info/about" onClick={closeMenu}>Про нас</Link>
-                        <Link to="/info/reviews" onClick={closeMenu}>Відгуки</Link>
-                        <Link to="/info/payment" onClick={closeMenu}>Оплата та доставка</Link>
-                        <Link to="/info/return" onClick={closeMenu}>Обмін та повернення</Link>
-                        <Link to="/info/contacts" onClick={closeMenu}>Контактна інформація</Link>
-                        <Link to="/info/terms" onClick={closeMenu}>Користувацька угода</Link>
+                        <Link to="/promotions" onClick={closeMenu}>{t('mobile-nav.sales')}</Link>
+                        <Link to="/info/about" onClick={closeMenu}>{t('mobile-nav.about')}</Link>
+                        <Link to="/info/reviews" onClick={closeMenu}>{t('mobile-nav.feedback')}</Link>
+                        <Link to="/info/payment" onClick={closeMenu}>{t('mobile-nav.payment')}</Link>
+                        <Link to="/info/return" onClick={closeMenu}>{t('mobile-nav.return')}</Link>
+                        <Link to="/info/contacts" onClick={closeMenu}>{t('mobile-nav.info')}</Link>
+                        <Link to="/info/terms" onClick={closeMenu}>{t('mobile-nav.agreement')}</Link>
                     </nav>
                 </div>
             </header>

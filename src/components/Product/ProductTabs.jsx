@@ -2,12 +2,15 @@ import React, {useEffect, useState} from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import toast from 'react-hot-toast';
 
+import ReactMarkdown from 'react-markdown';
+
 import { authService } from '../../services/authService';
 import { feedbackService } from '../../services/feedbackService';
 import  '../Feedbacks/Feedbacks.css';
 import  './ProductTabs.css';
 import DeleteFeedbackModal from "../Modals/DeleteFeedbackModal/DeleteFeedbackModal.jsx";
 import FeedbackCard from "../FeedbackCard/FeedbackCard.jsx";
+import {useTranslation} from "react-i18next";
 
 const ProductTabs = ({ description, characteristics, productId }) => {
     const [activeTab, setActiveTab] = useState('description');
@@ -31,6 +34,7 @@ const ProductTabs = ({ description, characteristics, productId }) => {
     const [page, setPage] = useState(0);
     const [totalPages, setTotalPages] = useState(0);
     const pageSize = 4;
+    const { t } = useTranslation();
 
     const isAuth = authService.isAuthenticated();
 
@@ -85,9 +89,9 @@ const ProductTabs = ({ description, characteristics, productId }) => {
 
     const handleReviewSubmit = async (e) => {
         e.preventDefault();
-        if (rating === 0) { toast.error("Будь ласка, оберіть оцінку"); return; }
-        if (!comment.trim()) { toast.error("Будь ласка, напишіть текст"); return; }
-        if (comment.length < 2 || comment.length > 1000) { toast.error("Текст повинен бути більше 2 або меньше 1000 символів"); return; }
+        if (rating === 0) { toast.error(t('toasts.rating')); return; }
+        if (!comment.trim()) { toast.error(t('toasts.texting')); return; }
+        if (comment.length < 2 || comment.length > 1000) { toast.error(t('toasts.lengthtext')); return; }
 
         setIsSubmitting(true);
 
@@ -96,17 +100,17 @@ const ProductTabs = ({ description, characteristics, productId }) => {
                 const updatedFeedback = await feedbackService.update(userFeedback.id, { rating, comment });
                 setUserFeedback(updatedFeedback || { ...userFeedback, rating, comment });
                 setIsEditing(false);
-                toast.success("Ваш відгук успішно оновлено!");
+                toast.success(t('toasts.feedback-update'));
             } else {
                 const newFeedback = await feedbackService.createFeedback({ rating, comment, productId });
                 setUserFeedback(newFeedback);
-                toast.success("Ваш відгук успішно додано!");
+                toast.success(t('toasts.feedback-add'));
             }
             setRating(0);
             setComment('');
             loadFeedbacks();
         } catch (error) {
-            toast.error("Помилка при збереженні відгуку.");
+            toast.error(t('toasts.feedback-error'));
         } finally {
             setIsSubmitting(false);
         }
@@ -139,11 +143,11 @@ const ProductTabs = ({ description, characteristics, productId }) => {
 
             setUserFeedback(null);
             setIsEditing(false);
-            toast.success("Ваш відгук успішно видалено");
+            toast.success(t('toasts.feedback-delete'));
             loadFeedbacks();
             setIsDeleteModalOpen(false);
         } catch (error) {
-            toast.error("Не вдалося видалити відгук. Спробуйте пізніше.");
+            toast.error(t('toasts.feedback-delete-error'));
             setIsDeleteModalOpen(false);
         }
     };
@@ -162,19 +166,19 @@ const ProductTabs = ({ description, characteristics, productId }) => {
                     className={`tab-btn ${activeTab === 'description' ? 'active' : ''}`}
                     onClick={() => setActiveTab('description')}
                 >
-                    Опис
+                    {t('tabs.description')}
                 </button>
                 <button
                     className={`tab-btn ${activeTab === 'characteristics' ? 'active' : ''}`}
                     onClick={() => setActiveTab('characteristics')}
                 >
-                    Характеристики
+                    {t('tabs.characteristics')}
                 </button>
                 <button
                     className={`tab-btn ${activeTab === 'reviews' ? 'active' : ''}`}
                     onClick={() => setActiveTab('reviews')}
                 >
-                    Відгуки
+                    {t('tabs.feedbacks')}
                 </button>
             </div>
 
@@ -184,12 +188,14 @@ const ProductTabs = ({ description, characteristics, productId }) => {
                     className={`mobile-accordion-btn ${activeTab === 'description' ? 'active' : ''}`}
                     onClick={() => setActiveTab(activeTab === 'description' ? '' : 'description')}
                 >
-                    <span>Опис</span>
+                    <span>{t('tabs.description')}</span>
                 </button>
 
                 {activeTab === 'description' && (
                     <div className="tab-pane active">
-                        <p className="tab-text">{description}</p>
+                        <div className="tab-text">
+                            <ReactMarkdown>{description}</ReactMarkdown>
+                        </div>
                     </div>
                 )}
 
@@ -197,7 +203,7 @@ const ProductTabs = ({ description, characteristics, productId }) => {
                     className={`mobile-accordion-btn ${activeTab === 'characteristics' ? 'active' : ''}`}
                     onClick={() => setActiveTab(activeTab === 'characteristics' ? '' : 'characteristics')}
                 >
-                    <span>Характеристики</span>
+                    <span>{t('tabs.characteristics')}</span>
                 </button>
 
                 {activeTab === 'characteristics' && (
@@ -215,7 +221,7 @@ const ProductTabs = ({ description, characteristics, productId }) => {
                                     </tbody>
                                 </table>
                             ) : (
-                                <p className="no-data-text">Характеристики відсутні.</p>
+                                <p className="no-data-text">{t('tabs.empty-feedbacks')}</p>
                             )}
                         </div>
                     </div>
@@ -225,7 +231,7 @@ const ProductTabs = ({ description, characteristics, productId }) => {
                     className={`mobile-accordion-btn ${activeTab === 'reviews' ? 'active' : ''}`}
                     onClick={() => setActiveTab(activeTab === 'reviews' ? '' : 'reviews')}
                 >
-                    <span>Відгуки</span>
+                    <span>{t('tabs.feedbacks')}</span>
                 </button>
 
                 {activeTab === 'reviews' && (
@@ -239,7 +245,7 @@ const ProductTabs = ({ description, characteristics, productId }) => {
                                 ) : feedbacks.length > 0 ? (
                                     feedbacks.map((feedback) => <FeedbackCard key={feedback.id} feedback={feedback} />)
                                 ) : (
-                                    <p style={{ color: '#94A3B8', fontSize: '16px', margin: '0' }}>Відгуків про цей товар ще немає. Будьте першим!</p>
+                                    <p style={{ color: '#94A3B8', fontSize: '16px', margin: '0' }}>{t('tabs.first-feedback')}</p>
                                 )}
                             </div>
 
@@ -254,11 +260,11 @@ const ProductTabs = ({ description, characteristics, productId }) => {
                                             cursor:  page > 0 ? 'pointer' : 'default'
                                         }}
                                     >
-                                        Попередня
+                                        {t('tabs.previous')}
                                     </button>
 
                                     <span className="pag-text">
-                                        Сторінка {page + 1} з {totalPages}
+                                        {t('tabs.page')} {page + 1} {t('tabs.from')} {totalPages}
                                     </span>
 
                                     <button
@@ -270,7 +276,7 @@ const ProductTabs = ({ description, characteristics, productId }) => {
                                             cursor:  page < totalPages - 1 ? 'pointer' : 'default'
                                         }}
                                     >
-                                        Наступна
+                                        {t('tabs.next')}
                                     </button>
                                 </div>
                             )}
@@ -280,18 +286,18 @@ const ProductTabs = ({ description, characteristics, productId }) => {
                             {!isAuth ? (
                                 <div className="feedback-warning">
                                     <p className="feedback-warning-text">
-                                        *Тільки авторизовані користувачі можуть залишати відгуки про товар.
+                                        {t('tabs.auth-user')}
                                     </p>
                                     <button className="feedback-btn-login" onClick={handleLoginClick}>
-                                        Увійти в кабінет
+                                        {t('tabs.login')}
                                     </button>
                                 </div>
                             ) : userFeedback && !isEditing ? (
                                 <div>
-                                   <h4 className="feedback-header-text" >Ваш відгук:</h4>
+                                   <h4 className="feedback-header-text" >{t('tabs.your-feedback')}</h4>
 
                                     <div className="header-send-feedback">
-                                        <h4 className="rate-text" >Оцінка:</h4>
+                                        <h4 className="rate-text" >{t('tabs.rate')}</h4>
                                         <div className="my-feedback-stars" >
                                             {[...Array(5)].map((_, index) => (
                                                 <img key={index}
@@ -309,11 +315,11 @@ const ProductTabs = ({ description, characteristics, productId }) => {
 
                                     <div className="product-feedback-btn-block">
                                         <button onClick={handleEditClick} className="feedback-send-btn feedback-blue-btn">
-                                            Редагувати
+                                            {t('tabs.change')}
                                         </button>
                                         <button onClick={handleDeleteClick}
                                                 className="feedback-send-btn feedback-red-btn">
-                                            Видалити
+                                            {t('tabs.delete')}
                                         </button>
                                     </div>
                                 </div>
@@ -321,11 +327,11 @@ const ProductTabs = ({ description, characteristics, productId }) => {
                                 <form onSubmit={handleReviewSubmit} className="form-send-feedback">
 
                                     <p className="feedback-header-text">
-                                        {isEditing ? "Редагування відгуку:" : "Залиште відгук про цей товар:"}
+                                        {isEditing ? t('tabs.update-feedback') : t('tabs.save-feedback')}
                                     </p>
 
                                     <div className="header-send-feedback" >
-                                        <span className="rate-text">Оцінка:</span>
+                                        <span className="rate-text">{t('tabs.rate')}</span>
                                         <div className="my-feedback-stars">
                                             {[...Array(5)].map((_, index) => {
                                                 const starValue = index + 1;
@@ -345,7 +351,7 @@ const ProductTabs = ({ description, characteristics, productId }) => {
                                     </div>
 
                                     <textarea
-                                        placeholder="Напишіть ваші враження про цей товар..."
+                                        placeholder={t('tabs.text-feedback')}
                                         className="product-textarea"
                                         value={comment}
                                         onChange={(e) => setComment(e.target.value)}
@@ -359,7 +365,7 @@ const ProductTabs = ({ description, characteristics, productId }) => {
                                             type="submit"
                                             disabled={isSubmitting}
                                             className="feedback-send-btn feedback-blue-btn">
-                                            {isSubmitting ? 'Збереження...' : (isEditing ? 'Оновити' : 'Надіслати')}
+                                            {isSubmitting ? t('tabs.saving') : (isEditing ? t('tabs.updating') : t('tabs.send'))}
                                         </button>
 
                                         {isEditing && (
@@ -368,7 +374,7 @@ const ProductTabs = ({ description, characteristics, productId }) => {
                                                 onClick={handleCancelEdit}
                                                 className="feedback-send-btn feedback-red-btn"
                                             >
-                                                Скасувати
+                                                {t('tabs.cancel')}
                                             </button>
                                         )}
                                     </div>

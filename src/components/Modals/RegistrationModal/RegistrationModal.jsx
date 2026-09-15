@@ -1,9 +1,7 @@
 import React, { useState } from 'react';
 import { userService } from '../../../services/userService';
-
+import { useTranslation } from 'react-i18next'; // Імпорт
 import './RegistrationModal.css';
-
-
 
 const RegistrationModal = ({ isOpen, onClose, onSwitchToLogin, onSuccess }) => {
     if (!isOpen) return null;
@@ -12,9 +10,9 @@ const RegistrationModal = ({ isOpen, onClose, onSwitchToLogin, onSuccess }) => {
     const [showPassword, setShowPassword] = useState(false);
     const [showConfirmPassword, setShowConfirmPassword] = useState(false);
     const [isAgreed, setIsAgreed] = useState(false);
-
     const [errors, setErrors] = useState({});
     const [globalError, setGlobalError] = useState('');
+    const { t } = useTranslation();
 
     const [formData, setFormData] = useState({
         email: '',
@@ -28,68 +26,60 @@ const RegistrationModal = ({ isOpen, onClose, onSwitchToLogin, onSuccess }) => {
     const handleChange = (e) => {
         const { name, value } = e.target;
         setFormData({ ...formData, [name]: value });
-
-        if (errors[name]) {
-            setErrors({ ...errors, [name]: '' });
-        }
+        if (errors[name]) setErrors({ ...errors, [name]: '' });
     };
 
     const handlePhoneChange = (e) => {
         const value = e.target.value;
-
         if (!value.startsWith('+380')) {
             setFormData(prev => ({ ...prev, phone: '+380' }));
             return;
         }
-
         if (!/^\d*$/.test(value.slice(1))) return;
-
         if (value.length > 13) return;
-
         setFormData(prev => ({ ...prev, phone: value }));
     };
 
     const validateForm = () => {
         const newErrors = {};
         const { firstName, lastName, email, phone, password, passwordConfirm } = formData;
-
         const nameRegex = /^[A-ZА-ЯІЇЄҐ][a-zа-яіїєґA-ZА-ЯІЇЄҐ'ʼ’\s-]+$/;
 
         if (!firstName || firstName.length < 2 || firstName.length > 64) {
-            newErrors.firstName = "Ім'я має бути від 2 до 64 символів";
+            newErrors.firstName = t('modals.reg.errors.name-len');
         } else if (!nameRegex.test(firstName)) {
-            newErrors.firstName = "Ім'я має починатися з великої літери (кирилиця/латиниця)";
+            newErrors.firstName = t('modals.reg.errors.name-regex');
         }
 
         if (!lastName || lastName.length < 2 || lastName.length > 64) {
-            newErrors.lastName = "Прізвище має бути від 2 до 64 символів";
+            newErrors.lastName = t('modals.reg.errors.surname-len');
         } else if (!nameRegex.test(lastName)) {
-            newErrors.lastName = "Прізвище має починатися з великої літери";
+            newErrors.lastName = t('modals.reg.errors.surname-regex');
         }
 
         const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
         if (!email || !emailRegex.test(email)) {
-            newErrors.email = "Невірний формат пошти";
+            newErrors.email = t('modals.reg.errors.email-invalid');
         }
 
         const phoneRegex = /^\+[0-9]+$/;
         if (!phone) {
-            newErrors.phone = "Введіть номер телефону";
+            newErrors.phone = t('modals.reg.errors.phone-empty');
         } else if (phone.length > 13) {
-            newErrors.phone = "Максимум 13 символів";
+            newErrors.phone = t('modals.reg.errors.phone-len');
         } else if (!phoneRegex.test(phone)) {
-            newErrors.phone = "Формат: +380...";
+            newErrors.phone = t('modals.reg.errors.phone-regex');
         }
 
         const passwordRegex = /^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z]).{8,20}$/;
         if (!password) {
-            newErrors.password = "Введіть пароль";
+            newErrors.password = t('modals.reg.errors.pass-empty');
         } else if (!passwordRegex.test(password)) {
-            newErrors.password = "8-20 символів: 1 цифра, 1 велика та 1 мала літера";
+            newErrors.password = t('modals.reg.errors.pass-regex');
         }
 
         if (password !== passwordConfirm) {
-            newErrors.passwordConfirm = "Паролі не співпадають";
+            newErrors.passwordConfirm = t('modals.reg.errors.pass-mismatch');
         }
 
         setErrors(newErrors);
@@ -98,7 +88,6 @@ const RegistrationModal = ({ isOpen, onClose, onSwitchToLogin, onSuccess }) => {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-
         if (!validateForm()) return;
         if (!isAgreed) return;
 
@@ -106,7 +95,6 @@ const RegistrationModal = ({ isOpen, onClose, onSwitchToLogin, onSuccess }) => {
         setGlobalError('');
 
         try {
-
             const payload = {
                 firstName: formData.firstName,
                 secondName: formData.lastName,
@@ -115,58 +103,50 @@ const RegistrationModal = ({ isOpen, onClose, onSwitchToLogin, onSuccess }) => {
                 password: formData.password,
                 confirmPassword: formData.passwordConfirm
             };
-
             await userService.registration(payload);
-
             onSuccess();
         } catch (err) {
-
             if (err.response && err.response.status === 400 && err.response.statusText === 'Email already taken') {
-                setGlobalError('Пошта вже занята. Будь ласка, виберіть іншу.');
+                setGlobalError(t('modals.reg.errors.email-taken'));
             } else {
-                setGlobalError('Помилка реєстрації. Перевірте дані або спробуйте пізніше.');
+                setGlobalError(t('modals.reg.errors.submit-err'));
             }
         } finally {
             setLoading(false);
         }
     };
 
-    if (!isOpen) return null;
-
     return (
         <div className="auth-modal-overlay" onClick={onClose}>
             <div className="reg-modal-content" onClick={(e) => e.stopPropagation()}>
-
                 <div className="auth-close-bnt">
                     <button className="reg-close-btn-img" onClick={onClose}>
                         <img src="/img/cross.svg" alt="close"/>
                     </button>
                 </div>
 
-                <h2 className="reg-modal-title">Створити аккаунт</h2>
+                <h2 className="reg-modal-title">{t('modals.reg.title')}</h2>
 
                 <form className="reg-form" onSubmit={handleSubmit}>
-
                     <section className="reg-form-section">
-
                         <div className="reg-row-inputs" >
                             <div className="inputWrapperStyle">
                                 <input
                                     name="firstName"
                                     type="text"
                                     className="reg-checkout-input"
-                                    placeholder="Ім'я"
+                                    placeholder={t('modals.reg.name')}
                                     value={formData.firstName}
                                     onChange={handleChange}
                                 />
                                 {errors.firstName && <span className="errorStyle">{errors.firstName}</span>}
-                             </div>
+                            </div>
                             <div className="inputWrapperStyle">
                                 <input
                                     name="lastName"
                                     type="text"
                                     className={`reg-checkout-input ${errors.lastName ? 'input-error' : ''}`}
-                                    placeholder="Прізвище"
+                                    placeholder={t('modals.reg.surname')}
                                     value={formData.lastName}
                                     onChange={handleChange}
                                 />
@@ -174,32 +154,30 @@ const RegistrationModal = ({ isOpen, onClose, onSwitchToLogin, onSuccess }) => {
                             </div>
                         </div>
 
-                            <div className="reg-row-inputs">
-
-                                <div className="inputWrapperStyle">
-                                    <input
-                                        name="email"
-                                        type="email"
-                                        className={`reg-checkout-input ${errors.email ? 'input-error' : ''}`}
-                                        placeholder="Пошта"
-                                        value={formData.email}
-                                        onChange={handleChange}
-                                    />
-                                    {errors.email && <span className="errorStyle">{errors.email}</span>}
-                                </div>
-
-                                <div className="inputWrapperStyle">
-                                    <input
-                                        name="phone"
-                                        type="tel"
-                                        className={`reg-checkout-input ${errors.phone ? 'input-error' : ''}`}
-                                        placeholder="Телефон (+380...)"
-                                        value={formData.phone}
-                                        onChange={handlePhoneChange}
-                                    />
-                                    {errors.phone && <span className="errorStyle">{errors.phone}</span>}
-                                </div>
+                        <div className="reg-row-inputs">
+                            <div className="inputWrapperStyle">
+                                <input
+                                    name="email"
+                                    type="email"
+                                    className={`reg-checkout-input ${errors.email ? 'input-error' : ''}`}
+                                    placeholder={t('modals.reg.email')}
+                                    value={formData.email}
+                                    onChange={handleChange}
+                                />
+                                {errors.email && <span className="errorStyle">{errors.email}</span>}
                             </div>
+                            <div className="inputWrapperStyle">
+                                <input
+                                    name="phone"
+                                    type="tel"
+                                    className={`reg-checkout-input ${errors.phone ? 'input-error' : ''}`}
+                                    placeholder={t('modals.reg.phone')}
+                                    value={formData.phone}
+                                    onChange={handlePhoneChange}
+                                />
+                                {errors.phone && <span className="errorStyle">{errors.phone}</span>}
+                            </div>
+                        </div>
 
                         <div className="reg-row-inputs reg-password-wrapper">
                             <div className="inputWrapperStyle">
@@ -208,7 +186,7 @@ const RegistrationModal = ({ isOpen, onClose, onSwitchToLogin, onSuccess }) => {
                                         name="password"
                                         type={showPassword ? "text" : "password"}
                                         className={`reg-checkout-input ${errors.password ? 'input-error' : ''}`}
-                                        placeholder="Пароль"
+                                        placeholder={t('modals.reg.pass')}
                                         value={formData.password}
                                         onChange={handleChange}
                                         style={{width: '100%'}}
@@ -233,7 +211,7 @@ const RegistrationModal = ({ isOpen, onClose, onSwitchToLogin, onSuccess }) => {
                                         name="passwordConfirm"
                                         type={showConfirmPassword ? "text" : "password"}
                                         className={`reg-checkout-input ${errors.passwordConfirm ? 'input-error' : ''}`}
-                                        placeholder="Підтвердження пароля"
+                                        placeholder={t('modals.reg.pass-confirm')}
                                         value={formData.passwordConfirm}
                                         onChange={handleChange}
                                         style={{width: '100%'}}
@@ -254,10 +232,9 @@ const RegistrationModal = ({ isOpen, onClose, onSwitchToLogin, onSuccess }) => {
                         {globalError && <div style={{color: 'red', marginBottom: '15px', fontSize: '18px'}}>{globalError}</div>}
 
                         <div className="reg-modal-info-block">
-                            <h3 className="reg-modal-info">Пароль має включати:</h3>
-
+                            <h3 className="reg-modal-info">{t('modals.reg.pass-req-title')}</h3>
                             <p className="reg-modal-text">
-                                Тільки латинські літери та символи. Мінімальна довжина поля 8 символів. Обовʼязково 1 цифра, 1 велика та 1 мала літера.
+                                {t('modals.reg.pass-req-text')}
                             </p>
                         </div>
 
@@ -271,32 +248,28 @@ const RegistrationModal = ({ isOpen, onClose, onSwitchToLogin, onSuccess }) => {
                                 />
                                 <span className="checkmark-reg"></span>
                                 <span className="agreement-text">
-                                   Підтверджуючи реєстрацію, я приймаю умови
-                                    <a href="/info/terms" target="_blank">користувацікої угоди</a>
+                                   {t('modals.reg.agreement-1')}
+                                    <a href="/info/terms" target="_blank">{t('modals.reg.agreement-2')}</a>
                                 </span>
                             </label>
                         </div>
-
 
                         <div className="reg-btn-wrapper">
                             <button
                                 className={`reg-btn ${!isAgreed ? 'disabled' : ''}`}
                                 type="submit"
                                 disabled={loading || !isAgreed}>
-                                {loading ? 'Обробка...' : 'Зареєструватися'}
+                                {loading ? t('modals.reg.processing') : t('modals.reg.submit')}
                             </button>
                         </div>
-
-
                     </section>
                 </form>
 
                 <div>
                     <button className="return-to-auth" onClick={onSwitchToLogin}>
-                        Повернутись до авторизації
+                        {t('modals.reg.back')}
                     </button>
                 </div>
-
             </div>
         </div>
     );

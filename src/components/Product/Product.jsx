@@ -23,6 +23,7 @@ import {authService} from "../../services/authService.js";
 import {favoriteProductService} from "../../services/favoriteProductService.js";
 import toast from "react-hot-toast";
 import {Helmet} from "react-helmet-async";
+import {useTranslation} from "react-i18next";
 
 const Product = () => {
 
@@ -39,12 +40,13 @@ const Product = () => {
     const [similarProducts, setSimilarProducts] = useState([]);
 
     const [isFav, setIsFav] = useState(false);
+    const { t } = useTranslation();
 
-    const categoryName = categorySlug ? getLabelFromSlug(categorySlug) : 'Каталог';
+    const categoryName = categorySlug ? getLabelFromSlug(categorySlug) : t('header.catalog');
 
     const productBreadcrumbs = [
-        { path: '/', breadcrumb: 'Головна' },
-        { path: '/catalog', breadcrumb: 'Каталог' },
+        { path: '/', breadcrumb: t('header.main') },
+        { path: '/catalog', breadcrumb: t('header.catalog') },
 
         ...(categorySlug ? [{
             path: `/catalog/${categorySlug}`,
@@ -110,7 +112,7 @@ const Product = () => {
             }
         } catch (error) {
             setIsFav(previousState);
-            toast.error("Не вдалося оновити улюблені");
+            toast.error(t('product-card.error-reload'));
         }
     };
 
@@ -138,12 +140,12 @@ const Product = () => {
             <Helmet>
 
                 <title>
-                    {product ? `Купити ${product.name} в Moki` : "Завантаження... | Moki"}
+                    {product ? `${t('product-card.buy')} ${product.name} в Moki` : t('product-card.dowloading')}
                 </title>
 
                 {product && (
                     <>
-                        <meta name="description" content={cleanDescription || "Найкраща якість у Moki"} />
+                        <meta name="description" content={cleanDescription || t('product-card.quality')} />
 
                         <link rel="canonical" href={`${siteUrl}/products/${productSlug}`} />
 
@@ -194,9 +196,9 @@ const Product = () => {
             </Helmet>
 
             {loading ? (
-                <div className="loader">Завантаження...</div>
+                <div className="loader">{t('product-card.dowloading')}</div>
             ) : !product ? (
-                <div className="not-found">Товар не знайдено</div>
+                <div className="not-found">{t('product-card.not_found')}</div>
             ) : (
             <main className="hero-section">
                 <div className="container hero__grid">
@@ -269,14 +271,14 @@ const Product = () => {
                                 <div className="product-info-bottom">
                                     <div className="product-status-row">
                                         <div className={`availability ${isAvailable ? '' : 'out-of-stock'}`}>
-                                            {isAvailable ? 'Є в наявності' : 'Немає в наявності'}
+                                            {isAvailable ? t('product-card.available') : t('product-card.not_available')}
                                         </div>
 
                                         <button className="btn-wishlist-desktop" onClick={handleHeartClick}>
                                             <img src={isFav ? "/img/heart-filled.svg" : "/img/heart-outline.svg"}
                                                  alt="favorite"
                                             />
-                                            <span>{isFav ? 'В списку бажаного' : 'Додати в список бажаного'}</span>
+                                            <span>{isFav ? t('product-card.in_wishlist') : t('product-card.not_wishlist')}</span>
                                         </button>
 
                                         <button className="btn-wishlist-mobile" onClick={handleHeartClick}>
@@ -290,11 +292,11 @@ const Product = () => {
                                     <div className="product-buttons-row">
                                         <button className="btn-cart-primary" onClick={() => addToCart(product, qty)}>
                                             <img src="/img/white_cart.png" alt="cart" />
-                                            До кошика
+                                            {t('product-card.to_cart')}
                                         </button>
                                         <button className="btn-one-click" onClick={() => handleForBuyOneClick(product)}>
                                             <img src="/img/blue_cart.png" alt="buy" />
-                                            Купити в один клік
+                                             {t('product-card.one_click')}
                                         </button>
                                     </div>
                                 </div>
@@ -311,7 +313,7 @@ const Product = () => {
                     {similarProducts.length > 0 && (
                         <div className="other-product">
                             <ProductSlider
-                                title="Схожі товари"
+                                title={t('product-card.other_product')}
                                 products={similarProducts}
                             />
                         </div>

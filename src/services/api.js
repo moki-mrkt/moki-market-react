@@ -4,11 +4,21 @@ import {URLS} from '../constants/urls.js';
 
 export const API_URL = URLS.backend_api;
 
+const getLanguage = () => {
+    const lang = localStorage.getItem('i18nextLng') || 'uk';
+    return lang.split('-')[0];
+};
+
 export const publicApi = axios.create({
     baseURL: API_URL,
     headers: {
         'Content-Type': 'application/json',
     },
+});
+
+publicApi.interceptors.request.use((config) => {
+    config.headers['Accept-Language'] = getLanguage();
+    return config;
 });
 
 const privateApi = axios.create({
@@ -36,10 +46,12 @@ const processQueue = (error, token = null) => {
 privateApi.interceptors.request.use(
     (config) => {
         const token = localStorage.getItem('accessToken');
-
         if (token) {
             config.headers['Authorization'] = `Bearer ${token}`;
         }
+
+        config.headers['Accept-Language'] = getLanguage();
+
         return config;
     },
     (error) => Promise.reject(error)

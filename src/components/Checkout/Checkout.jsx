@@ -2,6 +2,7 @@ import React, { useState, useEffect, useMemo } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import Breadcrumbs from '../Breadcrumbs/Breadcrumbs';
 import { useCart } from '../../contexts/CartContext.jsx';
+import { useTranslation } from 'react-i18next';
 
 import { orderService } from '../../services/orderService';
 import { authService } from '../../services/authService';
@@ -13,6 +14,7 @@ import toast from "react-hot-toast";
 
 const Checkout = () => {
     const navigate = useNavigate();
+    const { t } = useTranslation();
 
     const {
         cartItems,
@@ -160,7 +162,7 @@ const Checkout = () => {
 
         if (Object.keys(newErrors).length > 0) {
             setErrors(newErrors);
-            toast.error('Будь ласка, заповніть обов\'язкові поля');
+            toast.error(t('checkout.error-fill-required'));
             return;
         }
 
@@ -168,7 +170,7 @@ const Checkout = () => {
         if (formData.phoneNumber.length !== 13) {
             newErrors.phoneNumber = true;
             setErrors(newErrors);
-            toast.error('Будь ласка, введіть повний номер телефону (+380...)');
+            toast.error(t('checkout.error-phone-format'));
             return;
         }
 
@@ -214,7 +216,7 @@ const Checkout = () => {
             clearCart();
 
         } catch (error) {
-            toast.error('Сталася помилка при оформленні. Перевірте дані.');
+            toast.error(t('checkout.error-submit'));
         }
     };
 
@@ -230,18 +232,18 @@ const Checkout = () => {
     };
 
     const breadcrumbs = [
-        { path: '/', breadcrumb: 'Головна' },
-        { path: null, breadcrumb: 'Оформлення замовлення' }
+        { path: '/', breadcrumb: t('checkout.breadcrumb-home') },
+        { path: null, breadcrumb: t('checkout.breadcrumb-checkout') }
     ];
 
     if (cartItems.length === 0 && !isSuccessModalOpen) {
         return (
             <section className="hero-section">
                 <div className="container" style={{ textAlign: 'center', padding: '100px 0' }}>
-                    <h2>Ваш кошик порожній</h2>
-                    <p style={{ margin: '20px 0', color: '#6B7280' }}>Додайте товари, щоб оформити замовлення.</p>
+                    <h2>{t('checkout.empty-cart-title')}</h2>
+                    <p style={{ margin: '20px 0', color: '#6B7280' }}>{t('checkout.empty-cart-text')}</p>
                     <Link to="/" className="checkout-button" style={{ display: 'inline-block', maxWidth: '350px', textDecoration: 'none', color: "white", paddingTop: "10px" }}>
-                        Перейти до покупок
+                        {t('checkout.go-to-shop')}
                     </Link>
                 </div>
             </section>
@@ -266,7 +268,7 @@ const Checkout = () => {
                         <form onSubmit={handleSubmit}>
 
                             <section className="form-section">
-                                <h2 className="section-title">Дані клієнта</h2>
+                                <h2 className="section-title">{t('checkout.client-data')}</h2>
 
                                 <div className="input-group user-info-input">
                                     <input
@@ -291,7 +293,7 @@ const Checkout = () => {
                                         onFocus={handleFocus}
                                         maxLength={13}
                                     />
-                                    <label htmlFor="phoneNumber" className="floating-label">Телефон*</label>
+                                    <label htmlFor="phoneNumber" className="floating-label">{t('checkout.phone-label')}</label>
                                 </div>
 
                                 <div className="row-inputs user-info-input">
@@ -305,7 +307,7 @@ const Checkout = () => {
                                             onChange={handleInputChange}
                                             onFocus={handleFocus}
                                         />
-                                        <label htmlFor="firstName" className="floating-label">Ім'я*</label>
+                                        <label htmlFor="firstName" className="floating-label">{t('checkout.name-label')}</label>
                                     </div>
                                     <div className="input-group">
                                         <input
@@ -317,19 +319,18 @@ const Checkout = () => {
                                             onChange={handleInputChange}
                                             onFocus={handleFocus}
                                         />
-                                        <label htmlFor="lastName" className="floating-label">Прізвище*</label>
+                                        <label htmlFor="lastName" className="floating-label">{t('checkout.surname-label')}</label>
                                     </div>
                                 </div>
 
                                 <div className="info-message">
                                     <img src="/img/info-icon.svg" alt="info" className="info-icon" />
-                                    <p>Вкажи своє справжнє прізвище та ім'я, інакше ми не зможемо доставити Твою посилку.</p>
+                                    <p>{t('checkout.info-message')}</p>
                                 </div>
                             </section>
 
-                            {/* СПОСІБ ДОСТАВКИ */}
                             <section className="form-section">
-                                <h2 className="section-title">Спосіб доставки</h2>
+                                <h2 className="section-title">{t('checkout.delivery-method')}</h2>
 
                                 <div className="radio-group user-info-input">
                                     <label className="radio-card">
@@ -341,22 +342,10 @@ const Checkout = () => {
                                             onChange={handleRadioChange}
                                         />
                                         <span className="radio-custom"></span>
-                                        <span className="radio-label">Нова Пошта - відділення</span>
+                                        <span className="radio-label">{t('checkout.np-branch')}</span>
                                     </label>
                                     <hr />
 
-                                    {/*<label className="radio-card">*/}
-                                    {/*    <input*/}
-                                    {/*        type="radio"*/}
-                                    {/*        name="delivery"*/}
-                                    {/*        value="nova_poshta"*/}
-                                    {/*        checked={formData.deliveryType === 'nova_poshta'}*/}
-                                    {/*        onChange={handleRadioChange}*/}
-                                    {/*    />*/}
-                                    {/*    <span className="radio-custom"></span>*/}
-                                    {/*    <span className="radio-label">Нова Пошта - поштомат</span>*/}
-                                    {/*</label>*/}
-                                    {/*<hr />*/}
                                     <label className="radio-card">
                                         <input
                                             type="radio"
@@ -366,35 +355,35 @@ const Checkout = () => {
                                             onChange={handleRadioChange}
                                         />
                                         <span className="radio-custom"></span>
-                                        <span className="radio-label">Укр Пошта - відділення</span>
+                                        <span className="radio-label">{t('checkout.up-branch')}</span>
                                     </label>
                                 </div>
 
                                 <div className="row-inputs">
-                                        <div className="input-group">
-                                            <input
-                                                type="text"
-                                                id="region"
-                                                className={`checkout-select ${errors.region ? 'invalid-input' : ''}`}
-                                                placeholder="Область"
-                                                value={formData.region}
-                                                onChange={handleInputChange}
-                                                onFocus={handleFocus}
-                                            />
-                                            <label htmlFor="postOffice" className="floating-label"></label>
-                                        </div>
-                                        <div className="input-group">
-                                            <input
-                                                type="text"
-                                                id="city"
-                                                className={`checkout-select ${errors.city ? 'invalid-input' : ''}`}
-                                                placeholder="Населений пункт"
-                                                value={formData.city}
-                                                onChange={handleInputChange}
-                                                onFocus={handleFocus}
-                                            />
-                                            <label htmlFor="postOffice" className="floating-label"></label>
-                                        </div>
+                                    <div className="input-group">
+                                        <input
+                                            type="text"
+                                            id="region"
+                                            className={`checkout-select ${errors.region ? 'invalid-input' : ''}`}
+                                            placeholder={t('checkout.region-placeholder')}
+                                            value={formData.region}
+                                            onChange={handleInputChange}
+                                            onFocus={handleFocus}
+                                        />
+                                        <label htmlFor="region" className="floating-label"></label>
+                                    </div>
+                                    <div className="input-group">
+                                        <input
+                                            type="text"
+                                            id="city"
+                                            className={`checkout-select ${errors.city ? 'invalid-input' : ''}`}
+                                            placeholder={t('checkout.city-placeholder')}
+                                            value={formData.city}
+                                            onChange={handleInputChange}
+                                            onFocus={handleFocus}
+                                        />
+                                        <label htmlFor="city" className="floating-label"></label>
+                                    </div>
                                 </div>
                                 <div className="row-inputs">
                                     <div className="input-group">
@@ -402,32 +391,32 @@ const Checkout = () => {
                                             type="text"
                                             id="street"
                                             className="checkout-select"
-                                            placeholder="Вулиця"
+                                            placeholder={t('checkout.street-placeholder')}
                                             value={formData.street}
                                             onChange={handleInputChange}
                                         />
-                                        <label htmlFor="postOffice" className="floating-label"></label>
+                                        <label htmlFor="street" className="floating-label"></label>
                                     </div>
                                     <div className="input-group">
                                         <input
                                             type="text"
                                             id="houseNumber"
                                             className="checkout-select"
-                                            placeholder="Номер будинка"
+                                            placeholder={t('checkout.house-placeholder')}
                                             value={formData.houseNumber}
                                             onChange={handleInputChange}
                                         />
-                                        <label htmlFor="postOffice" className="floating-label"></label>
+                                        <label htmlFor="houseNumber" className="floating-label"></label>
                                     </div>
                                 </div>
                                 <div className="row-inputs input-post-office">
-                                    <span className="checkout-post-office-title">Відділення*: </span>
+                                    <span className="checkout-post-office-title">{t('checkout.branch-label')}</span>
                                     <div >
                                         <input
                                             type="text"
                                             id="postOffice"
                                             className={`checkout-select ${errors.postOffice ? 'invalid-input' : ''}`}
-                                            placeholder="Номер"
+                                            placeholder={t('checkout.branch-placeholder')}
                                             value={formData.postOffice}
                                             onChange={handleInputChange}
                                             onFocus={handleFocus}
@@ -438,7 +427,7 @@ const Checkout = () => {
                             </section>
 
                             <section className="form-section">
-                                <h2 className="section-title">Спосіб оплати</h2>
+                                <h2 className="section-title">{t('checkout.payment-method')}</h2>
 
                                 <div className="radio-group user-info-input">
                                     <label className="radio-card payment-card">
@@ -454,7 +443,7 @@ const Checkout = () => {
                                             <div className="payment-icons-group">
                                                 <img src="/img/visa.png" alt="Visa" />
                                             </div>
-                                            <span className="radio-label">Оплата на рахунок</span>
+                                            <span className="radio-label">{t('checkout.payment-card')}</span>
                                         </div>
                                     </label>
                                     <hr />
@@ -471,7 +460,7 @@ const Checkout = () => {
                                             <div className="payment-icons-group">
                                                 <img src="/img/wallet.svg" alt="Wallet" />
                                             </div>
-                                            <span className="radio-label">Оплата при отриманні</span>
+                                            <span className="radio-label">{t('checkout.payment-cod')}</span>
                                         </div>
                                     </label>
                                 </div>
@@ -479,14 +468,14 @@ const Checkout = () => {
 
                             <div className="checkout-button-wrapper">
                                 <button type="submit" className="checkout-button">
-                                    Оформити замовлення
+                                    {t('checkout.submit-order')}
                                 </button>
                             </div>
                         </form>
                     </div>
 
                     <aside className="order-summary">
-                        <h2 className="summary-title">Ваше замовлення</h2>
+                        <h2 className="summary-title">{t('checkout.your-order')}</h2>
 
                         <div className="checkout-items">
                             {cartItems.map(item => {
@@ -523,7 +512,7 @@ const Checkout = () => {
                                                         >+</button>
                                                     </div>
                                                     <div className="checkout-item-price checkout-action-mobile">
-                                                        {(itemPrice * itemQty).toFixed(0)} грн
+                                                        {(itemPrice * itemQty).toFixed(0)} {t('checkout.price-currency')}
                                                     </div>
                                                 </div>
 
@@ -543,7 +532,7 @@ const Checkout = () => {
                                                     </span>
                                                 )}
                                                 <span className="checkout-current-price">
-                                                    {item.price.toFixed(2)}₴ за шт.
+                                                    {item.price.toFixed(2)}₴ {t('checkout.price-per-unit')}
                                                 </span>
                                             </div>
                                         </div>
@@ -552,11 +541,11 @@ const Checkout = () => {
                                             <div style={{textAlign: 'right'}}>
                                                 {itemDiscount > 0 && (
                                                     <span className="checkout-old-price" style={{ textDecoration: 'line-through', color: '#999', fontSize: '12px', display: 'block' }}>
-                                                        {(itemPrice * itemQty).toFixed(0)} грн
+                                                        {(itemPrice * itemQty).toFixed(0)} {t('checkout.price-currency')}
                                                     </span>
                                                 )}
                                                 <span className="checkout-item-price">
-                                                    {(priceWithDiscount * itemQty).toFixed(0)} грн
+                                                    {(priceWithDiscount * itemQty).toFixed(0)} {t('checkout.price-currency')}
                                                 </span>
                                             </div>
                                             <button
@@ -575,23 +564,23 @@ const Checkout = () => {
                         <div className="checkout-order-totals">
 
                             <div className="checkout-total-row checkout-final-total checkout-together">
-                                <span>Разом</span>
+                                <span>{t('checkout.total-together')}</span>
                             </div>
                             <div className="checkout-total-row checkout-small-row">
-                                <span>{cartItems.length} товари на суму:</span>
-                                <span className="checkout-total-amount">{originalTotal.toFixed(0)} грн</span>
+                                <span>{t('checkout.total-items', { count: cartItems.length })}</span>
+                                <span className="checkout-total-amount">{originalTotal.toFixed(0)} {t('checkout.price-currency')}</span>
                             </div>
 
                             {discountAmount > 0 && (
                                 <div className="checkout-total-row checkout-discount checkout-small-row">
-                                    <span>У тому числі знижка:</span>
-                                    <span className="checkout-total-discount">-{discountAmount.toFixed(0)} грн</span>
+                                    <span>{t('checkout.total-discount')}</span>
+                                    <span className="checkout-total-discount">-{discountAmount.toFixed(0)} {t('checkout.price-currency')}</span>
                                 </div>
                             )}
 
                             <div className="checkout-total-row checkout-final-total">
-                                <span>До сплати:</span>
-                                <span className="checkout-total-pay">{finalTotal.toFixed(0)} грн</span>
+                                <span>{t('checkout.total-to-pay')}</span>
+                                <span className="checkout-total-pay">{finalTotal.toFixed(0)} {t('checkout.price-currency')}</span>
                             </div>
                         </div>
                     </aside>

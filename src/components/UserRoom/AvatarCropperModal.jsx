@@ -1,9 +1,11 @@
 import React, { useState, useCallback } from 'react';
 import Cropper from 'react-easy-crop';
-import getCroppedImg from '../../utils/cropImages'; // Ваш існуючий файл!
-import './UserRoom.css'; // Використовуємо існуючі стилі
+import getCroppedImg from '../../utils/cropImages';
+import { useTranslation } from 'react-i18next'; // Імпорт
+import './UserRoom.css';
 
 const AvatarCropperModal = ({ imageSrc, onClose, onSave }) => {
+    const { t } = useTranslation();
     const [crop, setCrop] = useState({ x: 0, y: 0 });
     const [zoom, setZoom] = useState(1);
     const [croppedAreaPixels, setCroppedAreaPixels] = useState(null);
@@ -30,7 +32,7 @@ const AvatarCropperModal = ({ imageSrc, onClose, onSave }) => {
     return (
         <div className="auth-modal-overlay" onClick={onClose}>
             <div className="modal-content cropper-modal" onClick={(e) => e.stopPropagation()}>
-                <h2 className="cropper-title" >Обрізати фото</h2>
+                <h2 className="cropper-title" >{t('cropper.title')}</h2>
 
                 <div className="cropper-wrapper">
                     <Cropper
@@ -46,12 +48,12 @@ const AvatarCropperModal = ({ imageSrc, onClose, onSave }) => {
                         restrictPosition={false}
                         minZoom={0.5}
                         objectFit="contain"
-                        tyle={{ containerStyle: { background: '#fff' } }}
+                        style={{ containerStyle: { background: '#fff' } }}
                     />
                 </div>
 
                 <div className="cropper-slider-container">
-                    <span className="cropper-slider-label">Масштаб</span>
+                    <span className="cropper-slider-label">{t('cropper.scale')}</span>
                     <input
                         type="range"
                         value={zoom}
@@ -70,7 +72,7 @@ const AvatarCropperModal = ({ imageSrc, onClose, onSave }) => {
                         onClick={onClose}
                         disabled={isProcessing}
                     >
-                        Скасувати
+                        {t('cropper.cancel')}
                     </button>
                     <button
                         className="save-btn confirm-btn"
@@ -78,7 +80,7 @@ const AvatarCropperModal = ({ imageSrc, onClose, onSave }) => {
                         onClick={handleSave}
                         disabled={isProcessing}
                     >
-                        {isProcessing ? 'Обробка...' : 'Зберегти'}
+                        {isProcessing ? t('cropper.processing') : t('cropper.save')}
                     </button>
                 </div>
             </div>

@@ -1,6 +1,7 @@
 import React, {useState, useEffect, useRef} from 'react';
 import { NavLink, Outlet } from 'react-router-dom';
 import toast from 'react-hot-toast';
+import { useTranslation } from 'react-i18next'; // Додано імпорт
 
 import AvatarCropperModal from './AvatarCropperModal';
 
@@ -26,6 +27,7 @@ const UserRoom = () => {
     const [isCropperOpen, setIsCropperOpen] = useState(false);
 
     const fileInputRef = useRef(null);
+    const { t } = useTranslation(); // Ініціалізація хука
 
     useEffect(() => {
         const fetchUserProfile = async () => {
@@ -34,14 +36,14 @@ const UserRoom = () => {
                 setUser(userData);
             } catch (error) {
                 console.error("Помилка завантаження профілю:", error);
-                toast.error("Не вдалося завантажити дані профілю");
+                toast.error(t('user-room.toast-profile-err'));
             } finally {
                 setLoading(false);
             }
         };
 
         fetchUserProfile();
-    }, []);
+    }, [t]);
 
     const handleFileChange = (event) => {
         const file = event.target.files[0];
@@ -69,10 +71,10 @@ const UserRoom = () => {
             const updatedUser = await userService.updateAvatar(newImageKey);
 
             setUser(updatedUser.data ? updatedUser.data : updatedUser);
-            toast.success('Фото профілю оновлено');
+            toast.success(t('user-room.toast-avatar-success'));
         } catch (error) {
             console.error('Помилка завантаження фото:', error);
-            toast.error('Не вдалося завантажити фото');
+            toast.error(t('user-room.toast-avatar-err'));
         } finally {
             setIsUploading(false);
             setSelectedImageSrc(null);
@@ -87,9 +89,9 @@ const UserRoom = () => {
         try {
             const updatedUser = await userService.deleteAvatar();
             setUser(updatedUser);
-            toast.success('Фото видалено');
+            toast.success(t('user-room.toast-avatar-del'));
         } catch (error) {
-            toast.error('Помилка видалення фото');
+            toast.error(t('user-room.toast-avatar-del-err'));
         } finally {
             setIsUploading(false);
         }
@@ -101,12 +103,12 @@ const UserRoom = () => {
         localStorage.removeItem('guest_cart');
     };
 
-    if (loading) return <div style={{textAlign: 'center', marginTop: '50px'}}>Завантаження...</div>;
-     if (!user) return <div style={{textAlign: 'center', marginTop: '50px'}}>Користувача не знайдено</div>;
+    if (loading) return <div style={{textAlign: 'center', marginTop: '50px'}}>{t('user-room.loading')}</div>;
+    if (!user) return <div style={{textAlign: 'center', marginTop: '50px'}}>{t('user-room.not-found')}</div>;
 
     return (
         <section className="account-section container">
-            <h2 className="user-room-title">Особистий кабінет</h2>
+            <h2 className="user-room-title">{t('user-room.title')}</h2>
 
             <div className="user-summary-card">
                 <div className="user-summary-info">
@@ -148,7 +150,7 @@ const UserRoom = () => {
                         <div className="user-name">
                             <span id="first-name">{user.firstName}</span> <span id="second-name">{user.secondName}</span>
                         </div>
-                        <div className="user-phone">{user.phoneNumber || 'Телефон не вказано'}</div>
+                        <div className="user-phone">{user.phoneNumber || t('user-room.no-phone')}</div>
                     </div>
                 </div>
             </div>
@@ -159,7 +161,7 @@ const UserRoom = () => {
                 <aside className={`account-sidebar ${isSidebarOpen ? 'open' : ''}`} id="accountSidebar">
 
                     <div className="sidebar-header" onClick={() => setIsSidebarOpen(!isSidebarOpen)}>
-                        <span className="sidebar-title">Меню</span>
+                        <span className="sidebar-title">{t('user-room.menu')}</span>
                         <img src="/img/arrow_sort.svg" alt="toggle" className="sidebar-toggle-icon" />
                     </div>
 
@@ -168,37 +170,37 @@ const UserRoom = () => {
                             <li>
                                 <NavLink to="info" className={({ isActive }) => isActive ? "tab-link active" : "tab-link"}>
                                     <img src="/img/user_blue.svg" alt="Info" />
-                                    <span>Особиста інформація</span>
+                                    <span>{t('user-room.info')}</span>
                                 </NavLink>
                             </li>
                             <li>
                                 <NavLink to="security" className={({ isActive }) => isActive ? "tab-link active" : "tab-link"}>
                                     <img src="/img/security.svg" alt="Security" />
-                                    <span>Безпека</span>
+                                    <span>{t('user-room.security')}</span>
                                 </NavLink>
                             </li>
                             <li>
                                 <NavLink to="orders" className={({ isActive }) => isActive ? "tab-link active" : "tab-link"}>
                                     <img src="/img/blue_cart.svg" alt="Orders" />
-                                    <span>Мої замовлення</span>
+                                    <span>{t('user-room.orders')}</span>
                                 </NavLink>
                             </li>
                             <li>
                                 <NavLink to="wishlist" className={({ isActive }) => isActive ? "tab-link active" : "tab-link"}>
                                     <img src="/img/heart-outline.svg" alt="Wishlist" />
-                                    <span>Улюблені товари</span>
+                                    <span>{t('user-room.wishlist')}</span>
                                 </NavLink>
                             </li>
                             <li>
                                 <NavLink to="reviews" className={({ isActive }) => isActive ? "tab-link active" : "tab-link"}>
                                     <img src="/img/like.svg" alt="Reviews" />
-                                    <span>Відгук</span>
+                                    <span>{t('user-room.reviews')}</span>
                                 </NavLink>
                             </li>
                             <li>
                                 <button className="logout-link" onClick={handleLogout}>
                                     <img className="logout-img" src="/img/logout.svg" alt="Exit" />
-                                    <span>Вихід</span>
+                                    <span>{t('user-room.logout')}</span>
                                 </button>
                             </li>
                         </ul>

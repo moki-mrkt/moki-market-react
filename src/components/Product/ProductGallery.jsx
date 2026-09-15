@@ -16,7 +16,6 @@ const ProductGallery = ({ images, fallbackImage, productName }) => {
 
     return (
         <>
-            {/* Головний слайдер */}
             <Swiper
                 spaceBetween={10}
                 thumbs={{ swiper: thumbsSwiper && !thumbsSwiper.destroyed ? thumbsSwiper : null }}
@@ -27,13 +26,12 @@ const ProductGallery = ({ images, fallbackImage, productName }) => {
                     <SwiperSlide key={index}>
                         <img
                             src={img.imageId ? `${image_api}${img.imageId}_large.webp` : '/img/icon.png'}
-                            alt={`Купити ${productName} в Moki`}
+                            alt={`{t('product-card.to_cart') ${productName} в Moki`}
                         />
                     </SwiperSlide>
                 ))}
             </Swiper>
 
-            {/* Слайдер мініатюр (Thumbs) */}
             {displayImages.length > 1 && (
                 <Swiper
                     onSwiper={setThumbsSwiper}

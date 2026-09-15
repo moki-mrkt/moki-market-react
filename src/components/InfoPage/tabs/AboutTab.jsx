@@ -1,50 +1,55 @@
 import {Helmet} from "react-helmet-async";
 import React from "react";
+import { useTranslation } from 'react-i18next';
 
-const AboutTab = () => (
-    <div id="about" className="info-tab active">
-        <Helmet>
-            <title>Про Moki Market</title>
-            <meta name="description" content="Про Moki Market — наша філософія та якість" />
-        </Helmet>
+const AboutTab = () => {
+    const { t } = useTranslation();
 
-        <h1 className="info-title">Про нас</h1>
-        <div className="text-block">
-            <p>Moki — це магазин натуральних сухофруктів, горіхів і солодощів, створений із любов'ю до якості та справжнього смаку. Ми віримо, що корисне може бути смачним, а здорові перекуси — приємними та доступними кожному.</p>
-            <p>У нашому асортименті — лише ретельно відібрані продукти: ароматні сухофрукти без доданого цукру, хрусткі горіхи, натуральні ласощі та східні солодощі. Ми співпрацюємо з перевіреними постачальниками, щоб гарантувати свіжість, безпечність і високу якість кожного продукту.</p>
-        </div>
+    return (
+        <div id="about" className="info-tab active">
+            <Helmet>
+                <title>{t('info.about.meta-title')}</title>
+                <meta name="description" content={t('info.about.meta-desc')} />
+            </Helmet>
 
-        <h2 className="section-subtitle">Наші переваги</h2>
-        <div className="advantages-grid">
-            <div className="adv-card card-1">
-                <div className="adv-icon"><img src="/img/leaf.svg" alt="Quality" /></div>
-                <p>Завжди якісні та свіжі продукти</p>
+            <h1 className="info-title">{t('info.about.title')}</h1>
+            <div className="text-block">
+                <p>{t('info.about.p-1')}</p>
+                <p>{t('info.about.p-2')}</p>
             </div>
-            <div className="adv-card card-2">
-                <div className="adv-icon"><img src="/img/truck.svg" alt="Delivery" /></div>
-                <p>Безкоштовна доставка від 2000 грн</p>
-            </div>
-            <div className="adv-card card-1">
-                <div className="adv-icon"><img src="/img/check.svg" alt="Update" /></div>
-                <p>Регулярне оновлення асортименту</p>
-            </div>
-            <div className="adv-card card-2">
-                <div className="adv-icon"><img src="/img/headset.svg" alt="Support" /></div>
-                <p>Онлайн підтримка 07:00 - 21:00</p>
-            </div>
-        </div>
 
-        <div className="text-block">
-            <p><strong>Moki</strong> — це не просто магазин, а місце, де кожен знайде свій смак: від класичних родзинок і фініків до екзотичних фруктів і вишуканих шоколадних цукерок.</p>
-            <p><strong>Обирай Moki</strong> — насолоду, яка поєднує користь природи та смак, що запам'ятовується.</p>
-        </div>
+            <h2 className="section-subtitle">{t('info.about.sub')}</h2>
+            <div className="advantages-grid">
+                <div className="adv-card card-1">
+                    <div className="adv-icon"><img src="/img/leaf.svg" alt="Quality" /></div>
+                    <p>{t('info.about.adv-1')}</p>
+                </div>
+                <div className="adv-card card-2">
+                    <div className="adv-icon"><img src="/img/truck.svg" alt="Delivery" /></div>
+                    <p>{t('info.about.adv-2')}</p>
+                </div>
+                <div className="adv-card card-1">
+                    <div className="adv-icon"><img src="/img/check.svg" alt="Update" /></div>
+                    <p>{t('info.about.adv-3')}</p>
+                </div>
+                <div className="adv-card card-2">
+                    <div className="adv-icon"><img src="/img/headset.svg" alt="Support" /></div>
+                    <p>{t('info.about.adv-4')}</p>
+                </div>
+            </div>
 
-        <div className="about-gallery">
-            <div className="gallery-item"><img src="/img/about_1.png" alt="Dates" /></div>
-            <div className="gallery-item"><img src="/img/about_2.png" alt="Mix" /></div>
-            <div className="gallery-item"><img src="/img/about_3.png" alt="Nuts" /></div>
+            <div className="text-block">
+                <p><strong>{t('info.about.p-3-1')}</strong> {t('info.about.p-3-2')}</p>
+                <p><strong>{t('info.about.p-4-1')}</strong> {t('info.about.p-4-2')}</p>
+            </div>
+
+            <div className="about-gallery">
+                <div className="gallery-item"><img src="/img/about_1.png" alt="Dates" /></div>
+                <div className="gallery-item"><img src="/img/about_2.png" alt="Mix" /></div>
+                <div className="gallery-item"><img src="/img/about_3.png" alt="Nuts" /></div>
+            </div>
         </div>
-    </div>
-);
+    );
+};
 
 export default AboutTab;
