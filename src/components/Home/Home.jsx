@@ -52,19 +52,19 @@ const Home = () => {
         <main className="hero-section">
 
             <Helmet>
-                <title>{t('seo.title')}</title>
-                <meta name="description" content={t('seo.description')} />
+                <title>{t('seo-main.title')}</title>
+                <meta name="description" content={t('seo-main.description')} />
                 <link rel="canonical" href="https://moki.com.ua" />
 
                 <meta property="og:type" content="website" />
                 <meta property="og:url" content="https://moki.com.ua" />
-                <meta property="og:title" content={t('seo.og-title')} />
-                <meta property="og:description" content={t('seo.og-description')} />
+                <meta property="og:title" content={t('seo-main.og-title')} />
+                <meta property="og:description" content={t('seo-main.og-description')} />
                 <meta property="og:image" content="https://moki.com.ua/img/og-main.jpg" />
 
                 <meta name="twitter:card" content="summary_large_image" />
-                <meta name="twitter:title" content={t('seo.twitter-title')} />
-                <meta name="twitter:description" content={t('seo.twitter-description')} />
+                <meta name="twitter:title" content={t('seo-main.twitter-title')} />
+                <meta name="twitter:description" content={t('seo-main.twitter-description')} />
                 <meta name="twitter:image" content="https://moki.com.ua/img/icon.png" />
 
                 <script type="application/ld+json">
