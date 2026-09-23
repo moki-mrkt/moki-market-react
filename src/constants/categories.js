@@ -1,48 +1,38 @@
+import i18n from 'i18next';
 
 export const CATEGORY_CONFIG = {
     'dried-fruits': {
-        enum: 'DRIED_FRUITS',
-        label: 'Сухофрукти'
+        enum: 'DRIED_FRUITS'
     },
     'nuts': {
-        enum: 'NUTS',
-        label: 'Горіхи'
+        enum: 'NUTS'
     },
     'sweets': {
-        enum: 'SWEETS',
-        label: 'Cолодощі'
+        enum: 'SWEETS'
     },
     'candies': {
-        enum: 'CANDIES',
-        label: 'Цукерки'
+        enum: 'CANDIES'
     },
     'superfoods': {
-        enum: 'SUPER_FOOD',
-        label: 'Суперфуд'
+        enum: 'SUPER_FOOD'
     },
     'oils': {
-        enum: 'OIL_AND_BUTTERS',
-        label: 'Олія та масла'
+        enum: 'OIL_AND_BUTTERS'
     },
     'preserves': {
-        enum: 'CONSERVATION',
-        label: 'Консервація'
+        enum: 'CONSERVATION'
     },
     'tea': {
-        enum: 'TEA',
-        label: 'Чай'
+        enum: 'TEA'
     },
     'coffee': {
-        enum: 'COFFEE',
-        label: 'Кава'
+        enum: 'COFFEE'
     },
     'snacks': {
-        enum: 'SNACKS_AND_CHIPS',
-        label: 'Снеки та чіпси'
+        enum: 'SNACKS_AND_CHIPS'
     },
     'spices': {
-        enum: 'SPICES',
-        label: 'Спеції'
+        enum: 'SPICES'
     }
 };
 
@@ -51,7 +41,7 @@ export const getEnumFromSlug = (slug) => {
 };
 
 export const getLabelFromSlug = (slug) => {
-    return CATEGORY_CONFIG[slug]?.label || slug;
+    return CATEGORY_CONFIG[slug] ? i18n.t(`category.${slug}`) : slug;
 };
 
 export const getSlugFromEnum = (enumValue) => {

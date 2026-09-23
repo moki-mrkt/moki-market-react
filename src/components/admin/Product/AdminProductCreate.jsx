@@ -1,21 +1,11 @@
 import React, {useEffect, useState} from 'react';
 import {useNavigate, useParams} from 'react-router-dom';
 import toast from 'react-hot-toast';
+import { useTranslation } from 'react-i18next';
 import {
-    Box,
-    Button,
-    CircularProgress,
-    FormControl,
-    Grid,
-    IconButton,
-    InputLabel,
-    MenuItem,
-    Paper,
-    Select,
-    TextField,
-    Typography,
-    Alert,
-    AlertTitle
+    Box, Button, CircularProgress, FormControl, Grid, IconButton,
+    InputLabel, MenuItem, Paper, Select, TextField, Typography,
+    Alert, AlertTitle, Checkbox, FormControlLabel
 } from '@mui/material';
 import DeleteIcon from '@mui/icons-material/Delete';
 import AddIcon from '@mui/icons-material/Add';
@@ -58,7 +48,26 @@ const AdminProductCreate = () => {
         subcategoryRu: '',
         initOfMeasure: 'шт',
         valueOfInitOfMeasure: '',
+        productType: 'SIMPLE',
+        minCustomWeight: '',
+        groupId: '',
+        variantName: '',
+        variantValue: ''
     });
+
+    const [characteristics, setCharacteristics] = useState([
+        { key: '', value: '' }
+    ]);
+
+    const [characteristicsRu, setCharacteristicsRu] = useState([
+        { key: '', value: '' }
+    ]);
+
+    const [weightOptions, setWeightOptions] = useState([]);
+
+    const [isGenerating, setIsGenerating] = useState(false);
+    const [isTranslating , setIsTranslating] = useState(false);
+    const { t } = useTranslation();
 
     useEffect(() => {
         if (isEditMode) {
@@ -85,23 +94,24 @@ const AdminProductCreate = () => {
                 subcategoryRu: product.subcategoryRu,
                 manufacturerOfTheProduct: product.manufacturerOfTheProduct,
                 initOfMeasure: product.initOfMeasure,
-                valueOfInitOfMeasure: product.valueOfInitOfMeasure
+                valueOfInitOfMeasure: product.valueOfInitOfMeasure,
+                productType: product.productType || 'SIMPLE',
+                minCustomWeight: product.minCustomWeight || '',
+                groupId: product.groupId || '',
+                variantName: product.variantName || '',
+                variantValue: product.variantValue || ''
             });
 
             if (product.characteristics) {
-                const charsArray = Object.entries(product.characteristics).map(([key, val]) => ({
-                    key: key,
-                    value: val
-                }));
-                setCharacteristics(charsArray.length > 0 ? charsArray : [{ name: '', value: '' }]);
+                setCharacteristics(Object.entries(product.characteristics).map(([key, val]) => ({ key, value: val })));
             }
-
             if (product.characteristicsRu) {
-                const charsArray = Object.entries(product.characteristicsRu).map(([key, val]) => ({
-                    key: key,
-                    value: val
-                }));
-                setCharacteristicsRu(charsArray.length > 0 ? charsArray : [{ name: '', value: '' }]);
+                setCharacteristicsRu(Object.entries(product.characteristicsRu).map(([key, val]) => ({ key, value: val })));
+            }
+            if (product.weightOptions) {
+                setWeightOptions(product.weightOptions.map(opt => ({
+                    weightValue: opt.weightValue, price: opt.price, isDefault: opt.isDefault
+                })));
             }
 
             if (product.images) {
@@ -118,24 +128,12 @@ const AdminProductCreate = () => {
             }
 
         } catch (error) {
-            console.error("Failed to load product", error);
             alert("Не вдалося завантажити товар");
             navigate('/admin-ui/products');
         } finally {
             setFetching(false);
         }
     };
-
-    const [characteristics, setCharacteristics] = useState([
-        { key: '', value: '' }
-    ]);
-
-    const [characteristicsRu, setCharacteristicsRu] = useState([
-        { key: '', value: '' }
-    ]);
-
-    const [isGenerating, setIsGenerating] = useState(false);
-    const [isTranslating , setIsTranslating] = useState(false);
 
     const handleGenerateDescription = async () => {
         if (!formData.name) {
@@ -230,36 +228,76 @@ const AdminProductCreate = () => {
 
     const handleChange = (e) => {
         const { name, value } = e.target;
-        setFormData(prev => ({
-            ...prev,
-            [name]: value
-        }));
+
+        setFormData(prev => {
+            const updatedData = { ...prev, [name]: value };
+
+            if (name === 'productType' && value === 'WEIGHT_BASED') {
+                if (weightOptions.length === 0) {
+                    setWeightOptions([
+                        {
+                            weightValue: 1000,
+                            price: prev.price || 0,
+                            isDefault: true
+                        }
+                    ]);
+                }
+            }
+
+            if (name === 'price' && prev.productType === 'WEIGHT_BASED') {
+                const newPrice = Number(value);
+                setWeightOptions(prevOpts => {
+                    let newOpts = [...prevOpts];
+                    const oneKgIndex = newOpts.findIndex(opt => Number(opt.weightValue) === 1000);
+
+                    if (oneKgIndex !== -1) {
+                        newOpts[oneKgIndex].price = newPrice;
+                    } else {
+                        newOpts.push({
+                            weightValue: 1000,
+                            price: newPrice,
+                            isDefault: newOpts.length === 0
+                        });
+                    }
+                    return newOpts;
+                });
+            }
+
+            return updatedData;
+        });
 
         if (error) setError(null);
     };
 
     const handleCharChange = (isRu, index, field, value) => {
-        const currentChars = isRu ? characteristicsRu : characteristics;
         const setChars = isRu ? setCharacteristicsRu : setCharacteristics;
-
-        const newChars = [...currentChars];
-        newChars[index][field] = value;
-        setChars(newChars);
+        setChars(prev => { const newArr = [...prev]; newArr[index][field] = value; return newArr; });
     };
 
     const addCharacteristic = (isRu) => {
-        const currentChars = isRu ? characteristicsRu : characteristics;
-        const setChars = isRu ? setCharacteristicsRu : setCharacteristics;
-
-        setChars([...currentChars, { key: '', value: '' }]);
+        (isRu ? setCharacteristicsRu : setCharacteristics)(prev => [...prev, { key: '', value: '' }]);
     };
 
     const removeCharacteristic = (isRu, index) => {
-        const currentChars = isRu ? characteristicsRu : characteristics;
-        const setChars = isRu ? setCharacteristicsRu : setCharacteristics;
-
-        setChars(currentChars.filter((_, i) => i !== index));
+        (isRu ? setCharacteristicsRu : setCharacteristics)(prev => prev.filter((_, i) => i !== index));
     };
+
+    const handleWeightChange = (index, field, value) => {
+        setWeightOptions(prev => {
+            const newOpts = [...prev];
+            if (field === 'isDefault' && value === true) {
+                newOpts.forEach(opt => opt.isDefault = false);
+            }
+            newOpts[index][field] = value;
+
+            if (Number(newOpts[index].weightValue) === 1000) {
+                setFormData(currentForm => ({ ...currentForm, price: newOpts[index].price }));
+            }
+            return newOpts;
+        });
+    };
+    const addWeightOption = () => setWeightOptions(prev => [...prev, { weightValue: '', price: '', isDefault: false }]);
+    const removeWeightOption = (index) => setWeightOptions(prev => prev.filter((_, i) => i !== index));
 
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -300,16 +338,22 @@ const AdminProductCreate = () => {
 
             const productPayload = {
                 ...formData,
-                price: parseFloat(formData.price),
+                price: parseFloat(formData.price) || 0,
                 purchasePrice: parseFloat(formData.purchasePrice) || 0,
-                discount: parseFloat(formData.discount) || 0,
+                discount: parseInt(formData.discount) || 0,
                 images: validImages,
                 characteristics: charMap,
                 characteristicsRu: charMapRu,
+                minCustomWeight: formData.productType === 'WEIGHT_BASED' ? parseInt(formData.minCustomWeight) : null,
+                weightOptions: formData.productType === 'WEIGHT_BASED' ? weightOptions.map(w => ({
+                    weightValue: parseInt(w.weightValue), price: parseFloat(w.price), isDefault: w.isDefault
+                })) : null,
+                groupId: formData.productType === 'VARIANT' ? formData.groupId : null,
+                variantName: formData.productType === 'VARIANT' ? formData.variantName : null,
+                variantValue: formData.productType === 'VARIANT' ? formData.variantValue : null,
             };
 
             if (isEditMode) {
-                console.log(productPayload.images)
                 await productService.updateProduct(id, productPayload);
                 toast.success('Товар успішно оновлено!');
             } else {
@@ -341,9 +385,7 @@ const AdminProductCreate = () => {
         window.scrollTo(0, 0);
     };
 
-    if (fetching) {
-        return <Box display="flex" justifyContent="center" mt={10}><CircularProgress /></Box>;
-    }
+    if (fetching) return <Box display="flex" justifyContent="center" mt={10}><CircularProgress /></Box>;
 
     return (
         <Box component="form" onSubmit={handleSubmit} sx={{ pb: 5, gap: 2 }}>
@@ -376,9 +418,18 @@ const AdminProductCreate = () => {
 
                         <Typography variant="h6" sx={{ mb: 2 }}>Загальна інформація</Typography>
 
-                        <Box sx={{ display: 'flex', justifyContent: 'space-between',  mb: 3, gap: 2 }}>
+                        <Grid item xs={12} sm={4} sx={{mb: 3, width: '40%'}}>
+                            <FormControl fullWidth>
+                                <InputLabel>Тип товару</InputLabel>
+                                <Select name="productType" value={formData.productType} label="Тип товару" onChange={handleChange}>
+                                    <MenuItem value="SIMPLE">Звичайний</MenuItem>
+                                    <MenuItem value="WEIGHT_BASED">На вагу (Фасування)</MenuItem>
+                                    <MenuItem value="VARIANT">Варіація (Група)</MenuItem>
+                                </Select>
+                            </FormControl>
+                        </Grid>
 
-                            {/* Ліва частина з текстовим полем (займає 60% ширини) */}
+                        <Box sx={{ display: 'flex', justifyContent: 'space-between',  mb: 3, gap: 2 }}>
                             <Box sx={{ width: '60%' }}>
                                 <TextField
                                     fullWidth
@@ -389,8 +440,6 @@ const AdminProductCreate = () => {
                                     required
                                 />
                             </Box>
-
-                            {/* Права частина з кнопкою (притискається вправо завдяки space-between) */}
                             <Button
                                 variant="outlined"
                                 onClick={translateToRu}
@@ -401,8 +450,8 @@ const AdminProductCreate = () => {
                                     textTransform: 'none',
                                     fontWeight: 600,
                                     borderRadius: 2,
-                                     height: 40, // Робить кнопку такої ж висоти, як TextField
-                                    whiteSpace: 'nowrap', // Забороняє тексту кнопки переноситись на новий рядок
+                                     height: 40,
+                                    whiteSpace: 'nowrap',
                                     '&:hover': {
                                         borderColor: '#1D4ED8',
                                         bgcolor: '#EFF6FF'
@@ -438,9 +487,9 @@ const AdminProductCreate = () => {
                                         label="Категорія"
                                         onChange={handleChange}
                                     >
-                                        {Object.values(CATEGORY_CONFIG).map((cat) => (
+                                        {Object.entries(CATEGORY_CONFIG).map(([slug, cat]) => (
                                             <MenuItem key={cat.enum} value={cat.enum}>
-                                                {cat.label}
+                                                {t(`category.${slug}`, { lng: 'uk' })}
                                             </MenuItem>
                                         ))}
                                     </Select>
@@ -492,6 +541,53 @@ const AdminProductCreate = () => {
                                     </FormControl>
                                 </Grid>
                         </Grid>
+
+                        {formData.productType === 'WEIGHT_BASED' && (
+                            <Box sx={{ p: 2, mb: 3, bgcolor: '#F3F4F6', borderRadius: 2 }}>
+                                <Typography variant="subtitle1" fontWeight={600} mb={2}>Налаштування вагового товару</Typography>
+                                <Grid container spacing={2} mb={2}>
+                                    <Grid item xs={6}>
+                                        <TextField
+                                            fullWidth
+                                            size="medium"
+                                            label={formData.productType === 'WEIGHT_BASED' ? "Базова ціна (за 1 кг)" : "Базова ціна"}
+                                            name="price"
+                                            type="number"
+                                            value={formData.price}
+                                            onChange={handleChange}
+                                            required
+                                            InputProps={{ endAdornment: <Typography variant="caption">₴</Typography> }}
+                                        />
+                                    </Grid>
+                                    <Grid item xs={6}>
+                                        <TextField fullWidth label="Мін. кастомна вага (г)" name="minCustomWeight" type="number" value={formData.minCustomWeight} onChange={handleChange} />
+                                    </Grid>
+                                </Grid>
+                                <Typography variant="subtitle2" mb={1}>Фіксовані фасування:</Typography>
+                                {weightOptions.map((opt, index) => (
+                                    <Box key={index} sx={{ display: 'flex', gap: 1, mb: 1, alignItems: 'center' }}>
+                                        <TextField label="Вага (г)" size="small" type="number" value={opt.weightValue} onChange={(e) => handleWeightChange(index, 'weightValue', e.target.value)} />
+                                        <TextField label="Ціна (₴)" size="small" type="number" value={opt.price} onChange={(e) => handleWeightChange(index, 'price', e.target.value)} />
+                                        <FormControlLabel control={<Checkbox checked={opt.isDefault} onChange={(e) => handleWeightChange(index, 'isDefault', e.target.checked)} />} label="За замовч." />
+                                        <IconButton onClick={() => removeWeightOption(index)} color="error"><DeleteIcon /></IconButton>
+                                    </Box>
+                                ))}
+                                <Button startIcon={<AddIcon />} onClick={addWeightOption} size="small">Додати фасування</Button>
+                            </Box>
+                        )}
+
+                        {formData.productType === 'VARIANT' && (
+                            <Box sx={{ p: 2, mb: 3, bgcolor: '#EFF6FF', borderRadius: 2 }}>
+                                <Typography variant="subtitle1" fontWeight={600} mb={2}>Налаштування варіацій</Typography>
+                                <Grid container spacing={2}>
+                                    <Grid item xs={12}><TextField fullWidth label="Group ID (Спільний для всіх варіантів)" name="groupId" value={formData.groupId} onChange={handleChange} helperText="Наприклад: Цукерки Amanti" /></Grid>
+                                    <Grid item xs={6}><TextField fullWidth label="Назва параметра (Напр: Вага)" name="variantName" value={formData.variantName} onChange={handleChange} /></Grid>
+                                    <Grid item xs={6}><TextField fullWidth label="Значення (Напр: 250г)" name="variantValue" value={formData.variantValue} onChange={handleChange} /></Grid>
+                                </Grid>
+                            </Box>
+                        )}
+
+
                         <Grid item xs={12}>
 
                             <Box sx={{ display: 'flex', justifyContent: 'flex-end', mb: 1 }}>

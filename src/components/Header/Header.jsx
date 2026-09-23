@@ -20,11 +20,16 @@ const Header = () => {
     const [isMenuOpen, setIsMenuOpen] = useState(false);
     const [searchTerm, setSearchTerm] = useState('');
 
+    const { syncCartWithServer } = useCart();
+
     const { t, i18n } = useTranslation();
 
     const toggleLanguage = () => {
         const newLang = i18n.language.startsWith('uk') ? 'ru' : 'uk';
         i18n.changeLanguage(newLang);
+        if (authService.isAuthenticated()) {
+            syncCartWithServer();
+        }
     };
 
     useEffect(() => {
@@ -196,12 +201,12 @@ const Header = () => {
 
                         </div>
 
-                        <div >
+                        <div  className="language-btn">
                             <button
+                                className="icon-cart-btn language-icon"
                                 onClick={toggleLanguage}
-                                style={{ background: 'none', border: 'none', cursor: 'pointer', fontWeight: 'bold', color: '#0E2CA4' }}
                             >
-                                {i18n.language.startsWith('uk') ? 'RU' : 'UA'}
+                                {i18n.language.startsWith('uk') ? 'UA' : 'RU'}
                             </button>
                         </div>
 
@@ -251,14 +256,24 @@ const Header = () => {
                     </div>
 
                     <nav className="mobile-nav-list">
-                        <Link to="/" onClick={closeMenu}>{t('mobile-nav.main')}</Link>
+                        <div className="main-and-lang">
+                            <Link to="/" onClick={closeMenu}>{t('mobile-nav.main')}</Link>
+                            <div  className="language-btn-mobile">
+                                <button
+                                    className="icon-cart-btn language-icon"
+                                    onClick={toggleLanguage}
+                                >
+                                    {i18n.language.startsWith('uk') ? 'UA' : 'RU'}
+                                </button>
+                            </div>
+                        </div>
                         <Link to="/catalog" onClick={closeMenu}>{t('mobile-nav.catalog')}</Link>
 
                         <aside className="mobile-sidebar">
                             <ul className="mobile-sidebar-menu">
                                 <li><Link to="/catalog" onClick={closeMenu}><img className="sidebar-img" src="/img/all_goods.svg" alt="" /><span>{t('category.all')}</span></Link></li>
                                 <li><Link to="/promotions" onClick={closeMenu}><img className="sidebar-img" src="/img/discounts.svg" alt="" /> <span>{t('category.sales')}</span></Link></li>
-                                <li><Link to="/catalog/dried-fruits" onClick={closeMenu}><img className="sidebar-img" src="/img/dried_fruits.svg" alt="" /><span>{t('category.dry-fruit')}</span></Link></li>
+                                <li><Link to="/catalog/dried-fruits" onClick={closeMenu}><img className="sidebar-img" src="/img/dried_fruits.svg" alt="" /><span>{t('category.dried-fruits')}</span></Link></li>
                                 <li><Link to="/catalog/sweets" onClick={closeMenu}><img className="sidebar-img" src="/img/sweets.svg" alt="sweets" /> <span>{t('category.sweets')}</span></Link></li>
                                 <li><Link to="/catalog/candies" onClick={closeMenu}><img className="sidebar-img" src="/img/sweets.svg" alt="candies" /> <span>{t('category.candies')}</span></Link></li>
                                 <li><Link to="/catalog/nuts" onClick={closeMenu}><img className="sidebar-img" src="/img/nuts.svg" alt="nuts" /> <span>{t('category.nuts')}</span></Link></li>
@@ -267,7 +282,7 @@ const Header = () => {
                                 <li><Link to="/catalog/superfoods" onClick={closeMenu}><img className="sidebar-img" src="/img/all_goods.svg" alt="superfoods" /><span>{t('category.superfood')}</span></Link></li>
                                 <li><Link to="/catalog/oils" onClick={closeMenu}><img className="sidebar-img" src="/img/discounts.svg" alt="oils" /><span>{t('category.oils')}</span></Link></li>
                                 <li><Link to="/catalog/preserves" onClick={closeMenu}><img className="sidebar-img" src="/img/all_goods.svg" alt="preserves" /><span>{t('category.preserves')}</span></Link></li>
-                                <li><Link to="/catalog/snacks" onClick={closeMenu}><img className="sidebar-img" src="/img/nuts.svg" alt="snacks" /><span>{t('category.snecks')}</span></Link></li>
+                                <li><Link to="/catalog/snacks" onClick={closeMenu}><img className="sidebar-img" src="/img/nuts.svg" alt="snacks" /><span>{t('category.snacks')}</span></Link></li>
                                 <li><Link to="/catalog/spices" onClick={closeMenu}><img className="sidebar-img" src="/img/dried_fruits.svg" alt="spices" /><span>{t('category.spices')}</span></Link></li>
                             </ul>
                         </aside>

@@ -97,16 +97,65 @@ const ProductCard = ({product, onFavoriteToggle }) => {
 
                 <div className="goods-info">
                     <div className="goods-title-weight">
-                        <Link to={productUrl} className="goods-title">
+                        <Link to={productUrl} className={`goods-title ${product.name.length > 32 ? 'long-title' : ''}`}>
                             {product.name}
                         </Link>
 
-                        <div className="goods-weight">
-                            {product.valueOfInitOfMeasure} {product.initOfMeasure}
-                        </div>
                     </div>
 
                     <div className="goods-vip">
+                        <div className="goods-weight-line">
+
+                            <div className="product-card-variants">
+                                <div className="variant-badges">
+
+                                    <span className="goods-weight-text">
+                                        {product.valueOfInitOfMeasure}{product.initOfMeasure}
+                                    </span>
+
+                                    {/* 2. Показуємо бейджі фасування (якщо є) */}
+                                    {product.productType === 'WEIGHT_BASED' && product.weightOptions?.length > 0 && (
+                                        <>
+                                            {product.weightOptions.slice(0, 3).map(opt => (
+                                                <Link
+                                                    key={opt.weightValue}
+                                                    to={`/products/${product.slug}?weight=${opt.weightValue}`}
+                                                    className="variant-badge clickable"
+                                                >
+                                                    {opt.weightValue >= 1000 ? `${opt.weightValue / 1000} кг` : `${opt.weightValue} г`}
+                                                </Link>
+                                            ))}
+                                            {product.weightOptions.length > 3 && (
+                                                <Link to={`/products/${product.slug}`} className="variant-badge more-badge clickable">
+                                                    +{product.weightOptions.length - 3}
+                                                </Link>
+                                            )}
+                                        </>
+                                    )}
+
+                                    {/* 3. Показуємо бейджі варіацій (якщо є) */}
+                                    {product.productType === 'VARIANT' && product.siblingVariants?.length > 0 && (
+                                        <>
+                                            {product.siblingVariants.slice(0, 3).map(variant => (
+                                                <Link
+                                                    key={variant.productId}
+                                                    to={`/products/${variant.slug}`}
+                                                    className="variant-badge clickable"
+                                                >
+                                                    {variant.variantValue}
+                                                </Link>
+                                            ))}
+                                            {product.siblingVariants.length > 3 && (
+                                                <Link to={`/products/${product.slug}`} className="variant-badge more-badge clickable">
+                                                    +{product.siblingVariants.length - 3}
+                                                </Link>
+                                            )}
+                                        </>
+                                    )}
+
+                                </div>
+                            </div>
+                        </div>
                         <div className="goods-rating">
 
                             {product.rating > 0 ? (

@@ -3,6 +3,7 @@ import { URLS } from '../../constants/urls.js';
 
 import './FeedbackCard.css';
 import {useNavigate} from "react-router-dom";
+import {useTranslation} from "react-i18next";
 
 const image_api = URLS.s3_bucket;
 
@@ -15,6 +16,8 @@ const formatDate = (dateString) => {
 const FeedbackCard = ({ feedback, showActions = false, onDelete }) => {
     const navigate = useNavigate();
     if (!feedback) return null;
+
+    const { t } = useTranslation();
 
     const handleGoToProduct = () => {
         const productSlug = feedback.product?.slug || feedback.productSlug;

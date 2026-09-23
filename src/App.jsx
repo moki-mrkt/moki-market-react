@@ -46,6 +46,7 @@ import {ModalProvider} from "./contexts/ModalContext.jsx";
 import AdminUsers from "./components/admin/User/AdminUsers.jsx";
 import AdminUserInfo from "./components/admin/User/AdminUserInfo.jsx";
 import AdminTools from "./components/admin/User/AdminTools.jsx";
+import ScrollToTop from './contexts/ScrollToTop.jsx';
 
 function App() {
     const location = useLocation();
@@ -53,6 +54,7 @@ function App() {
     return (
         <CartProvider>
             <ModalProvider>
+                <ScrollToTop />
                 <Toaster position="top-right"
                      toastOptions={{
                          className: 'moki-toast',

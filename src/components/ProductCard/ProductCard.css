@@ -141,6 +141,57 @@
   opacity: 0.5;
 }
 
+.product-card-variants {
+    min-height: 24px;
+}
+
+.variant-badges {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 8px;
+}
+
+
+.goods-weight-text {
+    font-size: 14px;
+    color: #6B7280;
+    margin-right: 3px;
+}
+
+.variant-badge {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 2px 10px;
+    font-size: 12px;
+    color: #4B5563;
+    border: 1px solid #EBC64D;
+    border-radius: 16px;
+    white-space: nowrap;
+}
+.variant-badge.more-badge {
+    background-color: #EBC64D;
+    color: #374151;
+}
+
+.variant-badge.clickable {
+    text-decoration: none;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.variant-badge.clickable:hover {
+    background-color: #EBC64D; /* Трохи темніший сірий при наведенні */
+    border-color: #EBC64D;
+    color: #111827;
+}
+
+.variant-badge.more-badge.clickable:hover {
+    background-color: #EBC64D;
+    color: #EBC64D;
+}
+
 .goods-vip {
     margin-top: auto;
     margin-bottom: 5px;
@@ -242,12 +293,12 @@
 
   .goods {
     width: 100%;
-    height: 100%;
+    height: 270px;
     justify-content: space-between;
     min-height: 100%;
     min-width: 140px;
     max-width: 170px;
-    max-height: 270px;
+    max-height: 260px;
     padding: 10px;
     position: relative;
     overflow: hidden;
@@ -299,17 +350,48 @@
       border-radius: 5px;
   }
 
+  .goods-weight-line {
+      margin-top: 2px;
+      margin-bottom: 2px;
+  }
+
  .goods-title-weight {
-     margin-bottom: 5px;
+     margin-bottom: 0;
+ }
+
+ .product-card-variants {
+     min-height: 10px;
+ }
+
+ .variant-badges {
+    gap: 4px;
+ }
+
+ .goods-weight-text {
+    font-size: 10px;
+    margin-right: 2px;
+ }
+
+ .variant-badge {
+    padding: 1px 5px;
+    font-size: 10px;
+    border: 1px solid #EBC64D;
+    border-radius: 16px;
+    white-space: nowrap;
  }
 
   .goods-title {
     font-size: 12px;
     overflow: hidden;
-    height: 35px;
+    height: 40px;
+  }
+
+  .goods-title.long-title {
+      font-size: 11px;
   }
 
   .goods-price {
+    margin-top: 0;
     font-size: 14px;
   }
 
@@ -335,6 +417,7 @@
     font-size: 12px;
     height: 20px;
     border-radius: 5px;
+    margin-top: 2px;
   }
 
   .goods-stars {
@@ -345,4 +428,14 @@
     height: 10px;
     width: 10px;
   }
+}
+
+@media (max-width: 365px) {
+    .variant-badge {
+        padding: 1px 3px;
+        font-size: 9px;
+        border: 1px solid #EBC64D;
+        border-radius: 16px;
+        white-space: nowrap;
+    }
 }

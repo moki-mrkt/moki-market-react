@@ -188,6 +188,111 @@
     font-size: 24px;
 }
 
+.weight-options-container {
+    display: flex;
+    gap: 12px;
+    align-items: center;
+    flex-wrap: wrap;
+}
+
+.weight-option-btn {
+    padding: 8px 16px;
+    border: 2px solid #EBC64D;
+    background: transparent;
+    color: #0E2CA4;
+    border-radius: 20px;
+    font-size: 18px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease-in-out;
+}
+
+.weight-option-btn.active {
+    background: #F0D051;
+    border-color: #F0D051;
+    color: #061A6A;
+}
+
+.weight-option-btn:hover:not(.active) {
+    background: #FEF9E6;
+}
+
+.weight-section {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.custom-weight-container {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+.custom-weight-label {
+    font-size: 24px;
+    color: #0E2CA4;
+    font-weight: 500;
+}
+
+.custom-weight-input-wrapper {
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+
+.custom-weight-input {
+    width: 140px;
+    height: 42px;
+    border: 2px solid #EBC64D;
+    border-radius: 20px;
+    padding: 0 35px 0 15px;
+    font-size: 18px;
+    color: #0E2CA4;
+    font-weight: 600;
+    outline: none;
+    background: transparent;
+    transition: border-color 0.2s;
+}
+
+.custom-weight-input::placeholder {
+    color: #AEBED2;
+    font-size: 14px;
+    font-weight: 400;
+}
+
+.custom-weight-unit-select {
+    position: absolute;
+    right: 10px;
+    border: none;
+    background: transparent;
+    color: #0E2CA4;
+    font-weight: 600;
+    font-size: 18px;
+    outline: none;
+    cursor: pointer;
+    padding-right: 5px;
+}
+
+.custom-weight-unit-select option {
+    font-size: 16px;
+    color: #0E2CA4;
+}
+
+.custom-weight-input {
+    width: 150px;
+    height: 42px;
+    border: 2px solid #EBC64D;
+    border-radius: 20px;
+    padding: 0 45px 0 15px; /* Збільшено правий padding */
+    font-size: 18px;
+    color: #0E2CA4;
+    font-weight: 600;
+    outline: none;
+    background: transparent;
+    transition: border-color 0.2s;
+}
+
 .availability {
     width: 304px;
     color: #29a10e;
@@ -482,6 +587,34 @@
         justify-content: space-between;
         gap: 0;
         margin: 10px 0;
+    }
+
+    .weight-options-container {
+        margin-top: 5px;
+    }
+
+    .weight-option-btn {
+        padding: 6px 12px;
+        font-size: 14px;
+    }
+
+    .custom-weight-container {
+        flex-direction: row;
+        align-items: center;
+        justify-content: space-between;
+    }
+    .custom-weight-input {
+        width: 130px;
+        height: 36px;
+        font-size: 16px;
+    }
+
+    .custom-weight-unit-select {
+        font-size: 14px;
+        padding-right: 0;
+    }
+    .custom-weight-label {
+        font-size: 20px;
     }
 
     .availability {

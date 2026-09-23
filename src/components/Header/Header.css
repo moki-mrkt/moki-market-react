@@ -147,7 +147,20 @@
     cursor: pointer;
 
     padding: 0;
-    /*margin-right: 5px;*/
+}
+
+.language-btn {
+    width: 44px;
+    height: 44px;
+    background: #FCF9EC;
+    border: 2px solid #EBC64D;
+    border-radius: 50%;
+    cursor: pointer;
+    color: #0E2CA4 !important;
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }
 
 .user-actions {
@@ -158,6 +171,11 @@
   display: flex;
   gap: 20px;
   align-items: center;
+}
+
+.language-icon {
+    color: #0E2CA4;
+    font-weight: bold;
 }
 
 .user-actions-icon {
@@ -352,35 +370,56 @@
    }
 
   .user-actions {
-    order: 4;
+    order: 5;
     width: auto;
     gap: 10px;
   }
 
-    .cart-badge {
-        position: absolute;
-        top: -8px;
-        right: -8px;
+  .cart-badge {
+    position: absolute;
+    top: -8px;
+    right: -8px;
+    background-color: #0E2CA4;
+    color: white;
+    font-size: 10px;
+    font-weight: 600;
+    min-width: 15px;
+    height: 15px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    pointer-events: none;
+  }
 
-        background-color: #0E2CA4;
-        color: white;
+  .main-and-lang {
+      display: flex;
+      justify-content: space-between;
+  }
 
-        font-size: 10px;
-        font-weight: 600;
+  .language-btn-mobile {
+      background: #FCF9EC;
+      border: 1px solid #EBC64D;
+      border-radius: 50%;
+      cursor: pointer;
+      color: #0E2CA4 !important;
 
-        min-width: 15px;
-        height: 15px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+  }
 
-        border-radius: 50%;
+  .language-btn {
+      display: none;
+  }
 
-        display: flex;
-        align-items: center;
-        justify-content: center;
+  .language-icon {
+      color: #0E2CA4;
+      font-size: 10px;
+  }
 
-        pointer-events: none;
-    }
 
-  .user-actions-icon {
+    .user-actions-icon {
     width: 28px;
     height: 28px;
   }

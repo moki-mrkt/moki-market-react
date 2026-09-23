@@ -10,7 +10,7 @@ const Catalog = () => {
     const { t } = useTranslation();
 
     const categories = [
-        { id: 1, title: t('category.dry-fruit'), img: '/img/categories/dry_fruits.webp', link: '/catalog/dried-fruits' },
+        { id: 1, title: t('category.dried-fruits'), img: '/img/categories/dry_fruits.webp', link: '/catalog/dried-fruits' },
         { id: 2, title: t('category.sweets'), img: '/img/categories/sweets.webp', link: '/catalog/sweets' },
         { id: 3, title: t('category.candies'), img: '/img/categories/candies.webp', link: '/catalog/candies' },
         { id: 4, title: t('category.nuts'), img: '/img/categories/nuts.webp', link: '/catalog/nuts' },
@@ -19,7 +19,7 @@ const Catalog = () => {
         { id: 7, title: t('category.superfoods'), img: '/img/categories/superfood.webp', link: '/catalog/superfoods' },
         { id: 8, title: t('category.oils'), img: '/img/categories/oils.webp', link: '/catalog/oils' },
         { id: 9, title: t('category.preserves'), img: '/img/categories/preserves.webp', link: '/catalog/preserves' },
-        { id: 10, title: t('category.snecks'), img: '/img/categories/snecks.webp', link: '/catalog/snacks' },
+        { id: 10, title: t('category.snacks'), img: '/img/categories/snecks.webp', link: '/catalog/snacks' },
         { id: 11, title: t('category.spices'), img: '/img/categories/spices.webp', link: '/catalog/spices' },
     ];
 

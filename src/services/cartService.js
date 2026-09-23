@@ -11,8 +11,10 @@ export const cartService = {
         return response.data;
     },
 
-    addToCart: async (productId, quantity) => {
-        const response = await privateApi.post(`/cart/items?productId=${productId}&quantity=${quantity}`);
+    addToCart: async (productId, quantity, weight = null) => {
+        let url = `/cart/items?productId=${productId}&quantity=${quantity}`;
+        if (weight) url += `&weight=${weight}`;
+        const response = await privateApi.post(url);
         return response.data;
     },
 

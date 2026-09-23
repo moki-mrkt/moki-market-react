@@ -17,7 +17,7 @@ const PageGoods = ({ initialFilters = {} }) => {
     const [searchParams] = useSearchParams();
     const searchQuery = searchParams.get('query');
 
-    const { t } = useTranslation(); // Ініціалізація хука
+    const { t, i18n } = useTranslation();
 
     const isLoadMore = useRef(false);
 
@@ -121,7 +121,7 @@ const PageGoods = ({ initialFilters = {} }) => {
             fetchProducts();
         }
 
-    }, [searchQuery, categorySlug, currentPage, sortOrder, appliedFilters]);
+    }, [searchQuery, categorySlug, currentPage, sortOrder, appliedFilters, i18n.language]);
 
     useEffect(() => {
         setCurrentPage(0);
@@ -137,7 +137,7 @@ const PageGoods = ({ initialFilters = {} }) => {
         setAvailableSubcategories([]);
         isLoadMore.current = false;
         window.scrollTo(0, 0);
-    }, [categorySlug, initialFilters.hasDiscount]);
+    }, [categorySlug, initialFilters.hasDiscount, i18n.language]);
 
     const handleRangeChange = (e) => {
         const { id, value } = e.target;
@@ -220,7 +220,16 @@ const PageGoods = ({ initialFilters = {} }) => {
         return Math.max(0, Math.min(100, percent));
     };
 
-    const seoContent = categorySlug ? (SEO_TEXTS[categorySlug] || SEO_TEXTS['default']) : SEO_TEXTS['default'];
+    const slug = categorySlug || 'default';
+    const seoTitle = t(`seo.${slug}.title`);
+    const seoIntro = t(`seo.${slug}.intro`, { returnObjects: true });
+    const seoFeaturesTitle = t(`seo.${slug}.featuresTitle`);
+    const seoFeatures = t(`seo.${slug}.features`, { returnObjects: true });
+    const seoTipsTitle = t(`seo.${slug}.tipsTitle`);
+    const seoTips = t(`seo.${slug}.tips`, { returnObjects: true });
+    const seoWhyUsTitle = t(`seo.${slug}.whyUsTitle`);
+    const seoWhyUs = t(`seo.${slug}.whyUs`, { returnObjects: true });
+    const seoFooter = t(`seo.${slug}.footer`);
 
     const siteUrl = "https://moki.com.ua";
     const currentUrl = categorySlug
@@ -233,15 +242,15 @@ const PageGoods = ({ initialFilters = {} }) => {
         <main className="hero-section">
 
             <Helmet>
-                <title>{searchQuery ? t('page-products.search-title', { query: searchQuery }) : t('page-products.seo-buy', { title: seoContent.title })}</title>
-                <meta name="description" content={seoContent.intro?.[0]?.substring(0, 160) || `${seoContent.title} в Moki Market...`} />
+                <title>{searchQuery ? t('page-products.search-title', { query: searchQuery }) : t('page-products.seo-buy', { title: seoTitle })}</title>
+                <meta name="description" content={Array.isArray(seoIntro) && seoIntro[0] ? seoIntro[0].substring(0, 160) : `${seoTitle} в Moki Market...`} />
 
                 {!searchQuery && <link rel="canonical" href={currentUrl} />}
 
                 {shouldNoIndex && <meta name="robots" content="noindex, follow" />}
 
                 <meta property="og:type" content="website" />
-                <meta property="og:title" content={seoContent.title} />
+                <meta property="og:title" content={seoTitle} />
                 <meta property="og:url" content={window.location.href} />
                 <meta property="og:image" content={`${siteUrl}/img/categories/${categorySlug || 'default'}.webp`} />
 
@@ -250,7 +259,7 @@ const PageGoods = ({ initialFilters = {} }) => {
                         {JSON.stringify({
                             "@context": "https://schema.org",
                             "@type": "ItemList",
-                            "name": seoContent.title,
+                            "name": seoTitle,
                             "numberOfItems": products.length,
                             "itemListElement": products.map((product, index) => ({
                                 "@type": "ListItem",
@@ -493,18 +502,18 @@ const PageGoods = ({ initialFilters = {} }) => {
                 </div>
 
                 <section className="category-description">
-                    <h2 className="seo-title">{seoContent.title}</h2>
+                    <h2 className="seo-title">{seoTitle}</h2>
 
                     <div className="seo-content">
-                        {seoContent.intro?.map((paragraph, index) => (
+                        {Array.isArray(seoIntro) && seoIntro.map((paragraph, index) => (
                             <p key={`intro-${index}`}>{paragraph}</p>
                         ))}
 
-                        {seoContent.features?.length > 0 && (
+                        {Array.isArray(seoFeatures) && seoFeatures.length > 0 && (
                             <>
-                                <h3>{seoContent.featuresTitle || t('page-products.features')}</h3>
+                                <h3>{seoFeaturesTitle || t('page-products.features')}</h3>
                                 <ul>
-                                    {seoContent.features.map((item, index) => (
+                                    {seoFeatures.map((item, index) => (
                                         <li key={`feature-${index}`}>
                                             <strong>{item.label}</strong> — {item.text}
                                         </li>
@@ -513,33 +522,33 @@ const PageGoods = ({ initialFilters = {} }) => {
                             </>
                         )}
 
-                        {seoContent.tips?.length > 0 && (
+                        {Array.isArray(seoTips) && seoTips.length > 0 && (
                             <>
-                                <h3>{seoContent.tipsTitle || t('page-products.tips')}</h3>
+                                <h3>{seoTipsTitle || t('page-products.tips')}</h3>
                                 <ol>
-                                    {seoContent.tips.map((tip, index) => (
+                                    {seoTips.map((tip, index) => (
                                         <li key={`tip-${index}`}>{tip}</li>
                                     ))}
                                 </ol>
                             </>
                         )}
 
-                        {seoContent.whyUs?.length > 0 && (
+                        {Array.isArray(seoWhyUs) && seoWhyUs.length > 0 && (
                             <>
-                                <h3>{seoContent.whyUsTitle || t('page-products.why-us', { title: seoContent.title.toLowerCase() })}</h3>
+                                <h3>{seoWhyUsTitle || t('page-products.why-us', { title: seoTitle.toLowerCase() })}</h3>
                                 <ul>
-                                    {seoContent.whyUs.map((reason, index) => (
+                                    {seoWhyUs.map((reason, index) => (
                                         <li key={`reason-${index}`}>{reason}</li>
                                     ))}
                                 </ul>
                             </>
                         )}
 
-                        {seoContent.footer ? (
-                            <p className="seo-footer-text">{seoContent.footer}</p>
+                        {seoFooter ? (
+                            <p className="seo-footer-text">{seoFooter}</p>
                         ) : (
                             <p className="seo-footer-text">
-                                {t('page-products.seo-footer', { title: seoContent.title.toLowerCase() })}
+                                {t('page-products.seo-footer', { title: seoTitle.toLowerCase() })}
                             </p>
                         )}
                     </div>

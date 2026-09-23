@@ -22,20 +22,32 @@ export const CartProvider = ({ children }) => {
         price: dtoItem.currentPrice,
         priceWithoutDiscount: dtoItem.productPrice,
         quantity: dtoItem.quantity,
-        itemTotal: dtoItem.totalPrice
+        itemTotal: dtoItem.totalPrice,
+        weight: dtoItem.weight
     });
 
-    const mapProductToItem = (product, qty) => {
-        const price = product.priceWithDiscount || product.price;
+    const mapProductToItem = (product, qty, weight) => {
+        let price = product.priceWithDiscount || product.price;
+        let priceWithoutDiscount = product.price;
+
+        if (product.productType === 'WEIGHT_BASED' && weight) {
+            priceWithoutDiscount = (weight / 1000) * product.price;
+            price = product.discount > 0
+                ? priceWithoutDiscount - (priceWithoutDiscount * product.discount / 100)
+                : priceWithoutDiscount;
+        }
+
         const image = product.images && product.images.length > 0 ? product.images[0].imageUrl : '/img/icon.png';
+
         return {
             id: product.id,
             name: product.name || product.productName,
             image: image,
             price: price,
-            priceWithoutDiscount: product.price,
+            priceWithoutDiscount: priceWithoutDiscount,
             quantity: qty,
-            itemTotal: price * qty
+            itemTotal: price * qty,
+            weight: weight
         };
     };
 
@@ -70,13 +82,15 @@ export const CartProvider = ({ children }) => {
         }
     };
 
-    const addToCart = async (product, quantity = 1, setCartOpen = true) => {
-        const newItem = mapProductToItem(product, quantity);
+    const addToCart = async (product, quantity = 1,weight = null, setCartOpen = true) => {
+        const cartItemId = weight ? `${product.id}_${weight}` : product.id;
+        const newItem = mapProductToItem(product, quantity, weight);
+        newItem.cartItemId = cartItemId;
         setCartItems(prev => {
-            const existing = prev.find(item => item.id === newItem.id);
+            const existing = prev.find(item => item.cartItemId === cartItemId || item.id === product.id && item.weight === weight);
             if (existing) {
                 return prev.map(item =>
-                    item.id === newItem.id
+                    (item.cartItemId === cartItemId || (item.id === product.id && item.weight === weight))
                         ? { ...item, quantity: item.quantity + quantity, itemTotal: item.price * (item.quantity + quantity) }
                         : item
                 );
@@ -89,7 +103,8 @@ export const CartProvider = ({ children }) => {
         if (authService.isAuthenticated()) {
             try {
                 setServerTotal(null);
-                const updatedCartDto = await cartService.addToCart(product.id, quantity);
+
+                const updatedCartDto = await cartService.addToCart(product.id, quantity, weight);
 
                 setCartItems(updatedCartDto.items.map(mapDtoToItem));
                 setServerTotal(updatedCartDto.totalCartPrice);

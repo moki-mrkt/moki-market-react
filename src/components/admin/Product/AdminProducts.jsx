@@ -29,7 +29,6 @@ const AdminProducts = () => {
         try {
             const response = await productService.getAllProducts(paginationModel.page, paginationModel.pageSize, query, null);
 
-            console.log(response)
             setRows(response.content || []);
             setRowCount(response.page.totalElements || 0);
 

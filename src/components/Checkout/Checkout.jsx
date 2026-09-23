@@ -195,7 +195,8 @@ const Checkout = () => {
 
             cartItems: cartItems.map(item => ({
                 productId: item.id,
-                quantity: item.quantity
+                quantity: item.quantity,
+                weight: item.weight || null
             })),
 
             addressDTO: {
@@ -512,7 +513,7 @@ const Checkout = () => {
                                                         >+</button>
                                                     </div>
                                                     <div className="checkout-item-price checkout-action-mobile">
-                                                        {(itemPrice * itemQty).toFixed(0)} {t('checkout.price-currency')}
+                                                        {(itemPrice * itemQty).toFixed(2)} {t('checkout.price-currency')}
                                                     </div>
                                                 </div>
 
@@ -532,7 +533,11 @@ const Checkout = () => {
                                                     </span>
                                                 )}
                                                 <span className="checkout-current-price">
-                                                    {item.price.toFixed(2)}₴ {t('checkout.price-per-unit')}
+                                                    {item.price.toFixed(2)}₴ {
+                                                        item.weight
+                                                            ? (item.weight >= 1000 ? `за ${item.weight / 1000} кг` : `за ${item.weight} г`)
+                                                            : t('checkout.price-per-unit')
+                                                    }
                                                 </span>
                                             </div>
                                         </div>
@@ -541,11 +546,11 @@ const Checkout = () => {
                                             <div style={{textAlign: 'right'}}>
                                                 {itemDiscount > 0 && (
                                                     <span className="checkout-old-price" style={{ textDecoration: 'line-through', color: '#999', fontSize: '12px', display: 'block' }}>
-                                                        {(itemPrice * itemQty).toFixed(0)} {t('checkout.price-currency')}
+                                                        {(itemPrice * itemQty).toFixed(2)} {t('checkout.price-currency')}
                                                     </span>
                                                 )}
                                                 <span className="checkout-item-price">
-                                                    {(priceWithDiscount * itemQty).toFixed(0)} {t('checkout.price-currency')}
+                                                    {(priceWithDiscount * itemQty).toFixed(2)} {t('checkout.price-currency')}
                                                 </span>
                                             </div>
                                             <button
@@ -568,19 +573,19 @@ const Checkout = () => {
                             </div>
                             <div className="checkout-total-row checkout-small-row">
                                 <span>{t('checkout.total-items', { count: cartItems.length })}</span>
-                                <span className="checkout-total-amount">{originalTotal.toFixed(0)} {t('checkout.price-currency')}</span>
+                                <span className="checkout-total-amount">{originalTotal.toFixed(2)} {t('checkout.price-currency')}</span>
                             </div>
 
                             {discountAmount > 0 && (
                                 <div className="checkout-total-row checkout-discount checkout-small-row">
                                     <span>{t('checkout.total-discount')}</span>
-                                    <span className="checkout-total-discount">-{discountAmount.toFixed(0)} {t('checkout.price-currency')}</span>
+                                    <span className="checkout-total-discount">-{discountAmount.toFixed(2)} {t('checkout.price-currency')}</span>
                                 </div>
                             )}
 
                             <div className="checkout-total-row checkout-final-total">
                                 <span>{t('checkout.total-to-pay')}</span>
-                                <span className="checkout-total-pay">{finalTotal.toFixed(0)} {t('checkout.price-currency')}</span>
+                                <span className="checkout-total-pay">{finalTotal.toFixed(2)} {t('checkout.price-currency')}</span>
                             </div>
                         </div>
                     </aside>

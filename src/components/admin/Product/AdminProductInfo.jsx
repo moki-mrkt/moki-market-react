@@ -2,7 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import {
     Box, Paper, Typography, Grid, Button, Chip,
-    Divider, CircularProgress, IconButton, Stack
+    Divider, CircularProgress, IconButton, Stack,
+    Table, TableHead, TableCell, TableBody, TableRow
 } from '@mui/material';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import EditIcon from '@mui/icons-material/Edit';
@@ -23,10 +24,8 @@ const AdminProductInfo = () => {
     const loadProduct = async () => {
         try {
             const data = await productService.getByIdForAdmin(id);
-            console.log(data);
             setProduct(data);
         } catch (error) {
-            console.error("Failed to load product", error);
             alert("Не вдалося завантажити інформацію про товар");
             navigate('/admin-ui/products');
         } finally {
@@ -34,10 +33,7 @@ const AdminProductInfo = () => {
         }
     };
 
-    if (loading) {
-        return <Box display="flex" justifyContent="center" mt={10}><CircularProgress /></Box>;
-    }
-
+    if (loading) return <Box display="flex" justifyContent="center" mt={10}><CircularProgress /></Box>;
     if (!product) return null;
 
     const getStatusChip = (status) => {
@@ -62,6 +58,16 @@ const AdminProductInfo = () => {
         );
     };
 
+    const getTypeChip = (type) => {
+        const typeMap = {
+            'SIMPLE': { label: 'Звичайний', bg: '#E0E7FF', text: '#3730A3' },
+            'WEIGHT_BASED': { label: 'На вагу', bg: '#FEF08A', text: '#854D0E' },
+            'VARIANT': { label: 'Варіація', bg: '#FCE7F3', text: '#9D174D' }
+        };
+        const t = typeMap[type] || typeMap['SIMPLE'];
+        return <Chip label={t.label} size="small" sx={{ bgcolor: t.bg, color: t.text, fontWeight: 600 }} />;
+    }
+
     const getCategoryLabel = (catEnum) => {
         const cat = Object.values(CATEGORY_CONFIG || {}).find(c => c.enum === catEnum);
         return cat ? cat.label : catEnum;
@@ -74,10 +80,10 @@ const AdminProductInfo = () => {
                 <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
                     <IconButton onClick={() => navigate('/admin-ui/products')} sx={{ border: '1px solid #E5E7EB', borderRadius: 2 }}>
                         <ArrowBackIcon />
-                    </IconButton>
+                        </IconButton>
                     <Box>
                         <Typography variant="h5" sx={{ fontWeight: 700, color: '#111827' }}>
-                            {product.name}
+                            {product.name} {getTypeChip(product.productType)}
                         </Typography>
                         <Typography variant="body2" color="text.secondary">
                             ID: {product.id}
@@ -127,6 +133,39 @@ const AdminProductInfo = () => {
                                 <Typography variant="body1">{product.salesCount}</Typography>
                             </Grid>
                         </Grid>
+
+                        {product.productType === 'WEIGHT_BASED' && (
+                            <Box sx={{ mt: 3, p: 2, bgcolor: '#F9FAFB', borderRadius: 2 }}>
+                                <Typography variant="subtitle2" mb={1} color="text.secondary">Опції ваги та фасування</Typography>
+                                <Grid container spacing={2} mb={2}>
+                                    <Grid item xs={6}><Typography variant="body2">Мін. кастомна вага: <b>{product.minCustomWeight} г</b></Typography></Grid>
+                                </Grid>
+                                {product.weightOptions?.length > 0 && (
+                                    <Table size="small">
+                                        <TableHead><TableRow><TableCell>Вага (г)</TableCell><TableCell>Ціна (₴)</TableCell><TableCell>Дефолт</TableCell></TableRow></TableHead>
+                                        <TableBody>
+                                            {product.weightOptions.map(opt => (
+                                                <TableRow key={opt.id}>
+                                                    <TableCell>{opt.weightValue}</TableCell><TableCell>{opt.price}</TableCell>
+                                                    <TableCell>{opt.isDefault ? 'Так' : 'Ні'}</TableCell>
+                                                </TableRow>
+                                            ))}
+                                        </TableBody>
+                                    </Table>
+                                )}
+                            </Box>
+                        )}
+
+                        {product.productType === 'VARIANT' && (
+                            <Box sx={{ mt: 3, p: 2, bgcolor: '#F9FAFB', borderRadius: 2 }}>
+                                <Typography variant="subtitle2" mb={1} color="text.secondary">Інформація про варіацію</Typography>
+                                <Grid container spacing={2}>
+                                    <Grid item xs={4}><Typography variant="body2">Група (Group ID): <b>{product.groupId}</b></Typography></Grid>
+                                    <Grid item xs={4}><Typography variant="body2">Параметр: <b>{product.variantName}</b></Typography></Grid>
+                                    <Grid item xs={4}><Typography variant="body2">Значення: <b>{product.variantValue}</b></Typography></Grid>
+                                </Grid>
+                            </Box>
+                        )}
 
                         <Divider sx={{ my: 2 }} />
 

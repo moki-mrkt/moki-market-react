@@ -124,10 +124,16 @@ const CartDrawer = ({ isOpen }) => {
                                     <div className="price-per-unit">
                                         { item.priceWithoutDiscount !== item.price && (
                                             <span className="item-price-without-discount">
-                                                     {item.priceWithoutDiscount}₴
+                                                     {item.priceWithoutDiscount.toFixed(2)}₴
                                            </span>
                                         )}
-                                        <span className="item-current-price">{item.price.toFixed(2)}₴ за шт.</span>
+                                        <span className="item-current-price">
+                                            {item.price.toFixed(2)}₴ за {
+                                            item.weight
+                                                ? (item.weight >= 1000 ? `${item.weight / 1000} кг` : `${item.weight} г`)
+                                                : 'шт.'
+                                        }
+                                        </span>
                                     </div>
                                 </div>
 
