@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from 'react';
-import {Link, useNavigate} from 'react-router-dom';
+import {Link, useNavigate, useSearchParams} from 'react-router-dom';
 import { DataGrid } from '@mui/x-data-grid';
 import ClearIcon from '@mui/icons-material/Clear';
 import { Box, Typography, Button, IconButton, Paper, TextField, InputAdornment, useTheme, useMediaQuery } from '@mui/material';
@@ -15,13 +15,20 @@ const AdminProducts = () => {
     const theme = useTheme();
     const isMobile = useMediaQuery(theme.breakpoints.down('md'));
 
+    const [searchParams, setSearchParams] = useSearchParams();
+
+    const initialPage = parseInt(searchParams.get('page') || '0', 10);
+    const initialSize = parseInt(searchParams.get('size') || '10', 10);
+    const initialSearch = searchParams.get('search') || '';
+
     const [rows, setRows] = useState([]);
     const [loading, setLoading] = useState(false);
     const [rowCount, setRowCount] = useState(0);
-    const [searchTerm, setSearchTerm] = useState('');
+    const [searchTerm, setSearchTerm] = useState(initialSearch);
 
     const [paginationModel, setPaginationModel] = useState({
-        page: 0, pageSize: 10,
+        page: initialPage,
+        pageSize: initialSize,
     });
 
     const loadProducts = async (query = searchTerm) => {
@@ -40,13 +47,34 @@ const AdminProducts = () => {
     };
 
     useEffect(() => {
-        loadProducts();
+        loadProducts(searchTerm, paginationModel);
     }, [paginationModel]);
+
+    const handlePaginationChange = (newModel) => {
+        setPaginationModel(newModel);
+
+        searchParams.set('page', newModel.page);
+        searchParams.set('size', newModel.pageSize);
+        if (searchTerm) {
+            searchParams.set('search', searchTerm);
+        }
+        setSearchParams(searchParams);
+    };
 
 
     const handleSearchSubmit = () => {
-        setPaginationModel(prev => ({ ...prev, page: 0 }));
-        loadProducts(searchTerm);
+        const newPagination = { ...paginationModel, page: 0 };
+        setPaginationModel(newPagination);
+
+        searchParams.set('page', '0');
+        if (searchTerm) {
+            searchParams.set('search', searchTerm);
+        } else {
+            searchParams.delete('search');
+        }
+        setSearchParams(searchParams);
+
+        loadProducts(searchTerm, newPagination);
     };
 
     const handleKeyDown = (e) => {
@@ -57,8 +85,14 @@ const AdminProducts = () => {
 
     const handleClearSearch = () => {
         setSearchTerm('');
-        setPaginationModel(prev => ({ ...prev, page: 0 }));
-        loadProducts('');
+        const newPagination = { ...paginationModel, page: 0 };
+        setPaginationModel(newPagination);
+
+        searchParams.delete('search');
+        searchParams.set('page', '0');
+        setSearchParams(searchParams);
+
+        loadProducts('', newPagination);
     };
 
     const handleEdit = (id) => {
@@ -260,16 +294,16 @@ const AdminProducts = () => {
                     />
                 </Box>
 
-                <Box sx={{ height: 400, width: '100%' }}>
+                <Box sx={{  width: '100%' }}>
                     <DataGrid
+                        autoHeight
                         rows={rows}
                         columns={columns}
-
                         loading={loading}
                         rowCount={rowCount}
                         paginationMode="server"
                         paginationModel={paginationModel}
-                        onPaginationModelChange={setPaginationModel}
+                        onPaginationModelChange={handlePaginationChange}
                         pageSizeOptions={[5, 10, 25]}
 
                         disableRowSelectionOnClick
