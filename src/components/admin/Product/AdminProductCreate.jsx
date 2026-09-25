@@ -426,7 +426,7 @@ const AdminProductCreate = () => {
                         <Grid item xs={12} sm={4} sx={{mb: 3, width: '40%'}}>
                             <FormControl fullWidth>
                                 <InputLabel>Тип товару</InputLabel>
-                                <Select name="productType" value={formData.productType} label="Тип товару" onChange={handleChange} variant={}>
+                                <Select name="productType" value={formData.productType} label="Тип товару" onChange={handleChange}>
                                     <MenuItem value="SIMPLE">Звичайний</MenuItem>
                                     <MenuItem value="WEIGHT_BASED">На вагу (Фасування)</MenuItem>
                                     <MenuItem value="VARIANT">Варіація (Група)</MenuItem>
