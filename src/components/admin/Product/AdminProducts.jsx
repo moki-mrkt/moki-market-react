@@ -16,6 +16,7 @@ const AdminProducts = () => {
     const isMobile = useMediaQuery(theme.breakpoints.down('md'));
 
     const [searchParams, setSearchParams] = useSearchParams();
+    const [isInitialLoad, setIsInitialLoad] = useState(true);
 
     const initialPage = parseInt(searchParams.get('page') || '0', 10);
     const initialSize = parseInt(searchParams.get('size') || '10', 10);
@@ -37,6 +38,7 @@ const AdminProducts = () => {
             const response = await productService.getAllProducts(model.page, model.pageSize, query, null);
             setRows(response.content || []);
             setRowCount(response.page.totalElements || 0);
+            setIsInitialLoad(false); // <--- Додано
         } catch (error) {
             console.error("Помилка при завантаженні товарів:", error);
         } finally {
@@ -49,8 +51,12 @@ const AdminProducts = () => {
     }, [paginationModel]);
 
     const handlePaginationChange = (newModel) => {
-        setPaginationModel(newModel);
+        // Блокуємо скидання на 0 сторінку під час першого завантаження
+        if (isInitialLoad && newModel.page === 0 && paginationModel.page > 0) {
+            return;
+        }
 
+        setPaginationModel(newModel);
         searchParams.set('page', newModel.page);
         searchParams.set('size', newModel.pageSize);
         if (searchTerm) {
@@ -195,7 +201,9 @@ const AdminProducts = () => {
                 <Box sx={{ display: 'flex', gap: 1, justifyContent: 'center', alignItems: 'center', width: '100%', height: '100%' }}>
                     <IconButton
                         size="small"
-                        onClick={() => navigate(`/admin-ui/products/view/${params.row.id}`)}
+                        onClick={() => navigate(`/admin-ui/products/view/${params.row.id}`, {
+                            state: { from: `/admin-ui/products?${searchParams.toString()}` }
+                        })}
                         sx={{ border: '1px solid #E5E7EB', borderRadius: 1, color: '#4B5563' }}
                     >
                         <VisibilityIcon fontSize="small" />

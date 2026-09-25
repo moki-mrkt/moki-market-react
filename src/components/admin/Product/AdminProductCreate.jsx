@@ -396,7 +396,7 @@ const AdminProductCreate = () => {
         <Box component="form" onSubmit={handleSubmit} sx={{ pb: 5, gap: 2 }}>
 
             <Box sx={{ display: 'flex', alignItems: 'center', mb: 3, gap: 2 }}>
-                <IconButton onClick={() => navigate('/admin-ui/products')}>
+                <IconButton onClick={() => navigate(location.state?.from || '/admin-ui/products')}>
                     <ArrowBackIcon />
                 </IconButton>
                 <Typography variant="h5" sx={{ fontWeight: 700 }}>

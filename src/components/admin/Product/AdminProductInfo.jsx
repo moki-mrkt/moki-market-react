@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
+import { useParams, useNavigate, useLocation } from 'react-router-dom';
 import {
     Box, Paper, Typography, Grid, Button, Chip,
     Divider, CircularProgress, IconButton, Stack,
@@ -13,6 +13,7 @@ import { CATEGORY_CONFIG } from '../../../constants/categories.js';
 const AdminProductInfo = () => {
     const { id } = useParams();
     const navigate = useNavigate();
+    const location = useLocation();
 
     const [product, setProduct] = useState(null);
     const [loading, setLoading] = useState(true);
@@ -78,8 +79,7 @@ const AdminProductInfo = () => {
 
             <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', mb: 3 }}>
                 <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
-                    <IconButton onClick={() => navigate('/admin-ui/products')} sx={{ border: '1px solid #E5E7EB', borderRadius: 2 }}>
-                        <ArrowBackIcon />
+                    <IconButton onClick={() => navigate(location.state?.from || '/admin-ui/products')} sx={{ border: '1px solid #E5E7EB', borderRadius: 2 }}>                        <ArrowBackIcon />
                         </IconButton>
                     <Box>
                         <Typography variant="h5" sx={{ fontWeight: 700, color: '#111827' }}>
@@ -93,7 +93,7 @@ const AdminProductInfo = () => {
                 <Button
                     variant="contained"
                     startIcon={<EditIcon />}
-                    onClick={() => navigate(`/admin-ui/products/edit/${id}`)}
+                    onClick={() => navigate(`/admin-ui/products/edit/${id}`, { state: { from: location.state?.from } })}
                     sx={{ bgcolor: '#111827', '&:hover': { bgcolor: '#374151' } }}
                 >
                     Редагувати
