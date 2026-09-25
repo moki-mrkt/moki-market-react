@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from 'react';
-import {useNavigate, useParams} from 'react-router-dom';
+import {useNavigate, useParams, useLocation} from 'react-router-dom';
 import toast from 'react-hot-toast';
 import { useTranslation } from 'react-i18next';
 import {
@@ -25,6 +25,7 @@ const AdminProductCreate = () => {
     const isEditMode = !!id;
 
     const navigate = useNavigate();
+    const location = useLocation();
 
     const [loading, setLoading] = useState(false);
     const [fetching, setFetching] = useState(false);
@@ -361,7 +362,11 @@ const AdminProductCreate = () => {
                 toast.success('Товар успішно створено!');
             }
 
-            navigate('/admin-ui/products');
+            if (location.state?.from) {
+                navigate(location.state.from);
+            } else {
+                navigate('/admin-ui/products');
+            }
 
         } catch (error) {
             if (error && error.status === 400) {
@@ -421,7 +426,7 @@ const AdminProductCreate = () => {
                         <Grid item xs={12} sm={4} sx={{mb: 3, width: '40%'}}>
                             <FormControl fullWidth>
                                 <InputLabel>Тип товару</InputLabel>
-                                <Select name="productType" value={formData.productType} label="Тип товару" onChange={handleChange}>
+                                <Select name="productType" value={formData.productType} label="Тип товару" onChange={handleChange} variant={}>
                                     <MenuItem value="SIMPLE">Звичайний</MenuItem>
                                     <MenuItem value="WEIGHT_BASED">На вагу (Фасування)</MenuItem>
                                     <MenuItem value="VARIANT">Варіація (Група)</MenuItem>

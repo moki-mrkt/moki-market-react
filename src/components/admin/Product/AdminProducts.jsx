@@ -31,14 +31,12 @@ const AdminProducts = () => {
         pageSize: initialSize,
     });
 
-    const loadProducts = async (query = searchTerm) => {
+    const loadProducts = async (query = searchTerm, model = paginationModel) => {
         setLoading(true);
         try {
-            const response = await productService.getAllProducts(paginationModel.page, paginationModel.pageSize, query, null);
-
+            const response = await productService.getAllProducts(model.page, model.pageSize, query, null);
             setRows(response.content || []);
             setRowCount(response.page.totalElements || 0);
-
         } catch (error) {
             console.error("Помилка при завантаженні товарів:", error);
         } finally {
@@ -96,8 +94,10 @@ const AdminProducts = () => {
     };
 
     const handleEdit = (id) => {
-        navigate(`/admin-ui/products/edit/${id}`);
-    };
+        navigate(`/admin-ui/products/edit/${id}`, {
+            state: { from: `/admin-ui/products?${searchParams.toString()}` }
+        });
+    }
 
     const handleDelete = async (id) => {
         if (window.confirm('Ви впевнені, що хочете видалити цей товар?')) {
