@@ -111,7 +111,10 @@ const AdminProductCreate = () => {
             }
             if (product.weightOptions) {
                 setWeightOptions(product.weightOptions.map(opt => ({
-                    weightValue: opt.weightValue, price: opt.price, isDefault: opt.isDefault
+                    weightValue: opt.weightValue,
+                    price: opt.price,
+                    isDefault: opt.isDefault,
+                    isExported: opt.isExported !== false
                 })));
             }
 
@@ -297,7 +300,7 @@ const AdminProductCreate = () => {
             return newOpts;
         });
     };
-    const addWeightOption = () => setWeightOptions(prev => [...prev, { weightValue: '', price: '', isDefault: false }]);
+    const addWeightOption = () => setWeightOptions(prev => [...prev, { weightValue: '', price: '', isDefault: false, isExported: true }]);
     const removeWeightOption = (index) => setWeightOptions(prev => prev.filter((_, i) => i !== index));
 
     const handleSubmit = async (e) => {
@@ -347,7 +350,10 @@ const AdminProductCreate = () => {
                 characteristicsRu: charMapRu,
                 minCustomWeight: formData.productType === 'WEIGHT_BASED' ? parseInt(formData.minCustomWeight) : null,
                 weightOptions: formData.productType === 'WEIGHT_BASED' ? weightOptions.map(w => ({
-                    weightValue: parseInt(w.weightValue), price: parseFloat(w.price), isDefault: w.isDefault
+                    weightValue: parseInt(w.weightValue),
+                    price: parseFloat(w.price),
+                    isDefault: w.isDefault,
+                    isExported: w.isExported
                 })) : null,
                 groupId: formData.productType === 'VARIANT' ? formData.groupId : null,
                 variantName: formData.productType === 'VARIANT' ? formData.variantName : null,
@@ -573,7 +579,14 @@ const AdminProductCreate = () => {
                                     <Box key={index} sx={{ display: 'flex', gap: 1, mb: 1, alignItems: 'center' }}>
                                         <TextField label="Вага (г)" size="small" type="number" value={opt.weightValue} onChange={(e) => handleWeightChange(index, 'weightValue', e.target.value)} />
                                         <TextField label="Ціна (₴)" size="small" type="number" value={opt.price} onChange={(e) => handleWeightChange(index, 'price', e.target.value)} />
-                                        <FormControlLabel control={<Checkbox checked={opt.isDefault} onChange={(e) => handleWeightChange(index, 'isDefault', e.target.checked)} />} label="За замовч." />
+                                        <FormControlLabel
+                                            control={<Checkbox checked={opt.isDefault} onChange={(e) => handleWeightChange(index, 'isDefault', e.target.checked)} />}
+                                            label="За замовч."
+                                        />
+                                        <FormControlLabel
+                                            control={<Checkbox checked={opt.isExported !== false} onChange={(e) => handleWeightChange(index, 'isExported', e.target.checked)} />}
+                                            label="В експорт"
+                                        />
                                         <IconButton onClick={() => removeWeightOption(index)} color="error"><DeleteIcon /></IconButton>
                                     </Box>
                                 ))}

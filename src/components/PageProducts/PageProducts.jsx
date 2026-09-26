@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useParams, useSearchParams } from 'react-router-dom';
 import {Helmet} from "react-helmet-async";
-import { useTranslation } from 'react-i18next'; // Додано імпорт
+import { useTranslation } from 'react-i18next';
 
 import Breadcrumbs from '../../components/Breadcrumbs/Breadcrumbs';
 import ProductCard from '../../components/ProductCard/ProductCard';
@@ -14,41 +14,53 @@ import './PageProducts.css';
 const PageGoods = ({ initialFilters = {} }) => {
 
     const { categorySlug } = useParams();
-    const [searchParams] = useSearchParams();
+    const [searchParams, setSearchParams] = useSearchParams();
     const searchQuery = searchParams.get('query');
+
+    const initialPage = parseInt(searchParams.get('page') || '0', 10);
+    const initialSort = searchParams.get('sort') || 'creationTime,desc';
+
+    const initialMinPrice = searchParams.has('minPrice') ? Number(searchParams.get('minPrice')) : null;
+    const initialMaxPrice = searchParams.has('maxPrice') ? Number(searchParams.get('maxPrice')) : null;
+
+    const initialSubcategories = searchParams.has('subcategories')
+        ? searchParams.get('subcategories').split(',')
+        : [];
 
     const { t, i18n } = useTranslation();
 
     const isLoadMore = useRef(false);
+    const isFirstMount = useRef(true);
 
     const [products, setProducts] = useState([]);
     const [loading, setLoading] = useState(true);
 
-    const [currentPage, setCurrentPage] = useState(0);
+    const [currentPage, setCurrentPage] = useState(initialPage);
     const [totalPages, setTotalPages] = useState(0);
 
     const [isFilterOpen, setIsFilterOpen] = useState(false);
 
-    const [sortOrder, setSortOrder] = useState('creationTime,desc');
+    const [sortOrder, setSortOrder] = useState(initialSort);
 
     const [availableSubcategories, setAvailableSubcategories] = useState([]);
 
     const [sliderLimits, setSliderLimits] = useState({ min: 0, max: 9999 });
 
-    const [priceRange, setPriceRange] = useState({ min: 0, max: 9999 });
-    const [selectedSubcategories, setSelectedSubcategories] = useState([]);
+    const [selectedSubcategories, setSelectedSubcategories] = useState(initialSubcategories);
+    const [priceRange, setPriceRange] = useState({
+        min: initialMinPrice !== null ? initialMinPrice : 0,
+        max: initialMaxPrice !== null ? initialMaxPrice : 9999
+    });
 
     const [appliedFilters, setAppliedFilters] = useState({
-        minPrice: null,
-        maxPrice: null,
-        subcategories: [],
+        minPrice: initialMinPrice,
+        maxPrice: initialMaxPrice,
+        subcategories: initialSubcategories,
         hasDiscount: initialFilters.hasDiscount || false
     });
 
     useEffect(() => {
-
         const fetchProducts = async () => {
-
             const backendCategory = getEnumFromSlug(categorySlug);
 
             if (!backendCategory && !searchQuery && !appliedFilters.hasDiscount) {
@@ -59,7 +71,6 @@ const PageGoods = ({ initialFilters = {} }) => {
 
             setLoading(true);
             try {
-
                 const params = {
                     category: backendCategory,
                     query: searchQuery,
@@ -73,7 +84,6 @@ const PageGoods = ({ initialFilters = {} }) => {
                 };
 
                 const response = await productService.search(params);
-
                 const pageData = response.products || response;
 
                 if (pageData && pageData.content) {
@@ -91,21 +101,22 @@ const PageGoods = ({ initialFilters = {} }) => {
                     if (currentPage === 0) setProducts([]);
                 }
 
-                if (currentPage === 0) {
+                // ДОДАНО: Винесено з if(currentPage === 0), щоб фільтри завантажувались завжди
+                if (response.subcategories && response.subcategories.length > 0) {
+                    setAvailableSubcategories(response.subcategories);
+                }
 
-                    if (response.subcategories && response.subcategories.length > 0) {
-                        setAvailableSubcategories(response.subcategories);
-                    }
+                if (response.minPrice !== undefined && response.maxPrice !== undefined) {
+                    const backendMin = Math.floor(response.minPrice);
+                    const backendMax = Math.ceil(response.maxPrice);
 
-                    if (response.minPrice !== undefined && response.maxPrice !== undefined) {
-                        const backendMin = Math.floor(response.minPrice);
-                        const backendMax = Math.ceil(response.maxPrice);
+                    setSliderLimits({ min: backendMin, max: backendMax });
 
-                        setSliderLimits({ min: backendMin, max: backendMax });
-
-                        if (appliedFilters.minPrice === null && appliedFilters.maxPrice === null) {
-                            setPriceRange({ min: backendMin, max: backendMax });
-                        }
+                    if (appliedFilters.minPrice === null && appliedFilters.maxPrice === null) {
+                        setPriceRange(prev => ({
+                            min: prev.min === 0 ? backendMin : prev.min,
+                            max: prev.max === 9999 ? backendMax : prev.max
+                        }));
                     }
                 }
 
@@ -123,7 +134,13 @@ const PageGoods = ({ initialFilters = {} }) => {
 
     }, [searchQuery, categorySlug, currentPage, sortOrder, appliedFilters, i18n.language]);
 
+    // ВИПРАВЛЕНО: Скидає фільтри ТІЛЬКИ якщо користувач перейшов у нову категорію
     useEffect(() => {
+        if (isFirstMount.current) {
+            isFirstMount.current = false;
+            return;
+        }
+
         setCurrentPage(0);
         setProducts([]);
         setAppliedFilters({
@@ -136,8 +153,27 @@ const PageGoods = ({ initialFilters = {} }) => {
         setSliderLimits({ min: 0, max: 9999 });
         setAvailableSubcategories([]);
         isLoadMore.current = false;
+        
+        // Очищаємо URL параметри при зміні категорії
+        setSearchParams({});
+        
         window.scrollTo(0, 0);
-    }, [categorySlug, initialFilters.hasDiscount, i18n.language]);
+    }, [categorySlug, initialFilters.hasDiscount]); 
+    // Прибрано i18n.language з залежностей, щоб зміна мови не скидала фільтри
+
+    const updateUrlParams = (updates) => {
+        const newParams = new URLSearchParams(searchParams);
+
+        Object.keys(updates).forEach(key => {
+            if (updates[key] === null || updates[key] === undefined || updates[key] === '') {
+                newParams.delete(key);
+            } else {
+                newParams.set(key, updates[key]);
+            }
+        });
+
+        setSearchParams(newParams);
+    };
 
     const handleRangeChange = (e) => {
         const { id, value } = e.target;
@@ -158,12 +194,8 @@ const PageGoods = ({ initialFilters = {} }) => {
     }
 
     const handleResetFilters = () => {
-
         setSelectedSubcategories([]);
-        setPriceRange({
-            min: sliderLimits.min,
-            max: sliderLimits.max
-        });
+        setPriceRange({ min: sliderLimits.min, max: sliderLimits.max });
 
         setAppliedFilters({
             subcategories: [],
@@ -171,10 +203,16 @@ const PageGoods = ({ initialFilters = {} }) => {
             maxPrice: sliderLimits.max,
             hasDiscount: initialFilters.hasDiscount || false
         });
-
         setSortOrder('creationTime,desc');
-
         setCurrentPage(0);
+
+        updateUrlParams({
+            page: 0,
+            sort: 'creationTime,desc',
+            minPrice: null,
+            maxPrice: null,
+            subcategories: null
+        });
     };
 
     const applyFilters = () => {
@@ -188,15 +226,27 @@ const PageGoods = ({ initialFilters = {} }) => {
         }));
 
         setIsFilterOpen(false);
+
+        updateUrlParams({
+            page: 0,
+            minPrice: priceRange.min,
+            maxPrice: priceRange.max,
+            subcategories: selectedSubcategories.length > 0 ? selectedSubcategories.join(',') : null
+        });
     };
 
     const handleSortChange = (e) => {
-        setSortOrder(e.target.value);
+        const newSortOrder = e.target.value;
+        setSortOrder(newSortOrder);
         setCurrentPage(0);
+
+        updateUrlParams({
+            sort: newSortOrder,
+            page: 0
+        });
     };
 
     const handleInputBlur = () => {
-
         let newMin = priceRange.min === '' ? sliderLimits.min : priceRange.min;
         let newMax = priceRange.max === '' ? sliderLimits.max : priceRange.max;
 
@@ -459,7 +509,12 @@ const PageGoods = ({ initialFilters = {} }) => {
                                             className="btn-load-more pag-but"
                                             onClick={() => {
                                                 isLoadMore.current = true;
-                                                setCurrentPage(prev => prev + 1);
+                                                setCurrentPage(prev => {
+                                                    const nextPage = prev + 1;
+                                                    // ДОДАНО: оновлення URL при підвантаженні
+                                                    updateUrlParams({ page: nextPage });
+                                                    return nextPage;
+                                                });
                                             }}
                                             disabled={loading}
                                         >
@@ -476,6 +531,7 @@ const PageGoods = ({ initialFilters = {} }) => {
                                             onClick={() => {
                                                 isLoadMore.current = false;
                                                 setCurrentPage(index);
+                                                updateUrlParams({ page: index });
                                                 window.scrollTo({ top: 0, behavior: 'smooth' });
                                             }}
                                         >
@@ -488,7 +544,12 @@ const PageGoods = ({ initialFilters = {} }) => {
                                             className="page-link pag-but next-btn"
                                             onClick={() => {
                                                 isLoadMore.current = false;
-                                                setCurrentPage(prev => prev + 1);
+                                                setCurrentPage(prev => {
+                                                    const nextPage = prev + 1;
+                                                    // ДОДАНО: оновлення URL при кліку "Наступна"
+                                                    updateUrlParams({ page: nextPage });
+                                                    return nextPage;
+                                                });
                                                 window.scrollTo({ top: 0, behavior: 'smooth' });
                                             }}
                                         >
