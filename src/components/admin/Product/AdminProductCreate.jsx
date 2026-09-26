@@ -50,6 +50,7 @@ const AdminProductCreate = () => {
         initOfMeasure: 'шт',
         valueOfInitOfMeasure: '',
         productType: 'SIMPLE',
+        allowCustomWeight: false,
         minCustomWeight: '',
         groupId: '',
         variantName: '',
@@ -97,6 +98,7 @@ const AdminProductCreate = () => {
                 initOfMeasure: product.initOfMeasure,
                 valueOfInitOfMeasure: product.valueOfInitOfMeasure,
                 productType: product.productType || 'SIMPLE',
+                allowCustomWeight: product.allowCustomWeight || false,
                 minCustomWeight: product.minCustomWeight || '',
                 groupId: product.groupId || '',
                 variantName: product.variantName || '',
@@ -231,10 +233,15 @@ const AdminProductCreate = () => {
 
 
     const handleChange = (e) => {
-        const { name, value } = e.target;
+        const { name, value, type, checked } = e.target;
+        const inputValue = type === 'checkbox' ? checked : value;
 
         setFormData(prev => {
-            const updatedData = { ...prev, [name]: value };
+            const updatedData = { ...prev, [name]: inputValue };
+
+            if (name === 'allowCustomWeight' && !inputValue) {
+                updatedData.minCustomWeight = '';
+            }
 
             if (name === 'productType' && value === 'WEIGHT_BASED') {
                 if (weightOptions.length === 0) {
@@ -348,7 +355,8 @@ const AdminProductCreate = () => {
                 images: validImages,
                 characteristics: charMap,
                 characteristicsRu: charMapRu,
-                minCustomWeight: formData.productType === 'WEIGHT_BASED' ? parseInt(formData.minCustomWeight) : null,
+                allowCustomWeight: formData.productType === 'WEIGHT_BASED' ? formData.allowCustomWeight : false,
+                minCustomWeight: (formData.productType === 'WEIGHT_BASED' && formData.allowCustomWeight) ? parseInt(formData.minCustomWeight) : null,
                 weightOptions: formData.productType === 'WEIGHT_BASED' ? weightOptions.map(w => ({
                     weightValue: parseInt(w.weightValue),
                     price: parseFloat(w.price),
@@ -571,7 +579,26 @@ const AdminProductCreate = () => {
                                         />
                                     </Grid>
                                     <Grid item xs={6}>
-                                        <TextField fullWidth label="Мін. кастомна вага (г)" name="minCustomWeight" type="number" value={formData.minCustomWeight} onChange={handleChange} />
+                                        <TextField
+                                            fullWidth
+                                            label="Мін. кастомна вага (г)"
+                                            name="minCustomWeight"
+                                            type="number"
+                                            value={formData.minCustomWeight}
+                                            onChange={handleChange}
+                                            disabled={!formData.allowCustomWeight}
+                                        />
+                                        <FormControlLabel
+                                            control={
+                                                <Checkbox
+                                                    name="allowCustomWeight"
+                                                    checked={formData.allowCustomWeight}
+                                                    onChange={handleChange}
+                                                />
+                                            }
+                                            label="Дозволити власну вагу"
+                                            sx={{ mb: 1, display: 'block' }}
+                                        />
                                     </Grid>
                                 </Grid>
                                 <Typography variant="subtitle2" mb={1}>Фіксовані фасування:</Typography>

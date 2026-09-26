@@ -360,26 +360,28 @@ const Product = () => {
                                                     </div>
                                                 )}
 
-                                                <div className="custom-weight-container">
-                                                    <span className="custom-weight-label">{t('product-card.custom-weight')}</span>
-                                                    <div className="custom-weight-input-wrapper">
-                                                        <input
-                                                            type="text"
-                                                            className="custom-weight-input"
-                                                            placeholder={customWeightUnit === 'кг' ? 'напр. 1.5' : 'напр. 350'}
-                                                            value={customWeight}
-                                                            onChange={handleCustomWeightChange}
-                                                        />
-                                                        <select
-                                                            className="custom-weight-unit-select"
-                                                            value={customWeightUnit}
-                                                            onChange={(e) => setCustomWeightUnit(e.target.value)}
-                                                        >
-                                                            <option value="г">г</option>
-                                                            <option value="кг">кг</option>
-                                                        </select>
+                                                {product.allowCustomWeight && (
+                                                    <div className="custom-weight-container">
+                                                        <span className="custom-weight-label">{t('product-card.custom-weight')}</span>
+                                                        <div className="custom-weight-input-wrapper">
+                                                            <input
+                                                                type="text"
+                                                                className="custom-weight-input"
+                                                                placeholder={customWeightUnit === 'кг' ? 'напр. 1.5' : 'напр. 350'}
+                                                                value={customWeight}
+                                                                onChange={handleCustomWeightChange}
+                                                            />
+                                                            <select
+                                                                className="custom-weight-unit-select"
+                                                                value={customWeightUnit}
+                                                                onChange={(e) => setCustomWeightUnit(e.target.value)}
+                                                            >
+                                                                <option value="г">г</option>
+                                                                <option value="кг">кг</option>
+                                                            </select>
+                                                        </div>
                                                     </div>
-                                                </div>
+                                                )}
                                             </div>
                                         ) : product.productType === 'VARIANT' && product.siblingVariants?.length > 0 ? (
                                             <div className="weight-section">
